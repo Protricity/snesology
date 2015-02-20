@@ -1,0 +1,12 @@
+fieldset.fieldset-account {
+    display: inline-block;
+}
+
+fieldset.fieldset-account[disabled] {
+    display: none;
+}
+
+fieldset.fieldset-account label {
+    display: inline-block;
+    /*width:100%;*/
+}

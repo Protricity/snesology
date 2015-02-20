@@ -1,0 +1,3 @@
+[submodule "CPath"]
+	path = CPath
+	url = https://ari.asulin@code.google.com/p/clevertree-cpath/

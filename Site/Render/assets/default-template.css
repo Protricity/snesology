@@ -1,0 +1,361 @@
+
+.pending {
+    opacity: 0.5;
+}
+
+/** Page Layout **/
+
+section, div.section {
+    /*margin: 0 0 0 0;*/
+    margin: 0 1px 1px 0;
+    border: 1px solid #CCC;
+
+    background-color: #eee;
+    overflow: hidden;
+
+    padding: 15px;
+}
+
+.header {
+    background: url("img/header.jpg") no-repeat;
+    height: 109px;
+}
+
+
+/*.console {*/
+/*background-color: #000;*/
+/*min-height: 20pt;*/
+/*}*/
+
+.navbar {
+    float: left;
+    max-width: 14em;
+}
+
+.navbar a {
+}
+
+.navbar a:hover {
+    background-color: #ccc;
+}
+
+.navbar .navbar-title {
+    font-size: 1em;
+    text-overflow: ellipsis;
+    overflow-x: hidden;
+    display: inline-block;
+}
+
+.navbar a {
+    /*font-family: 'Courier New' , Monospace;*/
+    text-decoration: none;
+    font-weight: bold;
+    display: block;
+    background-color: #DDE;
+    border: 1pt solid #335588;
+    border-radius: 1em;
+    box-shadow: inset 0 .3em .5em #999;
+    padding: 1em 1.5em 1em 1.5em;
+    /*font-size: 1.1em;*/
+}
+
+.navbar a:hover {
+    font-style: italic;
+    margin-right: 1em;
+    padding: 1em 0.5em 1em 1.5em;
+}
+
+.navbar a + a {
+    margin-top: 1em;
+}
+
+.content {
+}
+
+.footer {
+    height: 35px;
+    clear:both;
+    min-height: 20pt;
+    padding: 1pt;
+
+}
+
+.footer div.logos {
+    float:right;
+    margin:5px;
+    background: #eee url("img/footer.jpg") no-repeat;
+    width: 114px;
+    height: 28px;
+}
+
+/*.footer.fixed {*/
+/*position: fixed;*/
+/*left: 0;*/
+/*bottom: 0;*/
+/*width: 100%;*/
+
+/*}*/
+
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 0;
+}
+
+
+/** Tables **/
+
+thead th,
+tbody th,
+tr:hover {
+    background: #567;
+    color: #CCC;
+}
+
+
+/** Body **/
+
+body {
+    font-family: monospace;
+    margin: 0 0 0 0;
+}
+
+/** Page **/
+
+section.centered form {
+    text-align: center;
+}
+
+section.centered form * {
+    text-align: left;
+}
+
+/** Message Boxes **/
+
+.log    { color: #333; }
+.info   { color: #777; font-style: italic; }
+.error  { color: darkred; font-weight: bold; font-style: italic;  }
+
+div.info,
+div.error {
+    padding: 0 4pt 4pt 4pt;
+    margin: 2pt -2pt;
+    border-radius: 4pt;
+}
+div.info { background-color: #dde; border-top: 3pt solid #cce; }
+div.error { background-color: #edd; border-top: 3pt solid #ecc; }
+
+
+/** Form **/
+
+form {
+    position: relative;
+    font-family: monospace;
+}
+
+form > legend,
+fieldset > legend {
+    padding: 0 3pt;
+    /*margin-bottom: .5em;*/
+    font-weight: bold;
+}
+
+form > legend {
+    font-size: 1.5em;
+    margin-bottom: 1em;
+}
+
+fieldset {
+    border-radius: 4px;
+    border: 2pt solid #ccc;
+    /*margin: 0 0.2em 0.5em 0;*/
+    vertical-align: top;
+}
+
+fieldset.inline {
+    display: inline-block;
+}
+
+/*form * + label {*/
+     /*margin-top: 10pt;*/
+/*}*/
+
+
+form button {
+    cursor: pointer;
+}
+
+.input {
+    border: 1px solid #ccc;
+    padding: 5pt 5pt;
+    border-radius: 4pt;
+}
+
+.input.small {
+    padding: 2pt 2pt;
+    border-radius: 2pt;
+}
+
+.input.transparent {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    background-color: transparent;
+}
+
+form input[type="checkbox"],
+form input[type="range"] {
+    /*width: 2em;*/
+    height: 2.5em;
+    margin: 0;
+    vertical-align: bottom;
+    /*box-shadow: inset 1em 1em 1em #ddd;*/
+}
+
+/*form textarea {*/
+    /*height: 150pt;*/
+    /*width: 450pt;*/
+/*}*/
+
+/** Focus container **/
+
+.highlight {
+    font-size: 1em;
+    color: #945214;
+    font-weight: bold;
+    text-decoration: wavy;
+    border-color: #ed47f4;
+}
+
+/*form.focus {*/
+    /*background-color: #DDD;*/
+    /*opacity: 0.8;*/
+
+    /*margin: -0.5em;*/
+    /*padding: 0.5em;*/
+
+    /*border-radius: 0.5em;*/
+    /*color: #AAA;*/
+/*}*/
+
+
+/*form.focus input,*/
+/*form.focus textarea,*/
+/*form.focus button {*/
+    /*opacity: 0.2;*/
+
+/*}*/
+
+/*form.focus div.focus,*/
+/*form.focus input.focus,*/
+/*form.focus textarea.focus,*/
+/*form.focus button.focus  {*/
+    /*opacity: 1;*/
+    /*font-weight: bold;*/
+/*}*/
+
+/** Tables **/
+
+table {
+    /*border-collapse: collapse;*/
+
+    border-spacing: 0;
+    border-radius: 4px;
+    border: 2pt solid #ccc;
+    /*margin: 0 0.2em 0.5em 0;*/
+    vertical-align: top;
+    margin: 0.5em;
+    /*padding: 0.5em;*/
+}
+
+th, td {
+    padding: 0.25rem;
+    border: 1px solid #ccc;
+}
+
+td a
+th a {
+    text-decoration: none;
+}
+
+th a {
+    color: #CCC;
+}
+
+th,
+tr:hover {
+    background: #666;
+    color: #CCC;
+}
+td:hover {
+    background: #ccc;
+    color: #666;
+}
+
+tr.highlight {
+    background: #599;
+}
+
+td a:hover {
+    text-decoration: underline;
+}
+
+
+
+/** Data **/
+
+
+dl, ul, ol
+{
+    display: block;
+
+    /*float: left;*/
+    /*width: 648px;*/
+    margin: 5pt;
+    padding: 0 8pt 4pt 0;
+
+    /*border-radius: 8pt;*/
+    /*border: 2pt solid #ccc;*/
+
+    min-width: 30pt;
+}
+
+dd > a {
+    text-decoration: none;
+}
+
+dl > dt
+{
+    white-space: nowrap;
+
+    float: left;
+    clear: left;
+    width: 10em;
+    margin: 0 15px 0 0;
+    text-align: right;
+    font-weight: bold;
+    color: #999;
+
+    padding: 3pt 0 0;
+}
+
+dl > dd
+{
+    /*white-space: pre-line;*/
+    /*white-space: nowrap;*/
+    /*overflow-x: hidden;*/
+    overflow-y: hidden;
+
+    margin: 0 0 0 70pt;
+    padding: 3pt 0 0;
+
+    min-height: 12pt;
+}
+
+ul > li
+{
+    list-style-type: none;
+}
+
+/*dd dl.closed > :not(.stay-open) {*/
+/*display: none;*/
+/*}*/
+

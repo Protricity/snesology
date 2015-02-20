@@ -1,0 +1,10 @@
+form.form-register fieldset {
+    display: inline-block;
+}
+
+/*form.form-register .fieldset-generate {*/
+    /*display: none;*/
+/*}*/
+/*form.form-register.focus .fieldset-generate {*/
+    /*display: block;*/
+/*}*/

@@ -1,0 +1,8 @@
+*.old
+.idea
+/old/
+/games/
+/user/
+/grant/
+/session/
+/wallet/
