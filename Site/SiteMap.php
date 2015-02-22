@@ -37,7 +37,7 @@ class SiteMap implements IRouteMap, IBuildable
 			$Map->route('ANY /home', 'Site\\Account\\AccountHome', 272, 'My Account') ||
 
 			// @group Site\Account\Login
-			$Map->route('ANY /login/:fingerprint/', 'Site\\Account\\Login', 288, 'Login') ||
+			$Map->route('ANY /login/:fingerprint', 'Site\\Account\\Login', 288, 'Login') ||
 
 			// @group Site\Account\Logout
 			$Map->route('ANY /logout/', 'Site\\Account\\Logout', 272, 'Logout') ||
@@ -56,6 +56,21 @@ class SiteMap implements IRouteMap, IBuildable
 
 			// @group Site\SiteIndex
 			$Map->route('ANY /', 'Site\\SiteIndex') ||
+
+			// @group Site\Song\CreateSong
+			$Map->route('ANY /create/song/', 'Site\\Song\\CreateSong') ||
+			$Map->route('ANY /songs', 'Site\\Song\\CreateSong', 272, 'Songs') ||
+
+			// @group Site\Song\ManageSong
+			$Map->route('ANY /manage/song/:id', 'Site\\Song\\ManageSong') ||
+
+			// @group Site\Song\SearchSongs
+			$Map->route('ANY /songs', 'Site\\Song\\SearchSongs') ||
+			$Map->route('ANY /search/songs', 'Site\\Song\\SearchSongs') ||
+
+			// @group Site\Song\ViewSong
+			$Map->route('ANY /s/:id', 'Site\\Song\\ViewSong') ||
+			$Map->route('ANY /view/song/:id', 'Site\\Song\\ViewSong') ||
 
 			// @group __blank_template
 			$Map->route('ANY /order', 'Site\\Render\\BlankTemplate') ||

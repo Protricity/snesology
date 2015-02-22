@@ -74,13 +74,6 @@ class AccountEntry implements IBuildable, IKeyMap, ISerializable
 	protected $name;
 
 	/**
-	 * @column VARCHAR(64) NOT NULL
-	 * @select
-	 * @insert
-	 */
-//	protected $password;
-
-	/**
 	 * @column TEXT
 	 * @insert
 	 * @update

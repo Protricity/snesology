@@ -170,6 +170,8 @@ Version: GnuPG v1
 	    $publicKeyString = $Form->validateField($Request, self::PARAM_PUBLIC_KEY);
 
 	    try {
+            // todo: import before db
+
 		    $Account = AccountEntry::create($Request, $publicKeyString);
 		    $fingerprint = $Account->getFingerprint();
 		    $this->mNewAccountFingerprint = $fingerprint;

@@ -5,49 +5,53 @@
  * Date: 1/27/2015
  * Time: 1:56 PM
  */
-namespace Site\Account;
+namespace Site\Song;
 
 use CPath\Build\IBuildable;
 use CPath\Build\IBuildRequest;
+use CPath\Render\HTML\Attribute\Attributes;
 use CPath\Render\HTML\Element\Form\HTMLButton;
 use CPath\Render\HTML\Element\Form\HTMLForm;
+use CPath\Render\HTML\Element\Form\HTMLInputField;
+use CPath\Render\HTML\Element\Form\HTMLSelectField;
 use CPath\Render\HTML\Element\HTMLElement;
 use CPath\Render\HTML\Header\HTMLHeaderScript;
 use CPath\Render\HTML\Header\HTMLHeaderStyleSheet;
 use CPath\Render\HTML\Header\HTMLMetaTag;
-use CPath\Render\Map\MapRenderer;
-use CPath\Request\Exceptions\RequestException;
 use CPath\Request\Executable\ExecutableRenderer;
 use CPath\Request\Executable\IExecutable;
 use CPath\Request\Form\IFormRequest;
 use CPath\Request\IRequest;
 use CPath\Request\Session\ISessionRequest;
+use CPath\Request\Validation\RequiredValidation;
 use CPath\Response\Common\RedirectResponse;
 use CPath\Response\IResponse;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
-use Site\Account\DB\AccountEntry;
+use Site\Song\DB\GenreEntry;
+use Site\Song\DB\SongEntry;
 use Site\SiteMap;
+use Site\Song\DB\SongGenreEntry;
+use Site\Song\DB\SongSystemEntry;
+use Site\Song\DB\SystemEntry;
 
-class AccountHome implements IExecutable, IBuildable, IRoutable
+
+class CreateSong implements IExecutable, IBuildable, IRoutable
 {
-	const TITLE = 'Account Home';
+	const TITLE = 'Create a new Song';
 
-	const FORM_ACTION = '/home';
+	const FORM_ACTION = '/create/song/';
+	const FORM_ACTION2 = '/songs';
 	const FORM_METHOD = 'POST';
-	const FORM_NAME = __CLASS__;
+	const FORM_NAME = 'create-song';
 
-	const PARAM_ACCOUNT_STATUS = 'account-status';
-	const PARAM_SUBMIT = 'submit';
-	const PARAM_AFFILIATE_TYPE = 'affiliate-type';
-	const PARAM_AFFILIATE_ID = 'affiliate-id';
-	const PARAM_APPROVE_AFFILIATE_ID = 'approve-affiliate-id';
+    const PARAM_SONG_TITLE = 'song-title';
+    const PARAM_SONG_GENRES = 'song-genres';
+    const PARAM_SONG_SYSTEMS = 'song-systems';
 
 	/**
 	 * Execute a command and return a response. Does not render
 	 * @param IRequest $Request
-	 * @throws RequestException
-	 * @throws \CPath\Request\Validation\Exceptions\ValidationException
 	 * @throws \Exception
 	 * @return IResponse the execution response
 	 */
@@ -56,43 +60,53 @@ class AccountHome implements IExecutable, IBuildable, IRoutable
 		if (!$SessionRequest instanceof ISessionRequest)
 			throw new \Exception("Session required");
 
-		$Account = AccountEntry::loadFromSession($SessionRequest);
+        $systemList = SystemEntry::getAll();
+        $genreList = GenreEntry::getAll();
 
 		$Form = new HTMLForm(self::FORM_METHOD, $Request->getPath(), self::FORM_NAME,
 			new HTMLMetaTag(HTMLMetaTag::META_TITLE, self::TITLE),
-			new HTMLHeaderScript(__DIR__ . '/assets/account.js'),
-			new HTMLHeaderStyleSheet(__DIR__ . '/assets/account.css'),
+			new HTMLHeaderScript(__DIR__ . '/assets/song.js'),
+			new HTMLHeaderStyleSheet(__DIR__ . '/assets/song.css'),
 
-			new HTMLElement('fieldset', 'fieldset-info inline',
-				new HTMLElement('legend', 'legend-info', self::TITLE),
+			new HTMLElement('fieldset', 'fieldset-create-song',
+				new HTMLElement('legend', 'legend-song', self::TITLE),
 
-				new MapRenderer($Account)
-			),
-
-			"<br/>",
-
-			new HTMLElement('fieldset', 'fieldset-manage inline',
-				new HTMLElement('legend', 'legend-manage', "Manage Account"),
+				new HTMLElement('label', null, "<br/>",
+					new HTMLSelectField(self::PARAM_SONG_SYSTEMS, $systemList,
+						new RequiredValidation()
+					)
+				),
 
 				"<br/><br/>",
-				new HTMLButton(self::PARAM_SUBMIT, 'Update', 'update')
-			)
+                new HTMLElement('label', null, "<br/>",
+                    new HTMLSelectField(self::PARAM_SONG_GENRES, $genreList,
+                        new RequiredValidation()
+                    )
+                ),
 
+				"<br/><br/>Submit:<br/>",
+				new HTMLButton('submit', 'Submit', 'submit')
+			),
+			"<br/>"
 		);
 
 		if(!$Request instanceof IFormRequest)
 			return $Form;
 
-		$submit = $Request[self::PARAM_SUBMIT];
+        $genres = $Form->validateField($Request, self::PARAM_SONG_GENRES);
+        $systems = $Form->validateField($Request, self::PARAM_SONG_SYSTEMS);
+        $title = $Form->validateField($Request, self::PARAM_SONG_TITLE);
 
-		switch($submit) {
-			case 'update':
-				$status = $Form->validateField($Request, self::PARAM_ACCOUNT_STATUS);
-				$Account->update($Request, $Account, $status);
-				return new RedirectResponse(AccountHome::getRequestURL(), "Account updated successfully. Redirecting...", 5);
-		}
+		$Song = SongEntry::create($Request, $title);
+        foreach($genres as $genre) {
+            SongGenreEntry::addToSong($Request, $Song->getID(), $genre);
+        }
 
-		throw new \InvalidArgumentException($submit);
+        foreach($systems as $system) {
+            SongSystemEntry::addToSong($Request, $Song->getID(), $system);
+        }
+
+        return new RedirectResponse(ViewSong::getRequestURL($Song->getID()), "Song created successfully. Redirecting...", 5);
 	}
 
 	// Static
@@ -112,7 +126,9 @@ class AccountHome implements IExecutable, IBuildable, IRoutable
 	 * If an object is returned, it is passed along to the next handler
 	 */
 	static function routeRequestStatic(IRequest $Request, Array &$Previous = array(), $_arg = null) {
-		return new ExecutableRenderer(new static(), true);
+		$Render = new ExecutableRenderer(new static(), true);
+		$Render->execute($Request);
+		return $Render;
 	}
 
 	/**
@@ -124,10 +140,10 @@ class AccountHome implements IExecutable, IBuildable, IRoutable
 	 */
 	static function handleBuildStatic(IBuildRequest $Request) {
 		$RouteBuilder = new RouteBuilder($Request, new SiteMap());
-
-		$RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION, __CLASS__,
-			IRequest::MATCH_SESSION_ONLY
-			| IRequest::NAVIGATION_ROUTE,
-			"My Account");
+		$RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION, __CLASS__);
+		$RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION2, __CLASS__,
+			IRequest::NAVIGATION_ROUTE |
+			IRequest::MATCH_SESSION_ONLY,
+			"Songs");
 	}
 }

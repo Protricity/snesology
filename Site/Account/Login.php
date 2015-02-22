@@ -95,6 +95,7 @@ class Login implements IExecutable, IBuildable, IRoutable
 		}
 		$requestPath = self::getRequestURL($fingerprint);
 
+        // $Account->generateChallenge($Request);
 		$challenge = $Account->loadChallenge($Request);
 
 		$Form = new HTMLForm(self::FORM_METHOD, $requestPath, static::FORM_NAME,
