@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<!-- saved from url=(0031)http://localhost/snesology/home -->
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script src="./test_files/jquery.min.js"></script>
+    <script src="./test_files/default-template.js"></script>
+    <link rel="stylesheet" href="http://localhost/snesology/Site/Render/assets/default-template.css">
+    
+    <meta name="path" content="/home">
+    <meta name="domain-path" content="/snesology/">
+    <script src="./test_files/openpgp.js"></script>
+    <meta name="title" content="Account Home">
+    <script src="./test_files/account.js"></script>
+    <link rel="stylesheet" href="http://localhost/snesology/Site/Account/assets/account.css">
+    <meta name="title" content="Account Home">
+  </head>
+  <body class=" hasGoogleVoiceExt">
+    <section class="header">
+      <h1 class="header-title">DEMO MODE - GET /home</h1></section>
+    <section class="navbar">
+      <a href="./test_files/test.html">My Account</a>
+      <a href="http://localhost/snesology/logout/">Logout</a>
+      <a href="http://localhost/snesology/register/">Register</a>
+      <a href="http://localhost/snesology/songs">Songs</a></section>
+    <section class="content">
+      <form action="./test_files/test.html" method="POST" name="Site\Account\AccountHome">
+        <input name="account-fingerprint" value="9E12A673F58D93B5C0E41A52ABF896DD330B67B9" type="hidden" class="input">
+        <fieldset class="fieldset-info inline">
+          <legend class="legend-info">Account Home</legend>
+          <dl>
+            <dt>fingerprint</dt>
+            <dd><a href="http://localhost/snesology/a/9E12A673F58D93B5C0E41A52ABF896DD330B67B9">9E12A673F58D93B5C0E41A52ABF896DD330B67B9</a></dd>
+            <dt>inviter</dt>
+            <dd><a href="http://localhost/snesology/a/1FF080FF">1FF080FF</a></dd>
+            <dt>name</dt>
+            <dd>omfgomfg</dd>
+            <dt>email</dt>
+            <dd>omg@ohok.com</dd>
+            <dt>created</dt>
+            <dd>4 years ago</dd>
+          </dl>
+        </fieldset><br>
+        <fieldset class="fieldset-manage inline">
+          <legend class="legend-manage">Manage Account</legend><br><br>
+          <button name="submit" class="input" value="update">Update</button>
+        </fieldset>
+        <fieldset class="fieldset-invite inline">
+          <legend class="legend-invite">Create an Invite</legend>Invitee's Email Address:<br>
+          <input name="invite-email" class="input"><br><br>Add an invite message:<br>
+          <textarea name="invite-message" class="input"></textarea><br><br>Generated invite:<br>
+          <textarea name="invite-content" class="input"></textarea><br><br>
+          <button name="generate-invite" class="input" value="generate-invite">Generate</button>
+          <a class="send-email input" href="http://localhost/snesology/#" style="display: none;">Send Email</a>
+        </fieldset>
+      </form></section>
+    <section class="footer">
+      <div class="logos"></div></section>
+  
+</body></html>
