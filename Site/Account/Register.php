@@ -44,8 +44,7 @@ class Register implements IExecutable, IBuildable, IRoutable
 	const CLS_FIELDSET_TOOLS = 'fieldset-tools';
 	const CLS_FORM = 'form-register';
 
-    const FORM_ACTION = '/register';
-    const FORM_ACTION2 = '/register/';
+    const FORM_ACTION = '/register/';
 	const FORM_NAME = 'form-register';
 
 	const PARAM_PUBLIC_KEY = 'public_key';
@@ -229,10 +228,9 @@ Version: GnuPG v1
     static function handleBuildStatic(IBuildRequest $Request) {
         $RouteBuilder = new RouteBuilder($Request, new SiteMap());
         $RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION, __CLASS__,
-            IRequest::MATCH_NO_SESSION |
+//            IRequest::MATCH_NO_SESSION |
             IRequest::NAVIGATION_ROUTE,
             "Register");
-        $RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION2, __CLASS__);
     }
 
 	/**
