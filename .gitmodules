@@ -1,6 +1,6 @@
 [submodule "CPath"]
 	path = CPath
 	url = https://ari.asulin@code.google.com/p/clevertree-cpath/
-[submodule "BC/PGP/assets/libs/openpgp"]
-        path = BC/PGP/assets/libs/openpgp
+[submodule "Site/PGP/assets/libs/openpgp"]
+        path = Site/PGP/assets/libs/openpgp
         url = https://github.com/singpolyma/openpgp-php.git

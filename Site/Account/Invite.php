@@ -58,12 +58,12 @@ class Invite implements IExecutable, IBuildable, IRoutable
 		$requestPath = self::getRequestURL();
 
 		$Form = new HTMLForm(self::FORM_METHOD, $requestPath, self::FORM_NAME,
-			new HTMLMetaTag(HTMLMetaTag::META_TITLE, 'User Log in'),
+			new HTMLMetaTag(HTMLMetaTag::META_TITLE, 'Accept Invitation'),
 
-			new HTMLHeaderScript(__DIR__ . '\assets\form-login.js'),
-			new HTMLHeaderStyleSheet(__DIR__ . '\assets\form-login.css'),
+//			new HTMLHeaderScript(__DIR__ . '\assets\invite.js'),
+//			new HTMLHeaderStyleSheet(__DIR__ . '\assets\invite.css'),
 
-			new HTMLElement('legend', 'content-title', 'Log in'), // as ' . $this->getUser()->getPGPKey()->getUserID()),
+			new HTMLElement('legend', 'content-title', 'Accept Invitation'), // as ' . $this->getUser()->getPGPKey()->getUserID()),
 
 			new HTMLElement('fieldset',
 				new HTMLElement('legend', 'legend-submit', "Enter invite content"),

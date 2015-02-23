@@ -84,6 +84,7 @@ Version: GnuPG v1
 	 */
     function execute(IRequest $Request) {
         $inviteeEmail = null;
+        $inviterFingerprint = null;
         $isInvite = false;
         if($Request instanceof ISessionRequest) {
             if(Invite::hasInviteContent($Request)) {
@@ -183,7 +184,7 @@ Version: GnuPG v1
 	    try {
             // todo: import before db
 
-		    $Account = AccountEntry::create($Request, $publicKeyString, $inviteeEmail);
+		    $Account = AccountEntry::create($Request, $publicKeyString, $inviteeEmail, $inviterFingerprint);
 		    $fingerprint = $Account->getFingerprint();
 		    $this->mNewAccountFingerprint = $fingerprint;
 

@@ -320,7 +320,7 @@ class AccountEntry implements IBuildable, IKeyMap, ISerializable
 		return $active;
 	}
 
-	static function create(IRequest $Request, $public_key, $inviteEmail=null) {
+	static function create(IRequest $Request, $public_key, $inviteEmail=null, $inviterFingerprint=null) {
 
 		$PublicKey = new PublicKey($public_key);
         if($inviteEmail && $inviteEmail !== $PublicKey->getUserIDEmail())
@@ -329,7 +329,8 @@ class AccountEntry implements IBuildable, IKeyMap, ISerializable
 		$fingerprint = $PublicKey->getFingerprint();
 
 		$inserted = self::table()->insert(array(
-			AccountTable::COLUMN_FINGERPRINT => $fingerprint,
+            AccountTable::COLUMN_FINGERPRINT => $fingerprint,
+            AccountTable::COLUMN_INVITER_FINGERPRINT => $inviterFingerprint,
 			AccountTable::COLUMN_NAME => $PublicKey->getUserIDName(),
 			AccountTable::COLUMN_EMAIL => $PublicKey->getUserIDEmail(),
 			AccountTable::COLUMN_CREATED => time(),

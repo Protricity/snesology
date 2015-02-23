@@ -22,7 +22,7 @@
     var ready = function() {
 
         var domainPath = jQuery('head meta[name=' + META_DOMAIN_PATH + ']').attr('content');
-        var domainFullPath = window.location.protocol + "://" + window.location.host + domainPath;
+        var domainFullPath = window.location.protocol + "//" + window.location.host + domainPath;
         var inviteFullPath = domainFullPath + 'invite/';
 
         jQuery('button[name=' + PARAM_GENERATE_INVITE + ']').each(function(i, button) {
