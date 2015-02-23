@@ -304,6 +304,7 @@ class AccountEntry implements IBuildable, IKeyMap, ISerializable
 		$AccountEntry = unserialize($Session[AccountEntry::SESSION_KEY]);
 		if(!$AccountEntry) {
 			$SessionRequest->destroySession();
+            throw new \InvalidArgumentException("Not logged in");
 		}
 		$SessionRequest->endSession();
 
