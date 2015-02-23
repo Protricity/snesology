@@ -9,18 +9,24 @@ namespace Site\Song;
 
 use CPath\Build\IBuildable;
 use CPath\Build\IBuildRequest;
+use CPath\Render\HTML\Attribute\Attributes;
+use CPath\Render\HTML\Attribute\StyleAttributes;
 use CPath\Render\HTML\Element\Form\HTMLButton;
 use CPath\Render\HTML\Element\Form\HTMLForm;
+use CPath\Render\HTML\Element\Form\HTMLInputField;
 use CPath\Render\HTML\Element\Form\HTMLSelectField;
+use CPath\Render\HTML\Element\Form\HTMLTextAreaField;
 use CPath\Render\HTML\Element\HTMLElement;
 use CPath\Render\HTML\Header\HTMLHeaderScript;
 use CPath\Render\HTML\Header\HTMLHeaderStyleSheet;
 use CPath\Render\HTML\Header\HTMLMetaTag;
+use CPath\Render\Map\MapRenderer;
 use CPath\Request\Executable\ExecutableRenderer;
 use CPath\Request\Executable\IExecutable;
 use CPath\Request\Form\IFormRequest;
 use CPath\Request\IRequest;
 use CPath\Request\Session\ISessionRequest;
+use CPath\Request\Validation\Exceptions\ValidationException;
 use CPath\Request\Validation\RequiredValidation;
 use CPath\Response\Common\RedirectResponse;
 use CPath\Response\IResponse;
@@ -28,13 +34,16 @@ use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
 use Site\Song\DB\SongEntry;
 use Site\SiteMap;
-use Site\Song\DB\SongGenreEntry;
-use Site\Song\DB\SongSystemEntry;
+use Site\Song\Genre\DB\GenreEntry;
+use Site\Song\Genre\DB\SongGenreEntry;
+use Site\Song\System\DB\SongSystemEntry;
+use Site\Song\System\DB\SystemEntry;
+use Site\Song\Tag\DB\SongTagEntry;
 
 
 class ManageSong implements IExecutable, IBuildable, IRoutable
 {
-	const TITLE = 'Manage a new Song';
+	const TITLE = 'Manage a Song';
 
 	const FORM_ACTION = '/manage/song/:id';
 	const FORM_METHOD = 'POST';
@@ -42,8 +51,13 @@ class ManageSong implements IExecutable, IBuildable, IRoutable
 
     const PARAM_SONG_ID = 'id';
     const PARAM_SONG_TITLE = 'title';
+    const PARAM_SONG_DESCRIPTION = 'description';
     const PARAM_SONG_GENRES = 'genres';
     const PARAM_SONG_SYSTEMS = 'systems';
+    const PARAM_SONG_TAG_NAME = 'tag-name';
+    const PARAM_SONG_TAG_VALUE = 'tag-value';
+    const PARAM_SUBMIT = 'submit';
+    const PARAM_SONG_REMOVE_TAG_NAME = 'remove-tag-name';
 
     private $id;
 
@@ -64,72 +78,182 @@ class ManageSong implements IExecutable, IBuildable, IRoutable
 
         $Song = SongEntry::get($this->id);
 
-        $systemList = $Song->getGenreList();
-        $genreList = $Song->getSystemList();
+        $systemList = SystemEntry::getAll();
+        $genreList = GenreEntry::getAll();
+        $tagList = SongTagEntry::$TagDefaults;
+
+        $oldGenres = $Song->getGenreList();
+        $oldSystems = $Song->getSystemList();
+        $oldTags = $Song->getTagList();
 
 		$Form = new HTMLForm(self::FORM_METHOD, $Request->getPath(), self::FORM_NAME,
 			new HTMLMetaTag(HTMLMetaTag::META_TITLE, self::TITLE),
 			new HTMLHeaderScript(__DIR__ . '/assets/song.js'),
 			new HTMLHeaderStyleSheet(__DIR__ . '/assets/song.css'),
 
-			new HTMLElement('fieldset', 'fieldset-manage-song',
-				new HTMLElement('legend', 'legend-song', self::TITLE),
+            new HTMLElement('fieldset', 'fieldset-manage-song inline',
+                new HTMLElement('legend', 'legend-song', self::TITLE),
 
-				new HTMLElement('label', null, "<br/>",
-					$SystemSelect = new HTMLSelectField(self::PARAM_SONG_SYSTEMS, $systemList,
-						new RequiredValidation()
-					)
-				),
-
-				"<br/><br/>",
-                new HTMLElement('label', null, "<br/>",
-                    $GenreSelect = new HTMLSelectField(self::PARAM_SONG_GENRES, $genreList,
+                new HTMLElement('label', null, "Song Title:<br/>",
+                    new HTMLInputField(self::PARAM_SONG_TITLE, $Song->getTitle(),
+                        new Attributes('placeholder', 'Edit Song Title'),
                         new RequiredValidation()
                     )
                 ),
 
-				"<br/><br/>Update:<br/>",
-				new HTMLButton('update', 'Update', 'update')
-			),
-			"<br/>"
+                "<br/><br/>",
+                new HTMLElement('label', null, "Description:<br/>",
+                    new HTMLTextAreaField(self::PARAM_SONG_DESCRIPTION, $Song->getDescription(),
+                        new Attributes('placeholder', 'Enter a song description'),
+                        new Attributes('rows', 10, 'cols', 40),
+                        new RequiredValidation()
+                    )
+                ),
+
+                "<br/><br/>",
+                new HTMLElement('label', null, "Game Systems:<br/>",
+                    $SelectSystem = new HTMLSelectField(self::PARAM_SONG_SYSTEMS . '[]', $systemList,
+                        new Attributes('multiple', 'multiple'),
+                        new RequiredValidation()
+                    )
+                ),
+
+                "<br/><br/>",
+                new HTMLElement('label', null, "Genres:<br/>",
+                    $SelectGenre = new HTMLSelectField(self::PARAM_SONG_GENRES . '[]', $genreList,
+                        new Attributes('multiple', 'multiple'),
+                        new RequiredValidation()
+                    )
+                ),
+
+                "<br/><br/>",
+                new HTMLButton(self::PARAM_SUBMIT, 'Update', 'update')
+            ),
+
+            new HTMLElement('fieldset', 'fieldset-manage-song-tags-add inline',
+                new HTMLElement('legend', 'legend-song-tags-add', "Add Tag"),
+
+                new HTMLElement('label', null, "Tag Name<br/>",
+                    new HTMLSelectField(self::PARAM_SONG_TAG_NAME, $tagList
+                    )
+                ),
+
+                "<br/><br/>",
+                new HTMLElement('label', null, "Tag Value<br/>",
+                    new HTMLInputField(self::PARAM_SONG_TAG_VALUE
+                    )
+                ),
+
+                "<br/><br/>",
+                new HTMLButton(self::PARAM_SUBMIT, 'Add Tag', 'add-tag')
+            ),
+
+            new HTMLElement('fieldset', 'fieldset-manage-song-tags-remove inline',
+                new HTMLElement('legend', 'legend-song-tags-remove', "Remove Tag"),
+
+                new HTMLElement('label', null, "Tag Name<br/>",
+                    $SelectRemoveTag = new HTMLSelectField(self::PARAM_SONG_REMOVE_TAG_NAME,
+                        array("Select a tag to remove" => null),
+                        new StyleAttributes('width', '15em')
+                    )
+                ),
+
+                "<br/><br/>",
+                new HTMLButton(self::PARAM_SUBMIT, 'Remove Tag', 'remove-tag')
+            ),
+
+            new HTMLElement('fieldset', 'fieldset-manage-song-publish inline',
+                new HTMLElement('legend', 'legend-song-publish', "Song Information"),
+
+                new MapRenderer($Song)
+            )
 		);
+
+        if(!$Song->hasFlags(SongEntry::STATUS_PUBLISHED)) {
+            $Form->addAll(
+                "<br/>",
+                new HTMLElement('fieldset', 'fieldset-manage-song-publish inline',
+                    new HTMLElement('legend', 'legend-song-publish', "Publish!"),
+
+                    "Tags in place? <br/> All ready to go? <br/><br/>",
+                    new HTMLButton(self::PARAM_SUBMIT, 'Publish song', 'publish')
+                )
+            );
+        }
+
+        foreach($oldSystems as $system)
+            $SelectSystem->addOption($system, $system, true);
+
+        foreach($oldGenres as $genre)
+            $SelectGenre->addOption($genre, $genre, true);
+
+        foreach($oldTags as $name => $value) {
+            $title = array_search($name, SongTagEntry::$TagDefaults) ?: $name;
+            $SelectRemoveTag->addOption($name, "{$title} - {$value}");
+        }
 
 		if(!$Request instanceof IFormRequest)
 			return $Form;
 
-        $genres = $Form->validateField($Request, self::PARAM_SONG_GENRES);
-        $systems = $Form->validateField($Request, self::PARAM_SONG_SYSTEMS);
-        $title = $Form->validateField($Request, self::PARAM_SONG_TITLE);
+        $submit = $Form->validateField($Request, self::PARAM_SUBMIT);
 
-        foreach($genres as $genre) {
-            if(in_array($genre, $genreList)) {
-                $genreList = array_diff($genreList, array($genre));
-            } else {
-                SongGenreEntry::addToSong($Request, $Song->getID(), $genre);
-            }
+        switch($submit) {
+            case 'add-tag':
+                $tagName = $Form->validateField($Request, self::PARAM_SONG_TAG_NAME);
+                $tagValue = $Form->validateField($Request, self::PARAM_SONG_TAG_VALUE);
+                $Song->addTag($Request, $tagName, $tagValue);
+                return new RedirectResponse(ManageSong::getRequestURL($Song->getID()), "Updated song successfully. Misdirecting...", 5);
+
+            case 'remove-tag':
+                $tagName = $Form->validateField($Request, self::PARAM_SONG_REMOVE_TAG_NAME);
+                $Song->removeTag($Request, $tagName);
+                return new RedirectResponse(ManageSong::getRequestURL($Song->getID()), "Removed tag successfully. Reexploding...", 5);
+
+            case 'publish':
+                $Song->publish($Request, $Form);
+                return new RedirectResponse(ManageSong::getRequestURL($Song->getID()), "Song published successfully. You rock", 5);
+
+            case 'update':
+                $newGenres = $Form->validateField($Request, self::PARAM_SONG_GENRES);
+                $newSystems = $Form->validateField($Request, self::PARAM_SONG_SYSTEMS);
+                $newTitle = $Form->validateField($Request, self::PARAM_SONG_TITLE);
+                $newDescription = $Form->validateField($Request, self::PARAM_SONG_DESCRIPTION);
+
+                foreach($newGenres as $genre) {
+                    if(in_array($genre, $oldGenres)) {
+                        $oldGenres = array_diff($oldGenres, array($genre));
+                    } else {
+                        SongGenreEntry::addToSong($Request, $Song->getID(), $genre);
+                    }
+                }
+
+                foreach($oldGenres as $genre) {
+                    SongGenreEntry::removeFromSong($Request, $Song->getID(), $genre);
+                }
+
+                foreach($newSystems as $system) {
+                    if(in_array($system, $oldSystems)) {
+                        $oldSystems = array_diff($oldSystems, array($system));
+                    } else {
+                        SongSystemEntry::addToSong($Request, $Song->getID(), $system);
+                    }
+                }
+
+                foreach($oldSystems as $system) {
+                    SongSystemEntry::removeFromSong($Request, $Song->getID(), $system);
+                }
+
+                if($newTitle !== $Song->getTitle()
+                 || $newDescription !== $Song->getDescription()) {
+                    $Song->update($Request, $newTitle, $newDescription);
+                }
+
+                return new RedirectResponse(ManageSong::getRequestURL($Song->getID()), "Updated song successfully. Redissecting...", 5);
+
+            default:
+                throw new \InvalidArgumentException("Invalid submit: " . $submit);
         }
 
-        foreach($genreList as $genre) {
-            SongGenreEntry::removeFromSong($Request, $Song->getID(), $genre);
-        }
-
-        foreach($systems as $system) {
-            if(in_array($system, $genreList)) {
-                $systemList = array_diff($systemList, array($system));
-            } else {
-                SongSystemEntry::addToSong($Request, $Song->getID(), $system);
-            }
-        }
-
-        foreach($systemList as $system) {
-            SongSystemEntry::removeFromSong($Request, $Song->getID(), $system);
-        }
-
-        if($title !== $Song->getTitle()) {
-            $Song->updateTitle($Request, $title);
-        }
-
-        return new RedirectResponse(ManageSong::getRequestURL($Song->getID()), "Updated song successfully. Redirecting...", 5);
 	}
 
 	// Static

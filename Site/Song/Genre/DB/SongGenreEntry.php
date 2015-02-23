@@ -5,7 +5,7 @@
  * Date: 12/19/2014
  * Time: 4:02 PM
  */
-namespace Site\Song\DB;
+namespace Site\Song\Genre\DB;
 use CPath\Build\IBuildable;
 use CPath\Build\IBuildRequest;
 use CPath\Data\Schema\PDO\PDOTableClassWriter;
@@ -47,8 +47,8 @@ class SongGenreEntry implements IBuildable
 
         $delete = self::table()
             ->delete()
-            ->where(SongSystemTable::COLUMN_SONG_ID, $songID)
-            ->where(SongSystemTable::COLUMN_SYSTEM_ID, $genreID)
+            ->where(SongGenreTable::COLUMN_SONG_ID, $songID)
+            ->where(SongGenreTable::COLUMN_GENRE_ID, $genreID)
             ->execute($Request);
         if(!$delete)
             throw new \InvalidArgumentException("Could not delete " . __CLASS__);

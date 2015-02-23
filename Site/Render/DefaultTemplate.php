@@ -32,6 +32,7 @@ use Site\PaymentSource\ManagePaymentSource;
 use Site\PGP\PGPSupportHeaders;
 use Site\Product\ManageProduct;
 use Site\SiteMap;
+use Site\Song\ManageSong;
 use Site\Transaction\ManageTransaction;
 use Site\Wallet\ManageWallet;
 
@@ -167,15 +168,33 @@ class CustomHTMLValueRenderer implements IHTMLValueRenderer {
 	 */
 	function renderNamedValue($key, $value, $arg1=null) {
 		switch($key) {
+            case 'song-created':
 			case 'created':
 				if($value)
 					echo DateUtil::ago($value) . ' ago';
 				return true;
 
-			case 'fingerprint':
-				$href = $this->domain . ltrim(ManageAccount::getRequestURL($value), '/');
-				echo "<a href='{$href}'>", $arg1 ?: $value, "</a>";
-				return true;
+            case 'fingerprint':
+                $href = $this->domain . ltrim(ManageAccount::getRequestURL($value), '/');
+                echo "<a href='{$href}'>", $arg1 ?: $value, "</a>";
+                return true;
+
+            case 'song':
+            case 'song-id':
+                $href = $this->domain . ltrim(ManageSong::getRequestURL($value), '/');
+                echo "<a href='{$href}'>", $arg1 ?: $value, "</a>";
+                return true;
+
+            case 'url':
+            case 'tag-url':
+            case 'tag-url-torrent':
+            case 'tag-url-download':
+            case 'tag-url-icon':
+            case 'url-cover-front':
+            case 'url-cover-back':
+                $href = $value;
+                echo "<a href='{$href}'>", $arg1 ?: $value, "</a>";
+                return true;
 		}
 		return false;
 	}

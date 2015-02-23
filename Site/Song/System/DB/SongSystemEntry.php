@@ -5,7 +5,7 @@
  * Date: 12/19/2014
  * Time: 4:02 PM
  */
-namespace Site\Song\DB;
+namespace Site\Song\System\DB;
 use CPath\Build\IBuildable;
 use CPath\Build\IBuildRequest;
 use CPath\Data\Schema\PDO\PDOTableClassWriter;

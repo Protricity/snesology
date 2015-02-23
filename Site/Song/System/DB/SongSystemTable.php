@@ -1,9 +1,9 @@
 <?php
-namespace Site\Song\DB;
+namespace Site\Song\System\DB;
 
 use CPath\Data\Schema\PDO\AbstractPDOTable as AbstractBase;
 use Site\DB\SiteDB as DB;
-use Site\Song\DB\SongSystemEntry as Entry;
+use Site\Song\System\DB\SongSystemEntry as Entry;
 use CPath\Data\Schema\TableSchema;
 use CPath\Data\Schema\IReadableSchema;
 
@@ -16,7 +16,7 @@ use CPath\Data\Schema\IReadableSchema;
  */
 class SongSystemTable extends AbstractBase implements IReadableSchema {
 	const TABLE_NAME = 'song_system';
-	const FETCH_CLASS = 'Site\\Song\\DB\\SongSystemEntry';
+	const FETCH_CLASS = 'Site\\Song\\System\\DB\\SongSystemEntry';
 	/**
 
 	 * @column VARCHAR(64) NOT NULL
@@ -36,7 +36,7 @@ class SongSystemTable extends AbstractBase implements IReadableSchema {
 	 */
 	const UNIQUE_SONG_SYSTEM = 'unique_song_system';
 
-	function getSchema() { return new TableSchema('Site\\Song\\DB\\SongSystemEntry'); }
+	function getSchema() { return new TableSchema('Site\\Song\\System\\DB\\SongSystemEntry'); }
 
 	private $mDB = null;
 	function getDatabase() { return $this->mDB ?: $this->mDB = new DB(); }

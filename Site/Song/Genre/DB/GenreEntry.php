@@ -5,7 +5,7 @@
  * Date: 12/19/2014
  * Time: 4:02 PM
  */
-namespace Site\Song\DB;
+namespace Site\Song\Genre\DB;
 use CPath\Build\IBuildable;
 use CPath\Build\IBuildRequest;
 use CPath\Data\Schema\PDO\PDOTableClassWriter;
@@ -13,14 +13,15 @@ use CPath\Data\Schema\PDO\PDOTableWriter;
 use CPath\Data\Schema\TableSchema;
 use CPath\Request\IRequest;
 use Site\DB\SiteDB;
+use Site\Song\Genre\DefaultGenres;
 
 /**
- * Class SystemEntry
- * @table system
+ * Class GenreEntry
+ * @table genre
  */
-class SystemEntry implements IBuildable
+class GenreEntry implements IBuildable
 {
-    const ID_PREFIX = 'SS';
+    const ID_PREFIX = 'SG';
 
     const STATUS_NONE =         0x00;
     const STATUS_APPROVED =     0x01;
@@ -65,16 +66,7 @@ class SystemEntry implements IBuildable
 		return $this->id;
 	}
 
-    public static function getAll() {
-        $Query = self::table()
-            ->select(SystemTable::COLUMN_NAME);
-        $systemList = array();
-        while($system = $Query->fetchColumn(0))
-            $systemList[] = $system;
-        return $systemList;
-    }
-
-    public function getName() {
+	public function getName() {
 		return $this->name;
 	}
 
@@ -98,39 +90,63 @@ class SystemEntry implements IBuildable
     }
 
 	// Static
+
+    public static function getAll() {
+        $Query = self::table()
+            ->select(GenreTable::COLUMN_NAME);
+        $Defaults = new DefaultGenres();
+        $genreList = array();
+
+        foreach($Defaults->getDefaults() as $genre)
+            $genreList[$genre] = $genre;
+
+        while($genre = $Query->fetchColumn(0))
+            $genreList[$genre] = $genre;
+
+        sort($genreList);
+        return array_values($genreList);
+    }
+
+    static function removeFromSong($Request, $id) {
+		$delete = self::table()->delete(GenreTable::COLUMN_ID, $id)
+			->execute($Request);
+		if(!$delete)
+			throw new \InvalidArgumentException("Could not delete " . __CLASS__);
+	}
+
     /**
      * @param IRequest $Request
-     * @param $systemName
-     * @return SystemEntry
+     * @param $genre
+     * @return GenreEntry
      */
-	static function getOrCreate(IRequest $Request, $systemName) {
+	static function getOrCreate(IRequest $Request, $genre) {
 
-        /** @var SystemEntry $System */
-        $System = self::table()
+        /** @var GenreEntry $Genre */
+        $Genre = self::table()
             ->select()
-            ->where(SystemTable::COLUMN_NAME, $systemName)
+            ->where(GenreTable::COLUMN_NAME, $genre)
             ->fetch();
 
-        if($System)
-            return $System->getID();
+        if($Genre)
+            return $Genre->getID();
 
         $id = strtoupper(uniqid(self::ID_PREFIX));
         $inserted = self::table()->insert(array(
-            SystemTable::COLUMN_ID=> $id,
-            SystemTable::COLUMN_NAME => $systemName,
-            SystemTable::COLUMN_STATUS => self::STATUS_NONE,
+            GenreTable::COLUMN_ID=> $id,
+            GenreTable::COLUMN_NAME => $genre,
+            GenreTable::COLUMN_STATUS => self::STATUS_NONE,
         ))
             ->execute($Request);
 
         if(!$inserted)
             throw new \InvalidArgumentException("Could not insert " . __CLASS__);
-        $Request->log("New System Entry Inserted: " . $systemName, $Request::VERBOSE);
+        $Request->log("New Genre Entry Inserted: " . $genre, $Request::VERBOSE);
 
         return $id;
 	}
 
 	static function table() {
-		return new SystemTable();
+		return new GenreTable();
 	}
 
 	/**
@@ -143,7 +159,7 @@ class SystemEntry implements IBuildable
 	static function handleBuildStatic(IBuildRequest $Request) {
 		$Schema = new TableSchema(__CLASS__);
 		$DB = new SiteDB();
-		$ClassWriter = new PDOTableClassWriter($DB, __NAMESPACE__ . '\SystemTable', __CLASS__);
+		$ClassWriter = new PDOTableClassWriter($DB, __NAMESPACE__ . '\GenreTable', __CLASS__);
 		$Schema->writeSchema($ClassWriter);
 		$DBWriter = new PDOTableWriter($DB);
 		$Schema->writeSchema($DBWriter);

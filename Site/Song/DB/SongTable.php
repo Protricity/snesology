@@ -19,8 +19,8 @@ use CPath\Data\Schema\IReadableSchema;
 class SongTable extends AbstractBase implements IReadableSchema {
 	const TABLE_NAME = 'song';
 	const FETCH_CLASS = 'Site\\Song\\DB\\SongEntry';
-	const SELECT_COLUMNS = 'id, title, status, created';
-	const INSERT_COLUMNS = 'title, status, created';
+	const SELECT_COLUMNS = 'id, title, description, status, created';
+	const INSERT_COLUMNS = 'title, description, status, created';
 	const SEARCH_COLUMNS = 'id, title';
 	const PRIMARY_COLUMN = 'id';
 	/**
@@ -35,10 +35,16 @@ class SongTable extends AbstractBase implements IReadableSchema {
 	 * @column VARCHAR(64) NOT NULL
 	 * @select
 	 * @insert
-	 * @unique
 	 * @search
 	 */
 	const COLUMN_TITLE = 'title';
+	/**
+
+	 * @column TEXT
+	 * @select
+	 * @insert
+	 */
+	const COLUMN_DESCRIPTION = 'description';
 	/**
 
 	 * @column INT
@@ -53,14 +59,8 @@ class SongTable extends AbstractBase implements IReadableSchema {
 	 * @insert
 	 */
 	const COLUMN_CREATED = 'created';
-	/**
 
-	 * @index UNIQUE
-	 * @columns title
-	 */
-	const SONG_TITLE_UNIQUE = 'song_title_unique';
-
-	function insertRow($title = null, $status = null, $created = null) { 
+	function insertRow($title = null, $description = null, $status = null, $created = null) { 
 		return $this->insert(get_defined_vars());
 	}
 

@@ -13,6 +13,10 @@ use CPath\Data\Schema\IWritableSchema;
 use CPath\Data\Schema\PDO\AbstractPDOTable;
 use PDO;
 use Site\Account\DB\AccountTable;
+use Site\Song\DB\SongTable;
+use Site\Song\Genre\DB\SongGenreTable;
+use Site\Song\System\DB\SongSystemTable;
+use Site\Song\Tag\DB\SongTagTable;
 
 class SiteDB extends \PDO implements IReadableSchema, IRepairableSchema
 {
@@ -53,6 +57,10 @@ class SiteDB extends \PDO implements IReadableSchema, IRepairableSchema
 		foreach(
 			array(
 				new AccountTable(),
+                new SongTable(),
+                new SongGenreTable(),
+                new SongSystemTable(),
+                new SongTagTable(),
 			) as $Table) {
 			/** @var AbstractPDOTable $Table */
 			$Table->writeSchema($DB);

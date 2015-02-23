@@ -1,9 +1,9 @@
 <?php
-namespace Site\Song\DB;
+namespace Site\Song\System\DB;
 
 use CPath\Data\Schema\PDO\AbstractPDOPrimaryKeyTable as AbstractBase;
 use Site\DB\SiteDB as DB;
-use Site\Song\DB\SystemEntry as Entry;
+use Site\Song\System\DB\SystemEntry as Entry;
 use CPath\Data\Schema\TableSchema;
 use CPath\Data\Schema\IReadableSchema;
 
@@ -18,7 +18,7 @@ use CPath\Data\Schema\IReadableSchema;
  */
 class SystemTable extends AbstractBase implements IReadableSchema {
 	const TABLE_NAME = 'system';
-	const FETCH_CLASS = 'Site\\Song\\DB\\SystemEntry';
+	const FETCH_CLASS = 'Site\\Song\\System\\DB\\SystemEntry';
 	const SELECT_COLUMNS = 'id, name, status, created';
 	const INSERT_COLUMNS = 'name, status, created';
 	const SEARCH_COLUMNS = 'id, name';
@@ -64,7 +64,7 @@ class SystemTable extends AbstractBase implements IReadableSchema {
 		return $this->insert(get_defined_vars());
 	}
 
-	function getSchema() { return new TableSchema('Site\\Song\\DB\\SystemEntry'); }
+	function getSchema() { return new TableSchema('Site\\Song\\System\\DB\\SystemEntry'); }
 
 	private $mDB = null;
 	function getDatabase() { return $this->mDB ?: $this->mDB = new DB(); }

@@ -14,6 +14,7 @@ use CPath\Render\HTML\Element\Form\HTMLButton;
 use CPath\Render\HTML\Element\Form\HTMLForm;
 use CPath\Render\HTML\Element\Form\HTMLInputField;
 use CPath\Render\HTML\Element\Form\HTMLSelectField;
+use CPath\Render\HTML\Element\Form\HTMLTextAreaField;
 use CPath\Render\HTML\Element\HTMLElement;
 use CPath\Render\HTML\Header\HTMLHeaderScript;
 use CPath\Render\HTML\Header\HTMLHeaderStyleSheet;
@@ -28,13 +29,13 @@ use CPath\Response\Common\RedirectResponse;
 use CPath\Response\IResponse;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
-use Site\Song\DB\GenreEntry;
 use Site\Song\DB\SongEntry;
 use Site\SiteMap;
-use Site\Song\DB\SongGenreEntry;
-use Site\Song\DB\SongSystemEntry;
-use Site\Song\DB\SystemEntry;
-
+use Site\Song\DB\SongTable;
+use Site\Song\Genre\DB\GenreEntry;
+use Site\Song\Genre\DB\SongGenreEntry;
+use Site\Song\System\DB\SongSystemEntry;
+use Site\Song\System\DB\SystemEntry;
 
 class CreateSong implements IExecutable, IBuildable, IRoutable
 {
@@ -48,8 +49,9 @@ class CreateSong implements IExecutable, IBuildable, IRoutable
     const PARAM_SONG_TITLE = 'song-title';
     const PARAM_SONG_GENRES = 'song-genres';
     const PARAM_SONG_SYSTEMS = 'song-systems';
+    const PARAM_SONG_DESCRIPTION = 'song-description';
 
-	/**
+    /**
 	 * Execute a command and return a response. Does not render
 	 * @param IRequest $Request
 	 * @throws \Exception
@@ -71,21 +73,41 @@ class CreateSong implements IExecutable, IBuildable, IRoutable
 			new HTMLElement('fieldset', 'fieldset-create-song',
 				new HTMLElement('legend', 'legend-song', self::TITLE),
 
-				new HTMLElement('label', null, "<br/>",
-					new HTMLSelectField(self::PARAM_SONG_SYSTEMS, $systemList,
-						new RequiredValidation()
-					)
-				),
-
-				"<br/><br/>",
-                new HTMLElement('label', null, "<br/>",
-                    new HTMLSelectField(self::PARAM_SONG_GENRES, $genreList,
+                new HTMLElement('label', null, "Song Title:<br/>",
+                    new HTMLInputField(self::PARAM_SONG_TITLE,
+                        new Attributes('placeholder', 'My Song Title'),
                         new RequiredValidation()
                     )
                 ),
 
-				"<br/><br/>Submit:<br/>",
-				new HTMLButton('submit', 'Submit', 'submit')
+
+                "<br/><br/>",
+                new HTMLElement('label', null, "Description:<br/>",
+                    new HTMLTextAreaField(self::PARAM_SONG_DESCRIPTION,
+                        new Attributes('placeholder', 'Enter a song description'),
+                        new Attributes('rows', 10, 'cols', 40),
+                        new RequiredValidation()
+                    )
+                ),
+
+                "<br/><br/>",
+                new HTMLElement('label', null, "Game Systems:<br/>",
+                    new HTMLSelectField(self::PARAM_SONG_SYSTEMS . '[]', $systemList,
+                        new Attributes('multiple', 'multiple'),
+                        new RequiredValidation()
+                    )
+                ),
+
+                "<br/><br/>",
+                new HTMLElement('label', null, "Genres:<br/>",
+                    new HTMLSelectField(self::PARAM_SONG_GENRES . '[]', $genreList,
+                        new Attributes('multiple', 'multiple'),
+                        new RequiredValidation()
+                    )
+                ),
+
+				"<br/><br/>",
+				new HTMLButton('submit', 'Create', 'submit')
 			),
 			"<br/>"
 		);
@@ -93,11 +115,23 @@ class CreateSong implements IExecutable, IBuildable, IRoutable
 		if(!$Request instanceof IFormRequest)
 			return $Form;
 
+        $Form->setFormValues($Request);
+
         $genres = $Form->validateField($Request, self::PARAM_SONG_GENRES);
         $systems = $Form->validateField($Request, self::PARAM_SONG_SYSTEMS);
         $title = $Form->validateField($Request, self::PARAM_SONG_TITLE);
+        $description = $Form->validateField($Request, self::PARAM_SONG_DESCRIPTION);
 
-		$Song = SongEntry::create($Request, $title);
+        $MatchingSong = SongEntry::table()
+            ->select()
+            ->where(SongTable::COLUMN_TITLE, $title)
+            ->where(SongTable::COLUMN_STATUS, SongEntry::STATUS_PUBLISHED, '&?')
+            ->fetch();
+
+        if($MatchingSong)
+            throw new \InvalidArgumentException("A published song already has this name. What gives!?");
+
+		$Song = SongEntry::create($Request, $title, $description);
         foreach($genres as $genre) {
             SongGenreEntry::addToSong($Request, $Song->getID(), $genre);
         }
@@ -106,7 +140,7 @@ class CreateSong implements IExecutable, IBuildable, IRoutable
             SongSystemEntry::addToSong($Request, $Song->getID(), $system);
         }
 
-        return new RedirectResponse(ViewSong::getRequestURL($Song->getID()), "Song created successfully. Redirecting...", 5);
+        return new RedirectResponse(ManageSong::getRequestURL($Song->getID()), "Song created successfully. Redeflecting...", 5);
 	}
 
 	// Static
