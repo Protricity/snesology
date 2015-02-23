@@ -6,34 +6,96 @@
  * To change this template use File | Settings | File Templates.
  */
 (function(){
-    var PARAM_ACCOUNT_TYPE = 'account-type';
-    var CLS_FIELDSET_CHOOSE_ACCOUNT = 'fieldset-choose-account';
+    var PARAM_GENERATE_INVITE = 'generate-invite';
+    var PARAM_INVITE_EMAIL = 'invite-email';
+    var PARAM_INVITE_MESSAGE = 'invite-message';
+    var PARAM_ACCOUNT_FINGERPRINT = 'account-fingerprint';
+    var PARAM_INVITE_CONTENT = 'invite-content';
+    var CLS_ANCHOR_SEND_EMAIL = 'send-email';
+
+    var META_DOMAIN_PATH  = 'domain-path';
+
+    var DEFAULT_MESSAGE = "You have been invited.";
+
+    var validateEmail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
     var ready = function() {
 
-        jQuery('form:has(fieldset.' + CLS_FIELDSET_CHOOSE_ACCOUNT + ')').each(function(i, form) {
-            if (typeof form.accountInit !== 'undefined')
+        var domainPath = jQuery('head meta[name=' + META_DOMAIN_PATH + ']').attr('content');
+        var domainFullPath = window.location.protocol + "://" + window.location.host + domainPath;
+        var inviteFullPath = domainFullPath + 'invite/';
+
+        jQuery('button[name=' + PARAM_GENERATE_INVITE + ']').each(function(i, button) {
+            if (typeof button.inviteInit !== 'undefined')
                 return;
-            form.accountInit = true;
+            button.inviteInit = true;
 
-            var Form = jQuery(form);
-            console.info("Account Form Found: ", Form);
-            Form.on('input', function(e) {
-                var accountType = Form.find('*[name=' + PARAM_ACCOUNT_TYPE + ']').val();
-                var WalletFieldSets = Form.find('.' + CLS_FIELDSET_CHOOSE_ACCOUNT);
-                if(accountType) {
-                    var WalletFieldSet = WalletFieldSets.filter('[data-' + PARAM_ACCOUNT_TYPE + '=' + accountType + ']');
-                    WalletFieldSets = WalletFieldSets.not(WalletFieldSet);
-                    WalletFieldSet.filter(':disabled').removeAttr('disabled');
+            var Button = jQuery(button);
+            var Form = jQuery(button.form);
+            var TextAreaInviteContent = Form.find('*[name=' + PARAM_INVITE_CONTENT + ']');
+            var AnchorSendEmail = Form.find('a.' + CLS_ANCHOR_SEND_EMAIL);
+
+            AnchorSendEmail.hide();
+
+            console.info("Invite Button Found: ", Button);
+            Button.on('click input', function(e) {
+                e.preventDefault();
+                var accountFingerprint = Form.find('*[name=' + PARAM_ACCOUNT_FINGERPRINT + ']').val().toUpperCase();
+                var inviteEmail = Form.find('*[name=' + PARAM_INVITE_EMAIL + ']').val();
+                var inviteMessage = Form.find('*[name=' + PARAM_INVITE_MESSAGE + ']').val() || DEFAULT_MESSAGE;
+                var subject = "Invitation";
+
+                if(!validateEmail.test(inviteEmail))
+                    throw new Error("Invalid Email Address");
+
+                var keys = (new openpgp.Keyring.localstore()).loadPrivate();
+
+                for(var i=0; i<keys.length; i++) {
+                    var key = keys[i].getSigningKeyPacket();
+                    var fp = key.getFingerprint().toUpperCase();
+                    if(fp === accountFingerprint) {
+                        openpgp.signClearMessage(keys[i], inviteEmail)
+                            .then(function(signedEmail) {
+                                var inviteURL = inviteFullPath + '?invite=' + encodeURIComponent(signedEmail);
+                                var inviteAnchor = '<a href="' + inviteURL + '">Invite Link</a>';
+                                var body = inviteMessage
+                                    + "\n\nInvite Link:\n\n"
+                                    + inviteURL
+                                    + "\n\nOr Go here\n\n"
+                                    + inviteFullPath
+                                    + "\n\nAnd supply the PGP SIGNED MESSAGE content:\n"
+                                    + signedEmail
+                                    + "\n\n\n\n\n- CleverTree\n" + new Date();
+
+                                TextAreaInviteContent.val(body);
+
+                                var inviteMailto = "mailto:" + inviteEmail
+                                    + "?subject=" + encodeURIComponent(subject)
+                                    + "&body=" + encodeURIComponent(jQuery.trim(body));
+
+                                AnchorSendEmail.fadeIn();
+                                AnchorSendEmail.attr('href', inviteMailto);
+
+                            });
+                        return;
+                    }
                 }
-                WalletFieldSets.filter(':enabled').attr('disabled', 'disabled');
-            }).trigger('input');
 
+                throw new Error("Key pair not found in browser: " + accountFingerprint);
+            });
+            Button.removeAttr('disabled');
         });
     };
     jQuery(document).ready(function() {
         jQuery('body').on('ready', ready);
         ready();
+
+        if(typeof openpgp._worker_init === 'undefined') {
+            var src = jQuery('script[src$=openpgp\\.js], script[src$=openpgp\\.min\\.js]').attr('src');
+            src = src.replace('/openpgp.', '/openpgp.worker.');
+            openpgp.initWorker(src);
+            openpgp._worker_init = true;
+        }
     });
 })();
 

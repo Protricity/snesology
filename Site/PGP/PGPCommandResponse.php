@@ -141,7 +141,7 @@ class PGPCommandResponse extends Response implements IKeyMap
 		$ids = array();
 		$stdErr = $this->getSTDErr();
 		if (preg_match_all('/gpg: Signature made (.*) using (RSA|DSA) key ID (\w+)\s*$/im', $stdErr, $matches)) {
-			foreach ($matches[1] as $i => $keyID) {
+			foreach ($matches[3] as $i => $keyID) {
 				$this->append($ids, $keyID);
 			}
 		}

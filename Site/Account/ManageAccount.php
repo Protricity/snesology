@@ -76,8 +76,7 @@ class ManageAccount implements IExecutable, IBuildable, IRoutable
 		if (!$SessionRequest instanceof ISessionRequest)
 			throw new \Exception("Session required");
 
-		$AccountEntry = AccountEntry::get($this->id);
-		$Account = $AccountEntry->getAccount();
+		$Account = AccountEntry::get($this->id);
 
 		$Form = new HTMLForm(self::FORM_METHOD, $Request->getPath(), self::FORM_NAME,
 			new HTMLMetaTag(HTMLMetaTag::META_TITLE, self::TITLE),
@@ -95,9 +94,6 @@ class ManageAccount implements IExecutable, IBuildable, IRoutable
 						new RequiredValidation()
 					)
 				),
-
-				"<br/><br/>",
-				$Account->getFieldSet($Request),
 
 				"<br/><br/>",
 				new HTMLButton(self::PARAM_SUBMIT, 'Update', 'update'),

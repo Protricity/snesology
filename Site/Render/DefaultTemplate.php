@@ -174,6 +174,8 @@ class CustomHTMLValueRenderer implements IHTMLValueRenderer {
 					echo DateUtil::ago($value) . ' ago';
 				return true;
 
+            case 'inviter-fingerprint':
+            case 'inviter':
             case 'fingerprint':
                 $href = $this->domain . ltrim(ManageAccount::getRequestURL($value), '/');
                 echo "<a href='{$href}'>", $arg1 ?: $value, "</a>";

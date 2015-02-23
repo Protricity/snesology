@@ -9,12 +9,17 @@ namespace Site\Account;
 
 use CPath\Build\IBuildable;
 use CPath\Build\IBuildRequest;
+use CPath\Render\HTML\Attribute\Attributes;
 use CPath\Render\HTML\Element\Form\HTMLButton;
 use CPath\Render\HTML\Element\Form\HTMLForm;
+use CPath\Render\HTML\Element\Form\HTMLInputField;
+use CPath\Render\HTML\Element\Form\HTMLTextAreaField;
+use CPath\Render\HTML\Element\HTMLAnchor;
 use CPath\Render\HTML\Element\HTMLElement;
 use CPath\Render\HTML\Header\HTMLHeaderScript;
 use CPath\Render\HTML\Header\HTMLHeaderStyleSheet;
 use CPath\Render\HTML\Header\HTMLMetaTag;
+use CPath\Render\HTML\HTMLConfig;
 use CPath\Render\Map\MapRenderer;
 use CPath\Request\Exceptions\RequestException;
 use CPath\Request\Executable\ExecutableRenderer;
@@ -37,13 +42,15 @@ class AccountHome implements IExecutable, IBuildable, IRoutable
 	const FORM_METHOD = 'POST';
 	const FORM_NAME = __CLASS__;
 
-	const PARAM_ACCOUNT_STATUS = 'account-status';
 	const PARAM_SUBMIT = 'submit';
-	const PARAM_AFFILIATE_TYPE = 'affiliate-type';
-	const PARAM_AFFILIATE_ID = 'affiliate-id';
-	const PARAM_APPROVE_AFFILIATE_ID = 'approve-affiliate-id';
+    const PARAM_ACCOUNT_FINGERPRINT = 'account-fingerprint';
+    const PARAM_INVITE_EMAIL = 'invite-email';
+    const PARAM_INVITE_MESSAGE = 'invite-message';
+    const PARAM_INVITE_CONTENT = 'invite-content';
+    const PARAM_GENERATE_INVITE = 'generate-invite';
+    const CLS_ANCHOR_SEND_EMAIL = 'send-email';
 
-	/**
+    /**
 	 * Execute a command and return a response. Does not render
 	 * @param IRequest $Request
 	 * @throws RequestException
@@ -63,6 +70,8 @@ class AccountHome implements IExecutable, IBuildable, IRoutable
 			new HTMLHeaderScript(__DIR__ . '/assets/account.js'),
 			new HTMLHeaderStyleSheet(__DIR__ . '/assets/account.css'),
 
+            new HTMLInputField(self::PARAM_ACCOUNT_FINGERPRINT, $Account->getFingerprint(), 'hidden'),
+
 			new HTMLElement('fieldset', 'fieldset-info inline',
 				new HTMLElement('legend', 'legend-info', self::TITLE),
 
@@ -71,12 +80,37 @@ class AccountHome implements IExecutable, IBuildable, IRoutable
 
 			"<br/>",
 
-			new HTMLElement('fieldset', 'fieldset-manage inline',
-				new HTMLElement('legend', 'legend-manage', "Manage Account"),
+            new HTMLElement('fieldset', 'fieldset-manage inline',
+                new HTMLElement('legend', 'legend-manage', "Manage Account"),
 
-				"<br/><br/>",
-				new HTMLButton(self::PARAM_SUBMIT, 'Update', 'update')
-			)
+                "<br/><br/>",
+                new HTMLButton(self::PARAM_SUBMIT, 'Update', 'update')
+            ),
+
+            new HTMLElement('fieldset', 'fieldset-invite inline',
+                new HTMLElement('legend', 'legend-invite', "Create an Invite"),
+
+                "Invitee's Email Address:<br/>",
+                new HTMLInputField(self::PARAM_INVITE_EMAIL),
+
+                "<br/><br/>Add an invite message:<br/>",
+                new HTMLTextAreaField(self::PARAM_INVITE_MESSAGE
+//                    new Attributes('cols', 40)
+                ),
+
+                "<br/><br/>Generated invite:<br/>",
+                new HTMLTextAreaField(self::PARAM_INVITE_CONTENT
+//                    new Attributes('cols', 40)
+                ),
+
+                "<br/><br/>",
+                new HTMLButton(self::PARAM_GENERATE_INVITE, 'Generate', self::PARAM_GENERATE_INVITE,
+                    new Attributes('disabled', 'disabled')
+                ),
+
+                new HTMLAnchor('#', "Send Email", self::CLS_ANCHOR_SEND_EMAIL  . ' ' . HTMLConfig::$DefaultInputClass
+                )
+            )
 
 		);
 

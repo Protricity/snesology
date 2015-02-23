@@ -19,10 +19,10 @@ use CPath\Data\Schema\IReadableSchema;
 class AccountTable extends AbstractBase implements IReadableSchema {
 	const TABLE_NAME = 'account';
 	const FETCH_CLASS = 'Site\\Account\\DB\\AccountEntry';
-	const SELECT_COLUMNS = 'fingerprint, email, name, created';
+	const SELECT_COLUMNS = 'fingerprint, email, name, created, inviter_fingerprint';
 	const UPDATE_COLUMNS = 'public_key, challenge, answer';
 	const INSERT_COLUMNS = 'email, name, public_key, challenge, answer, created';
-	const SEARCH_COLUMNS = 'fingerprint, email, name';
+	const SEARCH_COLUMNS = 'fingerprint, email, name, inviter_fingerprint';
 	const PRIMARY_COLUMN = 'fingerprint';
 	/**
 
@@ -77,6 +77,13 @@ class AccountTable extends AbstractBase implements IReadableSchema {
 	 * @insert
 	 */
 	const COLUMN_CREATED = 'created';
+	/**
+
+	 * @column VARCHAR(64)
+	 * @select
+	 * @search
+	 */
+	const COLUMN_INVITER_FINGERPRINT = 'inviter_fingerprint';
 	/**
 
 	 * @index UNIQUE

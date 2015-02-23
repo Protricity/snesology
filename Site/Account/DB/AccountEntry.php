@@ -11,6 +11,7 @@ use CPath\Render\HTML\Element\Form\HTMLForm;
 use CPath\Request\Validation\Exceptions\ValidationException;
 use Site\Account\Exceptions\InvalidAccountPassword;
 use Site\PGP\Commands\Exceptions\PGPCommandException;
+use Site\PGP\Commands\PGPDecryptCommand;
 use Site\PGP\Commands\PGPEncryptCommand;
 use Site\PGP\Commands\PGPImportPublicKeyCommand;
 use Site\PGP\PublicKey;
@@ -101,9 +102,25 @@ class AccountEntry implements IBuildable, IKeyMap, ISerializable
 	 */
 	protected $created;
 
+    /**
+     * @column VARCHAR(64)
+     * @select
+     * @search
+     */
+    protected $inviter_fingerprint;
+
+
 	public function getFingerprint() {
 		return $this->fingerprint;
 	}
+
+    /**
+     * @return mixed
+     */
+    public function getInviterFingerprint() {
+        return $this->inviter_fingerprint;
+    }
+
 
 	public function getCreatedTimestamp() {
 		return $this->created;
@@ -133,7 +150,8 @@ class AccountEntry implements IBuildable, IKeyMap, ISerializable
 	 * @return void
 	 */
 	function mapKeys(IKeyMapper $Map) {
-		$Map->map('fingerprint', $this->getFingerprint());
+        $Map->map('fingerprint', $this->getFingerprint());
+        $Map->map('inviter', $this->getInviterFingerprint());
 		$Map->map('name', $this->getName());
 		$Map->map('email', $this->getEmail());
 		$Map->map('created', $this->getCreatedTimestamp());
@@ -195,7 +213,7 @@ class AccountEntry implements IBuildable, IKeyMap, ISerializable
 		$additionalRecipients = array();
 		$additionalRecipients[] = $this->getFingerprint();
 		$PGPEncrypt = new PGPEncryptCommand($additionalRecipients, $contentsToEncrypt);
-		$PGPEncrypt->setPrimaryKeyRing(static::KEYRING_NAME);
+		$PGPEncrypt->addKeyRing(static::KEYRING_NAME);
 		if($armored)
 			$PGPEncrypt->setArmored();
 
@@ -213,6 +231,25 @@ class AccountEntry implements IBuildable, IKeyMap, ISerializable
 			throw $ex;
 		}
 	}
+
+    public function verify(IRequest $Request, $invite) {
+        $PGPDecrypt = new PGPDecryptCommand($invite);
+        $PGPDecrypt->addKeyRing(static::KEYRING_NAME);
+
+        try {
+            $PGPDecrypt->execute($Request);
+            return $PGPDecrypt->getDecryptedString();
+
+        } catch (PGPCommandException $ex) {
+            if(strpos($ex->getMessage(), 'not found') !== false) {
+                $this->import($Request);
+                $PGPDecrypt->execute($Request);
+                return $PGPDecrypt->getDecryptedString();
+            }
+
+            throw $ex;
+        }
+    }
 
 	function generateChallenge(IRequest $Request) {
 		$passphrase = uniqid("CH");
@@ -283,9 +320,11 @@ class AccountEntry implements IBuildable, IKeyMap, ISerializable
 		return $active;
 	}
 
-	static function create(IRequest $Request, $public_key) {
+	static function create(IRequest $Request, $public_key, $inviteEmail=null) {
 
 		$PublicKey = new PublicKey($public_key);
+        if($inviteEmail && $inviteEmail !== $PublicKey->getUserIDEmail())
+            throw new \Exception("Only invitee's email may be used");
 
 		$fingerprint = $PublicKey->getFingerprint();
 
@@ -329,12 +368,13 @@ class AccountEntry implements IBuildable, IKeyMap, ISerializable
 			throw new \InvalidArgumentException("Could not delete " . __CLASS__);
 	}
 
-	/**
-	 * @param $fingerprint
-	 * @return AccountEntry
-	 */
-	static function get($fingerprint) {
-		return self::table()->fetchOne(AccountTable::COLUMN_FINGERPRINT, $fingerprint);
+    /**
+     * @param $fingerprint
+     * @param string $compare
+     * @return AccountEntry
+     */
+	static function get($fingerprint, $compare = '=?') {
+		return self::table()->fetchOne(AccountTable::COLUMN_FINGERPRINT, $fingerprint, $compare);
 	}
 
 	static function search($search) {

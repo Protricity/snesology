@@ -36,6 +36,9 @@ class SiteMap implements IRouteMap, IBuildable
 			// @group Site\Account\AccountHome
 			$Map->route('ANY /home', 'Site\\Account\\AccountHome', 272, 'My Account') ||
 
+			// @group Site\Account\Invite
+			$Map->route('ANY /invite/', 'Site\\Account\\Invite') ||
+
 			// @group Site\Account\Login
 			$Map->route('ANY /login/:fingerprint', 'Site\\Account\\Login', 288, 'Login') ||
 
@@ -48,7 +51,7 @@ class SiteMap implements IRouteMap, IBuildable
 			$Map->route('ANY /manage/account/:id', 'Site\\Account\\ManageAccount') ||
 
 			// @group Site\Account\Register
-			$Map->route('ANY /register', 'Site\\Account\\Register', 288, 'Register') ||
+			$Map->route('ANY /register/', 'Site\\Account\\Register') ||
 
 			// @group Site\Account\SearchAccounts
 			$Map->route('ANY /accounts', 'Site\\Account\\SearchAccounts') ||

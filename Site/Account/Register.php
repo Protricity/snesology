@@ -44,7 +44,7 @@ class Register implements IExecutable, IBuildable, IRoutable
 	const CLS_FIELDSET_TOOLS = 'fieldset-tools';
 	const CLS_FORM = 'form-register';
 
-	const FORM_ACTION = '/register';
+	const FORM_ACTION = '/register/';
 	const FORM_NAME = 'form-register';
 
 	const PARAM_PUBLIC_KEY = 'public_key';
@@ -83,6 +83,15 @@ Version: GnuPG v1
 	 * @return HTMLForm
 	 */
     function execute(IRequest $Request) {
+        $inviteeEmail = null;
+        $isInvite = false;
+        if($Request instanceof ISessionRequest) {
+            if(Invite::hasInviteContent($Request)) {
+                $isInvite = true;
+                list($inviteeEmail, $inviterFingerprint) = Invite::getInviteContent($Request);
+            }
+        }
+
 	    $Form = new HTMLForm('POST', self::FORM_ACTION, self::FORM_NAME, self::CLS_FORM,
 		    new HTMLMetaTag(HTMLMetaTag::META_TITLE, 'User Registration'),
 
@@ -98,7 +107,9 @@ Version: GnuPG v1
 			    new HTMLInputField(self::PARAM_USER, null, null, 'field-user'),
 
 			    "<br/><br/>Optionally provide an email address for others to see<br/>",
-			    new HTMLInputField(self::PARAM_EMAIL, null, 'email', 'field-email'),
+			    new HTMLInputField(self::PARAM_EMAIL, $inviteeEmail, 'email', 'field-email',
+                    ($inviteeEmail ? new Attributes('disabled', 'disabled') : null)
+                ),
 
 			    "<br/><br/>Choose an optional passphrase for your private key<br/>",
 			    new HTMLPasswordField(self::PARAM_PASSPHRASE, 'field-passphrase'),
@@ -172,7 +183,7 @@ Version: GnuPG v1
 	    try {
             // todo: import before db
 
-		    $Account = AccountEntry::create($Request, $publicKeyString);
+		    $Account = AccountEntry::create($Request, $publicKeyString, $inviteeEmail);
 		    $fingerprint = $Account->getFingerprint();
 		    $this->mNewAccountFingerprint = $fingerprint;
 
@@ -188,7 +199,8 @@ Version: GnuPG v1
 //		    $Request->startSession();
 //		    //UserSession::setUserFingerprintFromSession($Request, $User->getFingerprint());
 //	    }
-
+        if($Request instanceof ISessionRequest)
+            $Request->destroySession();
 	    return new RedirectResponse(Login::getRequestURL($Account->getFingerprint()),
 		    "User registered successfully - " . $Account->getName(), 5);
     }
@@ -201,6 +213,10 @@ Version: GnuPG v1
 
     // Static
 
+    public static function getRequestURL() {
+        return self::FORM_ACTION;
+    }
+
     /**
      * Handle this request and render any content
      * @param IBuildRequest $Request the build request inst for this build session
@@ -210,10 +226,11 @@ Version: GnuPG v1
      */
     static function handleBuildStatic(IBuildRequest $Request) {
         $RouteBuilder = new RouteBuilder($Request, new SiteMap());
-	    $RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION, __CLASS__,
-		    IRequest::MATCH_NO_SESSION |
-		    IRequest::NAVIGATION_ROUTE,
-		    "Register");
+        $RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION, __CLASS__,
+            IRequest::MATCH_NO_SESSION |
+            IRequest::NAVIGATION_ROUTE,
+            "Register");
+        $RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION, __CLASS__);
     }
 
 	/**
