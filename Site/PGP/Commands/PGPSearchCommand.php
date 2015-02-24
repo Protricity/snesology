@@ -7,6 +7,8 @@
  */
 namespace Site\PGP\Commands;
 
+use CPath\UnitTest\ITestable;
+use CPath\UnitTest\IUnitTestRequest;
 use Site\PGP\Commands\Exceptions\PGPCommandException;
 use Site\PGP\Commands\Exceptions\PGPNotFoundException;
 use Site\PGP\Commands\Exceptions\PGPSearchException;
@@ -20,7 +22,7 @@ use CPath\Request\IRequest;
 use CPath\Request\Log\ILogListener;
 use CPath\Response\IResponse;
 
-class PGPSearchCommand extends PGPCommand implements ISequenceMap
+class PGPSearchCommand extends PGPCommand implements ISequenceMap, ITestable
 {
 	const ALLOWED_CMD_REGEX = '\w\s\/:._@*=-';
 	const ALLOWED_OPTION_VALUE_CHARACTERS = '\w';
@@ -296,6 +298,19 @@ class PGPSearchCommand extends PGPCommand implements ISequenceMap
 	public function getSubShortCode() {
 		return $this->mSubShortCode;
 	}
+
+    /**
+     * Perform a unit test
+     * @param IUnitTestRequest $Test the unit test request inst for this test session
+     * @return void
+     * @test --disable 0
+     * Note: Use doctag 'test' with '--disable 1' to have this ITestable class skipped during a build
+     */
+    static function handleStaticUnitTest(IUnitTestRequest $Test) {
+        $PGPSearch = new PGPSearchCommand('abc');
+        $Result = $PGPSearch->execute($Test);
+        $Test->assert($Result !== null);
+    }
 }
 
 

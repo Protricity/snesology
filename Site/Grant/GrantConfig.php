@@ -26,13 +26,13 @@ class GrantConfig implements IBuildable
 	 * Handle this request and render any content
 	 * @param IBuildRequest $Request the build request inst for this build session
 	 * @return void
-	 * @build --disable 0
+	 * @build --disable 1
 	 * Note: Use doctag 'build' with '--disable 1' to have this IBuildable class skipped during a build
 	 */
 	static function handleBuildStatic(IBuildRequest $Request) {
-		$grantPath = GrantConfig::getContentPath();
-		if(!is_dir($grantPath))
-			mkdir($grantPath, 0777, true);
+//		$grantPath = GrantConfig::getContentPath();
+//		if(!is_dir($grantPath))
+//			mkdir($grantPath, 0777, true);
 	}
 }
 

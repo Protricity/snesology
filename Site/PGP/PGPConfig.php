@@ -21,7 +21,7 @@ class PGPConfig
 
 	static $GPGPath = 'gpg';
 	static $GPGEnv = array(
-		'PATH' => '/bin'
+		'PATH' => '/bin;/usr/bin;C:/cygwin/bin'
 	);
 
 	static $HomeDir = null;
