@@ -52,7 +52,6 @@ class HTMLSongReview implements IRenderHTML, IHTMLSupportHeaders
             $this->Reviewer->renderHTML($Request);
         echo RI::ni(1), "</span>";
 
-        echo "<br/><br/>";
         echo RI::ni(1), "<div class='review-content'>";
         if($this->SongReview)
             echo $this->SongReview->getFormattedReview();

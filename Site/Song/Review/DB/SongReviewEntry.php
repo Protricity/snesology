@@ -15,8 +15,6 @@ use CPath\Data\Schema\PDO\PDOTableClassWriter;
 use CPath\Data\Schema\PDO\PDOTableWriter;
 use CPath\Data\Schema\TableSchema;
 use CPath\Render\Helpers\RenderIndents as RI;
-use CPath\Render\HTML\Attribute\IAttributes;
-use CPath\Render\HTML\Element\Table\HTMLPDOQueryTable;
 use CPath\Render\HTML\IRenderHTML;
 use CPath\Request\IRequest;
 use Site\DB\SiteDB;
@@ -25,12 +23,13 @@ use Site\DB\SiteDB;
  * Class SongReviewEntry
  * @table song_review
  */
-class SongReviewEntry implements IBuildable, IKeyMap, IRenderHTML
+class SongReviewEntry implements IBuildable, IKeyMap
 {
     const STATUS_PUBLISHED =            0x000001;
 
     const STATUS_WRITE_UP =             0x000010;
     const STATUS_CRITIQUE =             0x000020;
+    const ALLOW_NODE_TAGS = 'a,b,i,br';
 
     static $StatusOptions = array(
         "Published" =>              self::STATUS_PUBLISHED,
@@ -128,6 +127,7 @@ class SongReviewEntry implements IBuildable, IKeyMap, IRenderHTML
         $review === null ?: $Update->update(SongReviewTable::COLUMN_REVIEW, $review);
         $reviewTitle === null ?: $Update->update(SongReviewTable::COLUMN_REVIEW_TITLE, $reviewTitle);
         $status === null ?: $Update->update(SongReviewTable::COLUMN_STATUS, $status);
+
         $Update->where(SongReviewTable::COLUMN_SONG_ID, $this->getSongID());
         $Update->where(SongReviewTable::COLUMN_ACCOUNT_FINGERPRINT, $this->getAccountFingerprint());
 
@@ -147,21 +147,13 @@ class SongReviewEntry implements IBuildable, IKeyMap, IRenderHTML
         $Map->map('review', $this->getReview());
     }
 
-    /**
-     * Render request as html
-     * @param IRequest $Request the IRequest inst for this render which contains the request and remaining args
-     * @param IAttributes $Attr
-     * @param IRenderHTML $Parent
-     * @return String|void always returns void
-     */
-    function renderHTML(IRequest $Request, IAttributes $Attr = null, IRenderHTML $Parent = null) {
-        echo RI::ni(), "<span class='review'>", $this->getReview(), "</span>";
-    }
-
     public function getFormattedReview() {
         $review = $this->getReview();
         $ri = "\n" . RI::get()->indent();
         $review = '<p>' . str_replace("\n", "</p>{$ri}<p>", $review) . '</p>';
+        foreach(explode(',', self::ALLOW_NODE_TAGS) as $tag)
+            $review = preg_replace('/' . preg_quote(htmlspecialchars('<' . $tag)) . '(\/)?>/', '<' . $tag . '$1>', $review);
+//        &#60;b&#62;filter_var&#60;/b&#62; &#60;b&#62;filter_var&#60;/b&#62; &#60;b&#62;filter_var&#60;/b&#62;
         return $review;
     }
 

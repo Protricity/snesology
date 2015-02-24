@@ -47,7 +47,7 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable
 
     const PARAM_SONG_ID = 'id';
     const PARAM_SONG_REVIEW_TITLE = 'title';
-    const PARAM_SONG_REVIEW = 'description';
+    const PARAM_SONG_REVIEW = 'review';
     const PARAM_SUBMIT = 'submit';
     const PARAM_SONG_STATUS = 'status';
 
@@ -128,14 +128,14 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable
             )
 		);
 
-        if(!$Song->hasFlags(SongEntry::STATUS_PUBLISHED)) {
+        if(!$ReviewEntry->hasFlags(SongReviewEntry::STATUS_PUBLISHED)) {
             $Form->addAll(
                 "<br/>",
                 new HTMLElement('fieldset', 'fieldset-review-song-publish inline',
                     new HTMLElement('legend', 'legend-song-publish', "Publish!"),
 
-                    "Tags in place? <br/> All ready to go? <br/><br/>",
-                    new HTMLButton(self::PARAM_SUBMIT, 'Publish song', 'publish')
+                    "Nailed it down? <br/> All set? <br/><br/>",
+                    new HTMLButton(self::PARAM_SUBMIT, 'Publish review', 'publish')
                 )
             );
         }
@@ -150,7 +150,8 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable
 
         $submit = $Form->validateField($Request, self::PARAM_SUBMIT);
 
-        $status = array_sum($Form->validateField($Request, self::PARAM_SONG_STATUS));
+        $status = $Form->validateField($Request, self::PARAM_SONG_STATUS);
+        $status = array_sum($status);
         $review = $Form->validateField($Request, self::PARAM_SONG_REVIEW);
         $reviewTitle = $Form->validateField($Request, self::PARAM_SONG_REVIEW_TITLE);
 
