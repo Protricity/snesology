@@ -10,6 +10,8 @@ namespace Site;
 define('CONFIG_CONTENT_PATH', dirname(__DIR__));
 
 class Config {
+    static $RequireInvite = true;
+
     static $ProfileSalt = 'QtbeMAJCJlGtZZaJlGbeS6mVGUw';
     static $ContentPath = CONFIG_CONTENT_PATH;
 

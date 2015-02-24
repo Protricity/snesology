@@ -93,6 +93,9 @@ Version: GnuPG v1
             }
         }
 
+        if(Config::$RequireInvite && !$isInvite)
+            throw new \Exception("Registration requires an invitation from an existing user in the community");
+
 	    $Form = new HTMLForm('POST', self::FORM_ACTION, self::FORM_NAME, self::CLS_FORM,
 		    new HTMLMetaTag(HTMLMetaTag::META_TITLE, 'User Registration'),
 

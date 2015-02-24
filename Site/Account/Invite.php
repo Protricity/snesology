@@ -101,7 +101,7 @@ class Invite implements IExecutable, IBuildable, IRoutable
         $SessionRequest->startSession();
         $Session = &$SessionRequest->getSession();
         $Session[self::SESSION_KEY_INVITE_EMAIL] = $inviteEmail;
-        $Session[self::SESSION_KEY_INVITE_FINGERPRINT] = $keyID;
+        $Session[self::SESSION_KEY_INVITE_FINGERPRINT] = $Account->getFingerprint();
         $SessionRequest->endSession();
 
 		return new RedirectResponse(Register::getRequestURL(), "Invite decrypted successfully. Redirecting to registration...", 5);
