@@ -60,10 +60,13 @@ class PGPCommandResponse extends Response implements IKeyMap
 
 		$stdErr = $this->getSTDErr();
 
-		if (preg_match('/gpg: can\'t do this in batch mode/i', $stdErr, $matches))
-			$Exs[] = new PGPCommandException($this->mCommand, $stdErr);
+        if (preg_match('/is not recognized/i', $stdErr, $matches))
+            $Exs[] = new PGPCommandException($this->mCommand, $stdErr);
 
-		if (preg_match('/encryption failed/i', $stdErr, $matches))
+        if (preg_match('/gpg: can\'t do this in batch mode/i', $stdErr, $matches))
+            $Exs[] = new PGPCommandException($this->mCommand, $stdErr);
+
+        if (preg_match('/encryption failed/i', $stdErr, $matches))
 			$Exs[] = new PGPCommandException($this->mCommand, $stdErr);
 
 //		if (preg_match('/gpg: .*failed/i', $stdErr, $matches))

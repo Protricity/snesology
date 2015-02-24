@@ -51,8 +51,8 @@ class SiteMap implements IRouteMap, IBuildable
 			$Map->route('ANY /manage/account/:id', 'Site\\Account\\ManageAccount') ||
 
 			// @group Site\Account\Register
-			$Map->route('ANY /register/', 'Site\\Account\\Register', 256, 'Register') ||
-			$Map->route('ANY /register', 'Site\\Account\\Register', 288, 'Register') ||
+			$Map->route('ANY /register/', 'Site\\Account\\Register', 288, 'Register') ||
+			$Map->route('GET /register/', 'Site\\Account\\Register') ||
 
 			// @group Site\Account\SearchAccounts
 			$Map->route('ANY /accounts', 'Site\\Account\\SearchAccounts') ||
