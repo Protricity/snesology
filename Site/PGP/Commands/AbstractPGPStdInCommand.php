@@ -26,7 +26,7 @@ abstract class AbstractPGPStdInCommand extends PGPCommand
 	function getOutputString() {
 		$output = $this->getOutputString();
 		if (!$output)
-			throw new PGPCommandException($this, "No output");
+			throw new PGPCommandException($this, "No output\n" . $this->getCommandResponse()->getSTDErr());
 		return $output;
 	}
 
