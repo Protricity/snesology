@@ -222,7 +222,7 @@ class PGPCommand implements IExecutable, ILogListener, IResponse, IKeyMap
 	function getOutputString() {
 		$output = $this->getSTDOut();
 		if (!$output && static::RECORD_STDOUT) {
-			throw new PGPCommandException($this, "No output\n" . $this->mSTDErr);}
+			throw new PGPCommandException($this, "No output\n" . implode("\n", $this->mSTDErr));}
 		return $output;
 	}
 
