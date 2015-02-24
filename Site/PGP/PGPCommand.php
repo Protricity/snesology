@@ -7,13 +7,13 @@
  */
 namespace Site\PGP;
 
-use Site\PGP\Commands\Exceptions\PGPCommandException;
 use CPath\Data\Map\IKeyMap;
 use CPath\Data\Map\IKeyMapper;
 use CPath\Request\Executable\IExecutable;
 use CPath\Request\IRequest;
 use CPath\Request\Log\ILogListener;
 use CPath\Response\IResponse;
+use Site\PGP\Commands\Exceptions\PGPCommandException;
 
 class PGPCommand implements IExecutable, ILogListener, IResponse, IKeyMap
 {

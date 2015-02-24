@@ -7,10 +7,10 @@
  */
 namespace Site\PGP;
 
-use Site\PGP\Exceptions\ParseException;
 use CPath\Data\Describable\IDescribable;
 use CPath\Data\Map\IKeyMap;
 use CPath\Data\Map\IKeyMapper;
+use Site\PGP\Exceptions\ParseException;
 
 set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__ . '/assets/libs/phpseclib/');
 require_once __DIR__ . '/assets/libs/openpgp/lib/openpgp.php';

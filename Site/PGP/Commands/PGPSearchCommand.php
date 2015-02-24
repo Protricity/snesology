@@ -7,13 +7,6 @@
  */
 namespace Site\PGP\Commands;
 
-use CPath\UnitTest\ITestable;
-use CPath\UnitTest\IUnitTestRequest;
-use Site\PGP\Commands\Exceptions\PGPCommandException;
-use Site\PGP\Commands\Exceptions\PGPNotFoundException;
-use Site\PGP\Commands\Exceptions\PGPSearchException;
-use Site\PGP\PGPCommand;
-use Site\Account\User;
 use CPath\Data\Map\IKeyMapper;
 use CPath\Data\Map\ISequenceMap;
 use CPath\Data\Map\ISequenceMapper;
@@ -21,6 +14,13 @@ use CPath\Data\Map\SequenceMapWrapper;
 use CPath\Request\IRequest;
 use CPath\Request\Log\ILogListener;
 use CPath\Response\IResponse;
+use CPath\UnitTest\ITestable;
+use CPath\UnitTest\IUnitTestRequest;
+use Site\Account\User;
+use Site\PGP\Commands\Exceptions\PGPCommandException;
+use Site\PGP\Commands\Exceptions\PGPNotFoundException;
+use Site\PGP\Commands\Exceptions\PGPSearchException;
+use Site\PGP\PGPCommand;
 
 class PGPSearchCommand extends PGPCommand implements ISequenceMap, ITestable
 {

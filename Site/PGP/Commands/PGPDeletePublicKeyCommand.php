@@ -7,9 +7,9 @@
  */
 namespace Site\PGP\Commands;
 
+use CPath\Request\IRequest;
 use Site\PGP\Exceptions\PGPPrivateKeyNotFound;
 use Site\PGP\PGPCommand;
-use CPath\Request\IRequest;
 
 class PGPDeletePublicKeyCommand extends PGPCommand
 {

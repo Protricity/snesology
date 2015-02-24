@@ -32,6 +32,8 @@ class SongTagEntry implements IBuildable, IKeyMap, IRenderHTML
     const TAG_URL_COVER_FRONT = 'url-cover-front';
     const TAG_URL_COVER_BACK = 'url-cover-back';
 
+    const TAG_ENTRY_ACCOUNT = 'entry-account';
+
     const TAG_LYRICIST = 'lyricist';
     const TAG_COMPOSER = 'composer';
     const TAG_CONDUCTOR = 'conductor';
@@ -48,12 +50,14 @@ class SongTagEntry implements IBuildable, IKeyMap, IRenderHTML
     const TAG_TRACK_NUMBER = 'track-number';
 
     static $TagDefaults = array(
-        "Song URL" => self::TAG_URL,
+        "Publish URL" => self::TAG_URL,
         "Torrent Magnet Link" => self::TAG_URL_TORRENT,
         "Download URL" => self::TAG_URL_DOWNLOAD,
         "Icon URL" => self::TAG_URL_ICON,
         "Album Cover URL (Front)" => self::TAG_URL_COVER_FRONT,
         "Album Cover URL (Back)" => self::TAG_URL_COVER_BACK,
+
+        "Entered By" => self::TAG_ENTRY_ACCOUNT,
 
         "Lyricist" => self::TAG_LYRICIST,
         "Composer" => self::TAG_COMPOSER,

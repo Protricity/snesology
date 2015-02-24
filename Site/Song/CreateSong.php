@@ -29,13 +29,15 @@ use CPath\Response\Common\RedirectResponse;
 use CPath\Response\IResponse;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
-use Site\Song\DB\SongEntry;
+use Site\Account\DB\AccountEntry;
 use Site\SiteMap;
+use Site\Song\DB\SongEntry;
 use Site\Song\DB\SongTable;
 use Site\Song\Genre\DB\GenreEntry;
 use Site\Song\Genre\DB\SongGenreEntry;
 use Site\Song\System\DB\SongSystemEntry;
 use Site\Song\System\DB\SystemEntry;
+use Site\Song\Tag\DB\SongTagEntry;
 
 class CreateSong implements IExecutable, IBuildable, IRoutable
 {
@@ -61,6 +63,8 @@ class CreateSong implements IExecutable, IBuildable, IRoutable
 		$SessionRequest = $Request;
 		if (!$SessionRequest instanceof ISessionRequest)
 			throw new \Exception("Session required");
+
+        $Account = AccountEntry::loadFromSession($SessionRequest);
 
         $systemList = SystemEntry::getAll();
         $genreList = GenreEntry::getAll();
@@ -139,6 +143,8 @@ class CreateSong implements IExecutable, IBuildable, IRoutable
         foreach($systems as $system) {
             SongSystemEntry::addToSong($Request, $Song->getID(), $system);
         }
+
+        $Song->addTag($Request, SongTagEntry::TAG_ENTRY_ACCOUNT, $Account->getFingerprint());
 
         return new RedirectResponse(ManageSong::getRequestURL($Song->getID()), "Song created successfully. Redeflecting...", 5);
 	}

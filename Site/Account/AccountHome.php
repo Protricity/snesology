@@ -59,11 +59,11 @@ class AccountHome implements IExecutable, IBuildable, IRoutable
 	 * @return IResponse the execution response
 	 */
 	function execute(IRequest $Request) {
-		$SessionRequest = $Request;
-		if (!$SessionRequest instanceof ISessionRequest)
-			throw new \Exception("Session required");
+        $SessionRequest = $Request;
+        if (!$SessionRequest instanceof ISessionRequest)
+            throw new \Exception("Session required");
 
-		$Account = AccountEntry::loadFromSession($SessionRequest);
+        $Account = AccountEntry::loadFromSession($SessionRequest);
 
 		$Form = new HTMLForm(self::FORM_METHOD, $Request->getPath(), self::FORM_NAME,
 			new HTMLMetaTag(HTMLMetaTag::META_TITLE, self::TITLE),

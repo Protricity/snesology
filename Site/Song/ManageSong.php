@@ -16,6 +16,7 @@ use CPath\Render\HTML\Element\Form\HTMLForm;
 use CPath\Render\HTML\Element\Form\HTMLInputField;
 use CPath\Render\HTML\Element\Form\HTMLSelectField;
 use CPath\Render\HTML\Element\Form\HTMLTextAreaField;
+use CPath\Render\HTML\Element\HTMLAnchor;
 use CPath\Render\HTML\Element\HTMLElement;
 use CPath\Render\HTML\Header\HTMLHeaderScript;
 use CPath\Render\HTML\Header\HTMLHeaderStyleSheet;
@@ -26,16 +27,16 @@ use CPath\Request\Executable\IExecutable;
 use CPath\Request\Form\IFormRequest;
 use CPath\Request\IRequest;
 use CPath\Request\Session\ISessionRequest;
-use CPath\Request\Validation\Exceptions\ValidationException;
 use CPath\Request\Validation\RequiredValidation;
 use CPath\Response\Common\RedirectResponse;
 use CPath\Response\IResponse;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
-use Site\Song\DB\SongEntry;
 use Site\SiteMap;
+use Site\Song\DB\SongEntry;
 use Site\Song\Genre\DB\GenreEntry;
 use Site\Song\Genre\DB\SongGenreEntry;
+use Site\Song\Review\HTML\HTMLSongReviewsTable;
 use Site\Song\System\DB\SongSystemEntry;
 use Site\Song\System\DB\SystemEntry;
 use Site\Song\Tag\DB\SongTagEntry;
@@ -85,6 +86,8 @@ class ManageSong implements IExecutable, IBuildable, IRoutable
         $oldGenres = $Song->getGenreList();
         $oldSystems = $Song->getSystemList();
         $oldTags = $Song->getTagList();
+
+        $ReviewTable = new HTMLSongReviewsTable($Request, $Song->getID());
 
 		$Form = new HTMLForm(self::FORM_METHOD, $Request->getPath(), self::FORM_NAME,
 			new HTMLMetaTag(HTMLMetaTag::META_TITLE, self::TITLE),
@@ -162,10 +165,18 @@ class ManageSong implements IExecutable, IBuildable, IRoutable
                 new HTMLButton(self::PARAM_SUBMIT, 'Remove Tag', 'remove-tag')
             ),
 
-            new HTMLElement('fieldset', 'fieldset-manage-song-publish inline',
-                new HTMLElement('legend', 'legend-song-publish', "Song Information"),
+            new HTMLElement('fieldset', 'fieldset-song-info inline',
+                new HTMLElement('legend', 'legend-song-info', "Song Information"),
 
                 new MapRenderer($Song)
+            ),
+
+            new HTMLElement('fieldset', 'fieldset-manage-song-reviews inline',
+                new HTMLElement('legend', 'legend-song-reviews', "Song Reviews"),
+
+                $ReviewTable,
+
+                new HTMLAnchor(ReviewSong::getRequestURL($Song->getID()), "Add a review")
             )
 		);
 

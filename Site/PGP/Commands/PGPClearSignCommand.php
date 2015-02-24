@@ -7,9 +7,9 @@
  */
 namespace Site\PGP\Commands;
 
+use CPath\Request\IRequest;
 use Site\PGP\PGPCommand;
 use Site\PGP\PGPCommandResponse;
-use CPath\Request\IRequest;
 
 class PGPClearSignCommand extends PGPCommand
 {

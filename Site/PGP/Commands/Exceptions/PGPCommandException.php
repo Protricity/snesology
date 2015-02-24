@@ -7,10 +7,10 @@
  */
 namespace Site\PGP\Commands\Exceptions;
 
-use Site\PGP\Commands\PGPSearchCommand;
-use Site\PGP\PGPCommand;
 use CPath\Data\Map\IKeyMapper;
 use CPath\Request\Exceptions\RequestException;
+use Site\PGP\Commands\PGPSearchCommand;
+use Site\PGP\PGPCommand;
 
 class PGPCommandException extends RequestException
 {

@@ -7,6 +7,16 @@
  */
 namespace Site\Grant;
 
+use CPath\Data\Map\IKeyMap;
+use CPath\Data\Map\IKeyMapper;
+use CPath\Request\Exceptions\RequestException;
+use CPath\Request\IRequest;
+use CPath\Request\Log\ILogListener;
+use CPath\Response\IResponse;
+use Site\Grant\DB\GrantEntry;
+use Site\Grant\DB\GrantTable;
+use Site\Grant\DB\GrantUserTable;
+use Site\Grant\Exceptions\MissingGrantContentException;
 use Site\PGP\Commands\PGPChangePassphrase;
 use Site\PGP\Commands\PGPDecryptCommand;
 use Site\PGP\Commands\PGPDeleteSecretAndPublicKeyCommand;
@@ -18,16 +28,6 @@ use Site\PGP\Commands\PGPSearchCommand;
 use Site\PGP\Commands\PGPVerifyCommand;
 use Site\PGP\PGPCommand;
 use Site\PGP\PGPConfig;
-use Site\Grant\DB\GrantEntry;
-use Site\Grant\DB\GrantTable;
-use Site\Grant\DB\GrantUserTable;
-use Site\Grant\Exceptions\MissingGrantContentException;
-use CPath\Data\Map\IKeyMap;
-use CPath\Data\Map\IKeyMapper;
-use CPath\Request\Exceptions\RequestException;
-use CPath\Request\IRequest;
-use CPath\Request\Log\ILogListener;
-use CPath\Response\IResponse;
 
 abstract class AbstractGrant implements ILogListener, IKeyMap
 {

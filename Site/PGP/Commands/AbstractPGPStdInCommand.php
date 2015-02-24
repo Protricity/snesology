@@ -7,9 +7,9 @@
  */
 namespace Site\PGP\Commands;
 
+use CPath\Request\IRequest;
 use Site\PGP\Commands\Exceptions\PGPCommandException;
 use Site\PGP\PGPCommand;
-use CPath\Request\IRequest;
 
 abstract class AbstractPGPStdInCommand extends PGPCommand
 {

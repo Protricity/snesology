@@ -6,15 +6,6 @@
  * Time: 4:02 PM
  */
 namespace Site\Account\DB;
-use CPath\Framework\Data\Serialize\Interfaces\ISerializable;
-use CPath\Render\HTML\Element\Form\HTMLForm;
-use CPath\Request\Validation\Exceptions\ValidationException;
-use Site\Account\Exceptions\InvalidAccountPassword;
-use Site\PGP\Commands\Exceptions\PGPCommandException;
-use Site\PGP\Commands\PGPDecryptCommand;
-use Site\PGP\Commands\PGPEncryptCommand;
-use Site\PGP\Commands\PGPImportPublicKeyCommand;
-use Site\PGP\PublicKey;
 use CPath\Build\IBuildable;
 use CPath\Build\IBuildRequest;
 use CPath\Data\Map\IKeyMap;
@@ -22,16 +13,28 @@ use CPath\Data\Map\IKeyMapper;
 use CPath\Data\Schema\PDO\PDOTableClassWriter;
 use CPath\Data\Schema\PDO\PDOTableWriter;
 use CPath\Data\Schema\TableSchema;
+use CPath\Framework\Data\Serialize\Interfaces\ISerializable;
+use CPath\Render\HTML\Attribute\IAttributes;
+use CPath\Render\HTML\Element\Form\HTMLForm;
+use CPath\Render\HTML\IRenderHTML;
 use CPath\Request\IRequest;
 use CPath\Request\Session\ISessionRequest;
+use CPath\Request\Validation\Exceptions\ValidationException;
+use Site\Account\Exceptions\InvalidAccountPassword;
+use Site\Account\ManageAccount;
 use Site\DB\SiteDB;
+use Site\PGP\Commands\Exceptions\PGPCommandException;
+use Site\PGP\Commands\PGPDecryptCommand;
+use Site\PGP\Commands\PGPEncryptCommand;
+use Site\PGP\Commands\PGPImportPublicKeyCommand;
+use Site\PGP\PublicKey;
 
 
 /**
  * Class AccountEntry
  * @table account
  */
-class AccountEntry implements IBuildable, IKeyMap, ISerializable
+class AccountEntry implements IBuildable, IKeyMap, ISerializable, IRenderHTML
 {
 	const ID_PREFIX = 'A';
 	const SESSION_KEY = 'session_account';
@@ -47,6 +50,7 @@ class AccountEntry implements IBuildable, IKeyMap, ISerializable
 		" * To log in: enter the following JSON value as the challenge answer:",
 		" */"]
 }';
+
 	const KEYRING_NAME = 'accounts.gpg';
 
 	/**
@@ -271,6 +275,16 @@ class AccountEntry implements IBuildable, IKeyMap, ISerializable
 		return $challenge;
 	}
 
+    /**
+     * Render request as html
+     * @param IRequest $Request the IRequest inst for this render which contains the request and remaining args
+     * @param IAttributes $Attr
+     * @param IRenderHTML $Parent
+     * @return String|void always returns void
+     */
+    function renderHTML(IRequest $Request, IAttributes $Attr = null, IRenderHTML $Parent = null) {
+        echo "<a href='", ManageAccount::getRequestURL($this->getFingerprint()), "'>", $this->getName(), "</a>";
+    }
 
 	/**
 	 * (PHP 5 &gt;= 5.1.0)<br/>

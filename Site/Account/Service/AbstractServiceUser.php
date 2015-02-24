@@ -7,6 +7,7 @@
  */
 namespace Site\Account\Service;
 
+use CPath\Request\IRequest;
 use Site\PGP\Commands\Exceptions\PGPNotFoundException;
 use Site\PGP\Commands\PGPDecryptCommand;
 use Site\PGP\Commands\PGPDeleteSecretAndPublicKeyCommand;
@@ -19,7 +20,6 @@ use Site\PGP\Commands\PGPSearchCommand;
 use Site\PGP\Commands\PGPVerifyCommand;
 use Site\PGP\PGPCommand;
 use Site\PGP\PGPConfig;
-use CPath\Request\IRequest;
 
 abstract class AbstractServiceUser extends User
 {

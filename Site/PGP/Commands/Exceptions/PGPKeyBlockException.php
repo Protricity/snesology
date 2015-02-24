@@ -7,8 +7,8 @@
  */
 namespace Site\PGP\Commands\Exceptions;
 
-use Site\PGP\PGPCommand;
 use CPath\Request\IRequest;
+use Site\PGP\PGPCommand;
 
 class PGPKeyBlockException extends PGPCommandException
 {

@@ -7,10 +7,10 @@
  */
 namespace Site\PGP;
 
-use Site\PGP\Exceptions\PGPPrivateKeyNotFound;
 use CPath\Data\Map\IKeyMapper;
 use CPath\Render\HTML\Attribute;
 use CPath\Request\IRequest;
+use Site\PGP\Exceptions\PGPPrivateKeyNotFound;
 
 
 class PublicKeyFile extends AbstractEncryptionKey

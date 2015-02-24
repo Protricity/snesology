@@ -20,9 +20,9 @@ use CPath\Request\IRequest;
 use CPath\Response\IResponse;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
+use Site\SiteMap;
 use Site\Song\DB\SongEntry;
 use Site\Song\DB\SongTable;
-use Site\SiteMap;
 
 class SearchSongs implements IExecutable, IBuildable, IRoutable
 {

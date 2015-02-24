@@ -7,9 +7,9 @@
  */
 namespace Site\PGP\Commands;
 
-use Site\PGP\PGPCommand;
 use CPath\Request\IRequest;
 use CPath\Request\Log\ILogListener;
+use Site\PGP\PGPCommand;
 
 class PGPEditKeyCommand extends PGPCommand
 {

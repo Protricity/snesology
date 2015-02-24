@@ -7,10 +7,10 @@
  */
 namespace Site\PGP\Commands;
 
+use CPath\Request\IRequest;
 use Site\PGP\Commands\Exceptions\PGPCommandException;
 use Site\PGP\PGPCommand;
 use Site\PGP\PGPCommandResponse;
-use CPath\Request\IRequest;
 
 class PGPChangePassphrase extends PGPCommand
 {

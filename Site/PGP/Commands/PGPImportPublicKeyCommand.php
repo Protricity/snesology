@@ -7,11 +7,11 @@
  */
 namespace Site\PGP\Commands;
 
+use CPath\Data\Map\IKeyMapper;
+use CPath\Request\IRequest;
 use Site\PGP\Commands\Exceptions\PGPCommandException;
 use Site\PGP\Exceptions\PGPKeyAlreadyImported;
 use Site\PGP\PGPCommand;
-use CPath\Data\Map\IKeyMapper;
-use CPath\Request\IRequest;
 
 class PGPImportPublicKeyCommand extends PGPCommand
 {

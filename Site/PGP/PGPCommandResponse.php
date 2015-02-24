@@ -7,12 +7,12 @@
  */
 namespace Site\PGP;
 
-use Site\PGP\Commands\Exceptions\PGPCommandException;
-use Site\PGP\Commands\Exceptions\PGPKeyBlockException;
 use CPath\Data\Map\IKeyMap;
 use CPath\Data\Map\IKeyMapper;
 use CPath\Response\IResponse;
 use CPath\Response\Response;
+use Site\PGP\Commands\Exceptions\PGPCommandException;
+use Site\PGP\Commands\Exceptions\PGPKeyBlockException;
 
 class PGPCommandResponse extends Response implements IKeyMap
 {

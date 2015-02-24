@@ -18,8 +18,9 @@ use CPath\Request\IRequest;
 use CPath\Response\IResponse;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
-use Site\Song\DB\SongEntry;
 use Site\SiteMap;
+use Site\Song\DB\SongEntry;
+use Site\Song\Review\HTML\HTMLSongReviewsTable;
 
 class ViewSong implements IExecutable, IBuildable, IRoutable
 {
@@ -50,11 +51,14 @@ class ViewSong implements IExecutable, IBuildable, IRoutable
 	function execute(IRequest $Request) {
         $Song = SongEntry::get($this->id);
 
-		$Form = new HTMLForm(self::FORM_METHOD, $Request->getPath(), self::FORM_NAME,
+        $ReviewTable = new HTMLSongReviewsTable($Request, $Song->getID());
+
+        $Form = new HTMLForm(self::FORM_METHOD, $Request->getPath(), self::FORM_NAME,
 			new HTMLMetaTag(HTMLMetaTag::META_TITLE, self::TITLE),
             
             new MapRenderer($Song),
-			"<br/>"
+			"<br/>",
+            $ReviewTable
 		);
 
 		return $Form;

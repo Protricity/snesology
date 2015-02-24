@@ -67,6 +67,9 @@ class SiteMap implements IRouteMap, IBuildable
 			// @group Site\Song\ManageSong
 			$Map->route('ANY /manage/song/:id', 'Site\\Song\\ManageSong') ||
 
+			// @group Site\Song\ReviewSong
+			$Map->route('ANY /review/song/:id', 'Site\\Song\\ReviewSong') ||
+
 			// @group Site\Song\SearchSongs
 			$Map->route('ANY /songs', 'Site\\Song\\SearchSongs') ||
 			$Map->route('ANY /search/songs', 'Site\\Song\\SearchSongs') ||

@@ -7,12 +7,12 @@
  */
 namespace Site\PGP\Commands;
 
+use CPath\Request\IRequest;
 use Site\Config;
 use Site\PGP\Commands\Exceptions\PGPCommandException;
 use Site\PGP\Commands\Exceptions\PGPKeyBlockException;
 use Site\PGP\PGPCommand;
 use Site\PGP\PGPConfig;
-use CPath\Request\IRequest;
 
 class PGPGenerateKeyPairCommand extends PGPCommand
 {

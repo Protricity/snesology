@@ -7,9 +7,9 @@
  */
 namespace Site\Grant;
 
-use Site\Config;
 use CPath\Build\IBuildable;
 use CPath\Build\IBuildRequest;
+use Site\Config;
 
 class GrantConfig implements IBuildable
 {
