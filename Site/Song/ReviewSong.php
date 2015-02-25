@@ -31,6 +31,7 @@ use CPath\Response\IResponse;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
 use Site\Account\DB\AccountEntry;
+use Site\Config;
 use Site\SiteMap;
 use Site\Song\DB\SongEntry;
 use Site\Song\Review\DB\SongReviewEntry;
@@ -98,6 +99,8 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable
                     )
                 ),
 
+                "<br/>Allowed Tags:<br/>",
+                "<div class='info'>&#60;" . implode('&#62;, &#60;', Config::$AllowedTags) . '&#62;</div>',
                 "<br/><br/>",
                 new HTMLElement('label', null, "Status:<br/>",
                     $SelectStatus = new HTMLSelectField(self::PARAM_SONG_STATUS . '[]', SongReviewEntry::$StatusOptions,

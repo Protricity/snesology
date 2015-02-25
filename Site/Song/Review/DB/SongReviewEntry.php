@@ -15,8 +15,10 @@ use CPath\Data\Schema\PDO\PDOTableClassWriter;
 use CPath\Data\Schema\PDO\PDOTableWriter;
 use CPath\Data\Schema\TableSchema;
 use CPath\Render\Helpers\RenderIndents as RI;
+use CPath\Render\HTML\HTMLConfig;
 use CPath\Render\HTML\IRenderHTML;
 use CPath\Request\IRequest;
+use Site\Config;
 use Site\DB\SiteDB;
 
 /**
@@ -29,7 +31,6 @@ class SongReviewEntry implements IBuildable, IKeyMap
 
     const STATUS_WRITE_UP =             0x000010;
     const STATUS_CRITIQUE =             0x000020;
-    const ALLOW_NODE_TAGS = 'a,b,i,br';
 
     static $StatusOptions = array(
         "Published" =>              self::STATUS_PUBLISHED,
@@ -151,9 +152,10 @@ class SongReviewEntry implements IBuildable, IKeyMap
         $review = $this->getReview();
         $ri = "\n" . RI::get()->indent();
         $review = '<p>' . str_replace("\n", "</p>{$ri}<p>", $review) . '</p>';
-        foreach(explode(',', self::ALLOW_NODE_TAGS) as $tag)
-            $review = preg_replace('/' . preg_quote(htmlspecialchars('<' . $tag)) . '(\/)?>/', '<' . $tag . '$1>', $review);
-//        &#60;b&#62;filter_var&#60;/b&#62; &#60;b&#62;filter_var&#60;/b&#62; &#60;b&#62;filter_var&#60;/b&#62;
+        foreach(Config::$AllowedTags as $tag) {
+            $review = str_replace('&#60;' . $tag . '&#62;', '<' . $tag . '>', $review);
+            $review = str_replace('&#60;/' . $tag . '&#62;', '</' . $tag . '>', $review);
+        }
         return $review;
     }
 

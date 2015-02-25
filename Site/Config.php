@@ -19,8 +19,20 @@ class Config {
 	static $REGISTRATION_LIMIT = 8640000;
 
 	public static $TemplateClass = 'Site\\Render\\DefaultTemplate';
+    public static $AllowedTags = array(
+        'b',
+        'i',
+        'em',
+        'strong',
+        'small',
+//        "&#60;b&#62;" => "<b>",
+//        "&#60;/b&#62;" => "</b>",
+//        "&#60;/b&#62;" => "</b>",
+//        "&#60;/b&#62;" => "</b>",
+//        "&#60;/b&#62;" => "</b>",
+    );
 
-	static function getContentPath($additionalPath=null) {
+    static function getContentPath($additionalPath=null) {
 		return self::$ContentPath . ($additionalPath ? '/' . $additionalPath : '');
 	}
 }
