@@ -26,7 +26,7 @@ use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
 use CPath\Route\RouteIndex;
 use CPath\Route\RouteRenderer;
-use Site\Account\ManageAccount;
+use Site\Account\ViewAccount;
 use Site\Config;
 use Site\PaymentSource\ManagePaymentSource;
 use Site\PGP\PGPSupportHeaders;
@@ -177,7 +177,7 @@ class CustomHTMLValueRenderer implements IHTMLValueRenderer {
             case 'inviter-fingerprint':
             case 'inviter':
             case 'fingerprint':
-                $href = $this->domain . ltrim(ManageAccount::getRequestURL($value), '/');
+                $href = $this->domain . ltrim(ViewAccount::getRequestURL($value), '/');
                 echo "<a href='{$href}'>", $arg1 ?: $value, "</a>";
                 return true;
 

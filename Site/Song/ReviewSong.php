@@ -10,6 +10,7 @@ namespace Site\Song;
 use CPath\Build\IBuildable;
 use CPath\Build\IBuildRequest;
 use CPath\Render\HTML\Attribute\Attributes;
+use CPath\Render\HTML\Attribute\StyleAttributes;
 use CPath\Render\HTML\Element\Form\HTMLButton;
 use CPath\Render\HTML\Element\Form\HTMLForm;
 use CPath\Render\HTML\Element\Form\HTMLInputField;
@@ -36,6 +37,7 @@ use Site\SiteMap;
 use Site\Song\DB\SongEntry;
 use Site\Song\Review\DB\SongReviewEntry;
 use Site\Song\Review\HTML\HTMLSongReview;
+use Site\Song\Review\ReviewTag\DB\ReviewTagEntry;
 
 
 class ReviewSong implements IExecutable, IBuildable, IRoutable
@@ -51,6 +53,9 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable
     const PARAM_SONG_REVIEW = 'review';
     const PARAM_SUBMIT = 'submit';
     const PARAM_SONG_STATUS = 'status';
+    const PARAM_REVIEW_REMOVE_TAG = 'review-remove-tag';
+    const PARAM_REVIEW_TAG_NAME = 'review-tag-name';
+    const PARAM_REVIEW_TAG_VALUE = 'review-tag-value';
 
     private $id;
 
@@ -74,8 +79,9 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable
         $ReviewEntry = SongReviewEntry::fetch($Song->getID(), $Account->getFingerprint());
 
         $Preview = new HTMLSongReview($ReviewEntry, $Account);
+        $tagList = ReviewTagEntry::$TagDefaults;
 
-		$Form = new HTMLForm(self::FORM_METHOD, $Request->getPath(), self::FORM_NAME,
+        $Form = new HTMLForm(self::FORM_METHOD, $Request->getPath(), self::FORM_NAME,
 			new HTMLMetaTag(HTMLMetaTag::META_TITLE, self::TITLE),
 			new HTMLHeaderScript(__DIR__ . '/assets/song.js'),
 			new HTMLHeaderStyleSheet(__DIR__ . '/assets/song.css'),
@@ -94,7 +100,7 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable
                 new HTMLElement('label', null, "Review:<br/>",
                     new HTMLTextAreaField(self::PARAM_SONG_REVIEW, $ReviewEntry ? $ReviewEntry->getReview() : null,
                         new Attributes('placeholder', 'Enter a song review'),
-                        new Attributes('rows', 20, 'cols', 80),
+                        new Attributes('rows', 15, 'cols', 80),
                         new RequiredValidation()
                     )
                 ),
@@ -115,11 +121,54 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable
                     : new HTMLButton(self::PARAM_SUBMIT, 'Create', 'create')
             ),
 
-
             new HTMLElement('fieldset', 'fieldset-view-song-review-preview inline',
                 new HTMLElement('legend', 'legend-view-song-review-preview', "Review Preview or is it Preview Review"),
 
                 $Preview
+            ),
+
+            ($ReviewEntry->hasFlags(SongReviewEntry::STATUS_PUBLISHED)
+                ? null
+                : new HTMLElement('fieldset', 'fieldset-manage-song-publish inline',
+                    new HTMLElement('legend', 'legend-song-publish', "Publish!"),
+
+                    "Nailed it down? <br/> All set? <br/><br/>",
+                    new HTMLButton(self::PARAM_SUBMIT, 'Publish Review', 'publish')
+                )
+            ),
+
+            "<br/><br/>",
+
+            new HTMLElement('fieldset', 'fieldset-manage-review-tags-add inline',
+                new HTMLElement('legend', 'legend-review-tags-add', "Add Review Tag"),
+
+                new HTMLElement('label', null, "Tag Name<br/>",
+                    new HTMLSelectField(self::PARAM_REVIEW_TAG_NAME, $tagList
+                    )
+                ),
+
+                "<br/><br/>",
+                new HTMLElement('label', null, "Tag Value<br/>",
+                    new HTMLInputField(self::PARAM_REVIEW_TAG_VALUE
+                    )
+                ),
+
+                "<br/><br/>",
+                new HTMLButton(self::PARAM_SUBMIT, 'Add Review Tag', 'add-review-tag')
+            ),
+
+            new HTMLElement('fieldset', 'fieldset-manage-review-tags-remove inline',
+                new HTMLElement('legend', 'legend-review-tags-remove', "Remove Review Tag"),
+
+                new HTMLElement('label', null, "Tag Name<br/>",
+                    $SelectRemoveTag = new HTMLSelectField(self::PARAM_REVIEW_REMOVE_TAG,
+                        array("Select a tag to remove" => null),
+                        new StyleAttributes('width', '15em')
+                    )
+                ),
+
+                "<br/><br/>",
+                new HTMLButton(self::PARAM_SUBMIT, 'Remove Tag', 'remove-tag')
             ),
 
             "<br/><br/>",
@@ -130,18 +179,6 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable
                 new MapRenderer($Song)
             )
 		);
-
-        if(!$ReviewEntry->hasFlags(SongReviewEntry::STATUS_PUBLISHED)) {
-            $Form->addAll(
-                "<br/>",
-                new HTMLElement('fieldset', 'fieldset-review-song-publish inline',
-                    new HTMLElement('legend', 'legend-song-publish', "Publish!"),
-
-                    "Nailed it down? <br/> All set? <br/><br/>",
-                    new HTMLButton(self::PARAM_SUBMIT, 'Publish review', 'publish')
-                )
-            );
-        }
 
         if($ReviewEntry)
             foreach(SongEntry::$StatusOptions as $desc => $flag)

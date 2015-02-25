@@ -21,7 +21,7 @@ use CPath\Request\IRequest;
 use CPath\Request\Session\ISessionRequest;
 use CPath\Request\Validation\Exceptions\ValidationException;
 use Site\Account\Exceptions\InvalidAccountPassword;
-use Site\Account\ManageAccount;
+use Site\Account\ViewAccount;
 use Site\DB\SiteDB;
 use Site\PGP\Commands\Exceptions\PGPCommandException;
 use Site\PGP\Commands\PGPDecryptCommand;
@@ -283,7 +283,7 @@ class AccountEntry implements IBuildable, IKeyMap, ISerializable, IRenderHTML
      * @return String|void always returns void
      */
     function renderHTML(IRequest $Request, IAttributes $Attr = null, IRenderHTML $Parent = null) {
-        echo "<a href='", ManageAccount::getRequestURL($this->getFingerprint()), "'>", $this->getName(), "</a>";
+        echo "<a href='", $Request->getDomainPath() . ltrim(ViewAccount::getRequestURL($this->getFingerprint()), '/'), "'>", $this->getName(), "</a>";
     }
 
 	/**

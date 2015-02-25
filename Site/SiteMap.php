@@ -45,17 +45,17 @@ class SiteMap implements IRouteMap, IBuildable
 			// @group Site\Account\Logout
 			$Map->route('ANY /logout/', 'Site\\Account\\Logout', 272, 'Logout') ||
 
-			// @group Site\Account\ManageAccount
-			$Map->route('ANY /a/:id', 'Site\\Account\\ManageAccount') ||
-			$Map->route('ANY /account/:id', 'Site\\Account\\ManageAccount') ||
-			$Map->route('ANY /manage/account/:id', 'Site\\Account\\ManageAccount') ||
-
 			// @group Site\Account\Register
 			$Map->route('ANY /register/', 'Site\\Account\\Register', 288, 'Register') ||
 
 			// @group Site\Account\SearchAccounts
 			$Map->route('ANY /accounts', 'Site\\Account\\SearchAccounts') ||
 			$Map->route('ANY /search/accounts', 'Site\\Account\\SearchAccounts') ||
+
+			// @group Site\Account\ViewAccount
+			$Map->route('ANY /a/:id', 'Site\\Account\\ViewAccount') ||
+			$Map->route('ANY /account/:id', 'Site\\Account\\ViewAccount') ||
+			$Map->route('ANY /view/account/:id', 'Site\\Account\\ViewAccount') ||
 
 			// @group Site\SiteIndex
 			$Map->route('ANY /', 'Site\\SiteIndex') ||

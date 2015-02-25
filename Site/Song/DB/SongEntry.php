@@ -205,8 +205,8 @@ class SongEntry implements IBuildable, IKeyMap, ISerializable
         SongTagEntry::addToSong($Request, $this->getID(), $tagName, $tagValue);
     }
 
-    public function removeTag($Request, $tagName) {
-        SongTagEntry::removeFromSong($Request, $this->getID(), $tagName);
+    public function removeTag($Request, $tagName, $tagValue) {
+        SongTagEntry::removeFromSong($Request, $this->getID(), $tagName, $tagValue);
     }
 
     public function publish(IRequest $Request, HTMLForm $Form=null) {

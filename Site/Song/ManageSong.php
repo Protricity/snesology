@@ -12,6 +12,7 @@ use CPath\Build\IBuildRequest;
 use CPath\Render\HTML\Attribute\Attributes;
 use CPath\Render\HTML\Attribute\StyleAttributes;
 use CPath\Render\HTML\Element\Form\HTMLButton;
+use CPath\Render\HTML\Element\Form\HTMLCheckBoxField;
 use CPath\Render\HTML\Element\Form\HTMLForm;
 use CPath\Render\HTML\Element\Form\HTMLInputField;
 use CPath\Render\HTML\Element\Form\HTMLSelectField;
@@ -58,7 +59,7 @@ class ManageSong implements IExecutable, IBuildable, IRoutable
     const PARAM_SONG_TAG_NAME = 'tag-name';
     const PARAM_SONG_TAG_VALUE = 'tag-value';
     const PARAM_SUBMIT = 'submit';
-    const PARAM_SONG_REMOVE_TAG_NAME = 'remove-tag-name';
+    const PARAM_SONG_REMOVE_TAG = 'remove-tag';
 
     private $id;
 
@@ -133,6 +134,16 @@ class ManageSong implements IExecutable, IBuildable, IRoutable
                 new HTMLButton(self::PARAM_SUBMIT, 'Update', 'update')
             ),
 
+            ($Song->hasFlags(SongEntry::STATUS_PUBLISHED)
+                ? null
+                : new HTMLElement('fieldset', 'fieldset-manage-song-publish inline',
+                    new HTMLElement('legend', 'legend-song-publish', "Publish!"),
+
+                    "Tags in place? <br/> All ready to go? <br/><br/>",
+                    new HTMLButton(self::PARAM_SUBMIT, 'Publish song', 'publish')
+                )
+            ),
+
             new HTMLElement('fieldset', 'fieldset-manage-song-tags-add inline',
                 new HTMLElement('legend', 'legend-song-tags-add', "Add Tag"),
 
@@ -147,22 +158,26 @@ class ManageSong implements IExecutable, IBuildable, IRoutable
                     )
                 ),
 
+                new HTMLCheckBoxField(self::PARAM_SONG_TAG_VALUE,
+                    new Attributes('disabled', 'disabled')
+                ),
+
                 "<br/><br/>",
-                new HTMLButton(self::PARAM_SUBMIT, 'Add Tag', 'add-tag')
+                new HTMLButton(self::PARAM_SUBMIT, 'Add Tag', 'add-review-tag')
             ),
 
             new HTMLElement('fieldset', 'fieldset-manage-song-tags-remove inline',
                 new HTMLElement('legend', 'legend-song-tags-remove', "Remove Tag"),
 
                 new HTMLElement('label', null, "Tag Name<br/>",
-                    $SelectRemoveTag = new HTMLSelectField(self::PARAM_SONG_REMOVE_TAG_NAME,
+                    $SelectRemoveTag = new HTMLSelectField(self::PARAM_SONG_REMOVE_TAG,
                         array("Select a tag to remove" => null),
                         new StyleAttributes('width', '15em')
                     )
                 ),
 
                 "<br/><br/>",
-                new HTMLButton(self::PARAM_SUBMIT, 'Remove Tag', 'remove-tag')
+                new HTMLButton(self::PARAM_SUBMIT, 'Remove Tag', 'remove-review-tag')
             ),
 
             new HTMLElement('fieldset', 'fieldset-song-info inline',
@@ -180,17 +195,6 @@ class ManageSong implements IExecutable, IBuildable, IRoutable
             )
 		);
 
-        if(!$Song->hasFlags(SongEntry::STATUS_PUBLISHED)) {
-            $Form->addAll(
-                "<br/>",
-                new HTMLElement('fieldset', 'fieldset-manage-song-publish inline',
-                    new HTMLElement('legend', 'legend-song-publish', "Publish!"),
-
-                    "Tags in place? <br/> All ready to go? <br/><br/>",
-                    new HTMLButton(self::PARAM_SUBMIT, 'Publish song', 'publish')
-                )
-            );
-        }
 
         foreach($oldSystems as $system)
             $SelectSystem->addOption($system, $system, true);
@@ -200,7 +204,7 @@ class ManageSong implements IExecutable, IBuildable, IRoutable
 
         foreach($oldTags as $name => $value) {
             $title = array_search($name, SongTagEntry::$TagDefaults) ?: $name;
-            $SelectRemoveTag->addOption($name, "{$title} - {$value}");
+            $SelectRemoveTag->addOption($name.':'.$value, "{$title} - {$value}");
         }
 
 		if(!$Request instanceof IFormRequest)
@@ -216,8 +220,8 @@ class ManageSong implements IExecutable, IBuildable, IRoutable
                 return new RedirectResponse(ManageSong::getRequestURL($Song->getID()), "Updated song successfully. Misdirecting...", 5);
 
             case 'remove-tag':
-                $tagName = $Form->validateField($Request, self::PARAM_SONG_REMOVE_TAG_NAME);
-                $Song->removeTag($Request, $tagName);
+                list($tagName, $tagValue) = explode(':', $Form->validateField($Request, self::PARAM_SONG_REMOVE_TAG), 2);
+                $Song->removeTag($Request, $tagName, $tagValue);
                 return new RedirectResponse(ManageSong::getRequestURL($Song->getID()), "Removed tag successfully. Reexploding...", 5);
 
             case 'publish':

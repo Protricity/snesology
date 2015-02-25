@@ -7,9 +7,7 @@
  */
 namespace Site\Song\Review\HTML;
 
-use CPath\Render\HTML\Attribute\IAttributes;
 use CPath\Render\HTML\Element\Table\HTMLPDOQueryTable;
-use CPath\Render\HTML\IRenderHTML;
 use CPath\Request\IRequest;
 use Site\Song\Review\DB\SongReviewEntry;
 

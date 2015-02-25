@@ -124,18 +124,19 @@ class SongTagEntry implements IBuildable, IKeyMap, IRenderHTML
      * @return String|void always returns void
      */
     function renderHTML(IRequest $Request, IAttributes $Attr = null, IRenderHTML $Parent = null) {
-        echo RI::ni(), "<span class='tag-", $this->getTagName(), "'>", $this->getTagValue(), "</span>";
+        echo RI::ni(), "<span class='tag tag-", $this->getTagName(), "'>", $this->getTagValue(), "</span>";
     }
 
 	// Static
 
 
 
-    static function removeFromSong($Request, $songID, $tag) {
+    static function removeFromSong($Request, $songID, $tag, $tagValue) {
         $delete = self::table()
             ->delete()
             ->where(SongTagTable::COLUMN_SONG_ID, $songID)
             ->where(SongTagTable::COLUMN_TAG, $tag)
+            ->where(SongTagTable::COLUMN_TAG, $tagValue)
             ->execute($Request);
 
         if(!$delete)

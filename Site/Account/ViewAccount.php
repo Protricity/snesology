@@ -9,38 +9,31 @@ namespace Site\Account;
 
 use CPath\Build\IBuildable;
 use CPath\Build\IBuildRequest;
-use CPath\Render\HTML\Element\Form\HTMLButton;
 use CPath\Render\HTML\Element\Form\HTMLForm;
-use CPath\Render\HTML\Element\Form\HTMLInputField;
-use CPath\Render\HTML\Element\Form\HTMLSelectField;
 use CPath\Render\HTML\Element\HTMLElement;
 use CPath\Render\HTML\Header\HTMLHeaderScript;
 use CPath\Render\HTML\Header\HTMLHeaderStyleSheet;
 use CPath\Render\HTML\Header\HTMLMetaTag;
+use CPath\Render\Map\MapRenderer;
 use CPath\Request\Exceptions\RequestException;
 use CPath\Request\Executable\ExecutableRenderer;
 use CPath\Request\Executable\IExecutable;
-use CPath\Request\Form\IFormRequest;
 use CPath\Request\IRequest;
 use CPath\Request\Session\ISessionRequest;
-use CPath\Request\Validation\RequiredValidation;
-use CPath\Response\Common\RedirectResponse;
 use CPath\Response\IResponse;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
 use Site\Account\DB\AccountEntry;
-use Site\Account\Types\AbstractAccountType;
-use Site\Account\Types\AdministratorAccount;
 use Site\SiteMap;
 
-class ManageAccount implements IExecutable, IBuildable, IRoutable
+class ViewAccount implements IExecutable, IBuildable, IRoutable
 {
-	const TITLE = 'Manage Account';
+	const TITLE = 'View Account';
 
 	const FORM_FORMAT = '/a/%s';
 	const FORM_ACTION = '/a/:id';
 	const FORM_ACTION2 = '/account/:id';
-	const FORM_ACTION3 = '/manage/account/:id';
+	const FORM_ACTION3 = '/view/account/:id';
 	const FORM_METHOD = 'POST';
 	const FORM_NAME = __CLASS__;
 
@@ -82,61 +75,30 @@ class ManageAccount implements IExecutable, IBuildable, IRoutable
 			new HTMLHeaderScript(__DIR__ . '/assets/account.js'),
 			new HTMLHeaderStyleSheet(__DIR__ . '/assets/account.css'),
 
-			new HTMLElement('fieldset', 'fieldset-manage inline',
-				new HTMLElement('legend', 'legend-manage', self::TITLE),
 
-				new HTMLInputField(self::PARAM_ID, $this->id, 'hidden'),
-				new HTMLInputField(self::PARAM_ACCOUNT_TYPE, $Account->getTypeName(), 'hidden'),
+            new HTMLElement('fieldset', 'fieldset-info inline',
+                new HTMLElement('legend', 'legend-info', self::TITLE),
 
-				new HTMLElement('label', null, "Status<br/>",
-					$SelectStatus = new HTMLSelectField(self::PARAM_ACCOUNT_STATUS, AccountEntry::$StatusOptions,
-						new RequiredValidation()
-					)
-				),
-
-				"<br/><br/>",
-				new HTMLButton(self::PARAM_SUBMIT, 'Update', 'update'),
-				new HTMLButton(self::PARAM_SUBMIT, 'Delete', 'delete')
-			),
-
-			new HTMLElement('fieldset', 'fieldset-affiliate-approve inline',
-				new HTMLElement('legend', 'legend-affiliate-approve', "Approve Affiliates"),
-
-				$ApproveSelect = new HTMLSelectField(self::PARAM_APPROVE_AFFILIATE_ID, array(
-					'Pending affiliate approvals' => null,
-				)),
-
-				"<br/><br/>",
-				new HTMLButton(self::PARAM_SUBMIT, 'Approve', 'approve')
-
-			)
+                new MapRenderer($Account)
+            )
+//
+//			new HTMLElement('fieldset', 'fieldset-view inline',
+//				new HTMLElement('legend', 'legend-view', self::TITLE),
+//
+//				new HTMLInputField(self::PARAM_ID, $this->id, 'hidden'),
+//
+//				"<br/><br/>",
+//				new HTMLButton(self::PARAM_SUBMIT, 'Update', 'update')
+//			)
 
 		);
 
-		$SelectStatus->setInputValue($AccountEntry->getStatus());
-
-
-		$Account = AbstractAccountType::loadFromSession($SessionRequest);
-		if ($Account instanceof AdministratorAccount) {
-		}
-
-		if(!$Request instanceof IFormRequest)
+//		if(!$Request instanceof IFormRequest)
 			return $Form;
 
-		$submit = $Request[self::PARAM_SUBMIT];
+//		$submit = $Request[self::PARAM_SUBMIT];
 
-		switch($submit) {
-			case 'update':
-				$status = $Form->validateField($Request, self::PARAM_ACCOUNT_STATUS);
-				$AccountEntry->update($Request, $Account, $status);
-				return new RedirectResponse(ManageAccount::getRequestURL($this->getAccountID()), "Account updated successfully. Redirecting...", 5);
-
-			case 'delete':
-				AccountEntry::delete($Request, $this->getAccountID());
-				return new RedirectResponse(SearchAccounts::getRequestURL(), "Account deleted successfully. Redirecting...", 5);
-		}
-
-		throw new \InvalidArgumentException($submit);
+//		throw new \InvalidArgumentException($submit);
 	}
 
 	// Static
