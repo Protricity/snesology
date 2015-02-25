@@ -135,7 +135,6 @@ class SongReviewEntry implements IBuildable, IKeyMap
         return $tagList;
     }
 
-
     public function addTag($Request, $tagName, $tagValue) {
         ReviewTagEntry::addToSong($Request, $this->getSongID(), $this->getAccountFingerprint(), $tagName, $tagValue);
     }

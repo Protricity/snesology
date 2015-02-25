@@ -68,7 +68,7 @@ class HTMLSongReview implements IRenderHTML, IHTMLSupportHeaders
      * @return void
      */
     function writeHeaders(IRequest $Request, IHeaderWriter $Head) {
-        $Head->writeScript(__DIR__ . '/assets/review.js');
-        $Head->writeStyleSheet(__DIR__ . '/assets/review.css');
+//        $Head->writeScript(__DIR__ . '/assets/song-review.js');
+        $Head->writeStyleSheet(__DIR__ . '/assets/song-review.css');
     }
 }

@@ -1,11 +1,11 @@
 <?php
 namespace Site\Song\Review\DB;
 
+use CPath\Data\Schema\IReadableSchema;
 use CPath\Data\Schema\PDO\AbstractPDOTable as AbstractBase;
+use CPath\Data\Schema\TableSchema;
 use Site\DB\SiteDB as DB;
 use Site\Song\Review\DB\SongReviewEntry as Entry;
-use CPath\Data\Schema\TableSchema;
-use CPath\Data\Schema\IReadableSchema;
 
 /**
  * Class SongReviewTable
