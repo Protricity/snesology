@@ -18,6 +18,8 @@ use CPath\Render\Helpers\RenderIndents as RI;
 use CPath\Request\IRequest;
 use Site\Config;
 use Site\DB\SiteDB;
+use Site\Song\Review\ReviewTag\DB\ReviewTagEntry;
+use Site\Song\Review\ReviewTag\DB\ReviewTagTable;
 
 /**
  * Class SongReviewEntry
@@ -29,6 +31,7 @@ class SongReviewEntry implements IBuildable, IKeyMap
 
     const STATUS_WRITE_UP =             0x000010;
     const STATUS_CRITIQUE =             0x000020;
+    const JOIN_COLUMN_TAGS = 'tags';
 
     static $StatusOptions = array(
         "Published" =>              self::STATUS_PUBLISHED,
@@ -70,6 +73,8 @@ class SongReviewEntry implements IBuildable, IKeyMap
      * @column INTEGER
      */
     protected $created;
+
+    protected $tags;
 
     public function getSongID() {
 		return $this->song_id;
@@ -119,6 +124,26 @@ class SongReviewEntry implements IBuildable, IKeyMap
         return $statusList ?: array("Unpublished");
     }
 
+    public function getTagList() {
+        $tags = explode('||', $this->tags);
+        $tagList = array();
+        foreach($tags as &$tag) {
+            list($key, $value) = explode('::', $tag);
+            if($key)
+                $tagList[$key] = $value;
+        }
+        return $tagList;
+    }
+
+
+    public function addTag($Request, $tagName, $tagValue) {
+        ReviewTagEntry::addToSong($Request, $this->getSongID(), $this->getAccountFingerprint(), $tagName, $tagValue);
+    }
+
+    public function removeTag($Request, $tagName, $tagValue) {
+        ReviewTagEntry::removeFromSong($Request, $this->getSongID(), $this->getAccountFingerprint(), $tagName, $tagValue);
+    }
+
     function update(IRequest $Request, $review=null, $reviewTitle=null, $status=null) {
         $Update = self::table()
             ->update();
@@ -166,9 +191,8 @@ class SongReviewEntry implements IBuildable, IKeyMap
      */
     public static function getLast($songID, $count=null) {
         $count ?: $count = 10;
-        return self::table()
-            ->select()
-            ->where(SongReviewTable::COLUMN_SONG_ID, $songID)
+        return self::query()
+            ->where(SongReviewTable::TABLE_NAME . '.' . SongReviewTable::COLUMN_SONG_ID, $songID)
             ->orderBy(SongReviewTable::COLUMN_CREATED, "DESC")
             ->limit($count);
     }
@@ -179,12 +203,35 @@ class SongReviewEntry implements IBuildable, IKeyMap
      * @return SongReviewEntry
      */
     public static function fetch($songID, $accountFingerprint) {
-        return self::table()
-            ->select()
-            ->where(SongReviewTable::COLUMN_SONG_ID, $songID)
-            ->where(SongReviewTable::COLUMN_ACCOUNT_FINGERPRINT, $accountFingerprint)
+        return self::query()
+            ->where(SongReviewTable::TABLE_NAME . '.' . SongReviewTable::COLUMN_SONG_ID, $songID)
+            ->where(SongReviewTable::TABLE_NAME . '.' . SongReviewTable::COLUMN_ACCOUNT_FINGERPRINT, $accountFingerprint)
             ->fetch();
     }
+
+
+    /**
+     * @return PDOSelectBuilder
+     */
+    static function query() {
+        return self::table()
+            ->select(SongReviewTable::TABLE_NAME . '.' . SongReviewTable::COLUMN_SONG_ID)
+            ->select(SongReviewTable::TABLE_NAME . '.' . SongReviewTable::COLUMN_ACCOUNT_FINGERPRINT)
+            ->select(SongReviewTable::TABLE_NAME . '.' . SongReviewTable::COLUMN_REVIEW_TITLE)
+            ->select(SongReviewTable::TABLE_NAME . '.' . SongReviewTable::COLUMN_REVIEW)
+            ->select(SongReviewTable::TABLE_NAME . '.' . SongReviewTable::COLUMN_CREATED)
+            ->select(SongReviewTable::TABLE_NAME . '.' . SongReviewTable::COLUMN_STATUS)
+
+            ->select('GROUP_CONCAT(DISTINCT CONCAT(' . ReviewTagTable::TABLE_NAME . '.' . ReviewTagTable::COLUMN_TAG . ', "::", ' . ReviewTagTable::TABLE_NAME . '.' . ReviewTagTable::COLUMN_VALUE . ') SEPARATOR "||")', self::JOIN_COLUMN_TAGS)
+            ->leftJoin(ReviewTagTable::TABLE_NAME
+                . ' ON ' . ReviewTagTable::TABLE_NAME . '.' . ReviewTagTable::COLUMN_SONG_ID . ' = ' . SongReviewTable::TABLE_NAME . '.' . SongReviewTable::COLUMN_SONG_ID
+                . ' AND ' . ReviewTagTable::TABLE_NAME . '.' . ReviewTagTable::COLUMN_ACCOUNT_FINGERPRINT . ' = ' . SongReviewTable::TABLE_NAME . '.' . SongReviewTable::COLUMN_ACCOUNT_FINGERPRINT)
+
+            ->groupBy(SongReviewTable::TABLE_NAME . '.' . SongReviewTable::COLUMN_SONG_ID . ', ' . SongReviewTable::TABLE_NAME . '.' . SongReviewTable::COLUMN_ACCOUNT_FINGERPRINT)
+
+            ->setFetchMode(SongReviewTable::FETCH_MODE, SongReviewTable::FETCH_CLASS);
+    }
+
 
     static function removeFromSong($Request, $songID, $accountFingerprint) {
         $delete = self::table()

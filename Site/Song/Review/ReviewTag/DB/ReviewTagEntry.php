@@ -10,6 +10,7 @@ use CPath\Build\IBuildable;
 use CPath\Build\IBuildRequest;
 use CPath\Data\Map\IKeyMap;
 use CPath\Data\Map\IKeyMapper;
+use CPath\Data\Schema\PDO\PDOSelectBuilder;
 use CPath\Data\Schema\PDO\PDOTableClassWriter;
 use CPath\Data\Schema\PDO\PDOTableWriter;
 use CPath\Data\Schema\TableSchema;
@@ -20,8 +21,8 @@ use CPath\Request\IRequest;
 use Site\DB\SiteDB;
 
 /**
- * Class SongTagEntry
- * @table song_tag
+ * Class ReviewTagEntry
+ * @table song_review_tag
  */
 class ReviewTagEntry implements IBuildable, IKeyMap, IRenderHTML
 {
@@ -102,7 +103,7 @@ class ReviewTagEntry implements IBuildable, IKeyMap, IRenderHTML
             ->where(ReviewTagTable::COLUMN_SONG_ID, $songID)
             ->where(ReviewTagTable::COLUMN_ACCOUNT_FINGERPRINT, $accountFingerprint)
             ->where(ReviewTagTable::COLUMN_TAG, $tag)
-            ->where(ReviewTagTable::COLUMN_TAG, $tagValue)
+            ->where(ReviewTagTable::COLUMN_VALUE, $tagValue)
             ->execute($Request);
 
         if(!$delete)

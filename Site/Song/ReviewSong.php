@@ -80,6 +80,7 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable
 
         $Preview = new HTMLSongReview($ReviewEntry, $Account);
         $tagList = ReviewTagEntry::$TagDefaults;
+        $oldTags = $ReviewEntry->getTagList();
 
         $Form = new HTMLForm(self::FORM_METHOD, $Request->getPath(), self::FORM_NAME,
 			new HTMLMetaTag(HTMLMetaTag::META_TITLE, self::TITLE),
@@ -168,7 +169,7 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable
                 ),
 
                 "<br/><br/>",
-                new HTMLButton(self::PARAM_SUBMIT, 'Remove Tag', 'remove-tag')
+                new HTMLButton(self::PARAM_SUBMIT, 'Remove Tag', 'remove-review-tag')
             ),
 
             "<br/><br/>",
@@ -185,29 +186,54 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable
                 if($ReviewEntry->hasFlags($flag))
                     $SelectStatus->addOption($flag, $desc, true);
 
+        foreach($oldTags as $name => $value) {
+            $title = array_search($name, ReviewTagEntry::$TagDefaults) ?: $name;
+            $SelectRemoveTag->addOption($name.';'.$value, "{$title} - {$value}");
+        }
+
 		if(!$Request instanceof IFormRequest)
 			return $Form;
 
         $submit = $Form->validateField($Request, self::PARAM_SUBMIT);
 
-        $status = $Form->validateField($Request, self::PARAM_SONG_STATUS);
-        $status = array_sum($status);
-        $review = $Form->validateField($Request, self::PARAM_SONG_REVIEW);
-        $reviewTitle = $Form->validateField($Request, self::PARAM_SONG_REVIEW_TITLE);
 
-        if($submit === 'publish')
-            $status |= SongReviewEntry::STATUS_PUBLISHED;
+        switch($submit) {
+            case 'add-review-tag':
+                $tagName = $Form->validateField($Request, self::PARAM_REVIEW_TAG_NAME);
+                $tagValue = $Form->validateField($Request, self::PARAM_REVIEW_TAG_VALUE);
+                $ReviewEntry->addTag($Request, $tagName, $tagValue);
+                return new RedirectResponse(ReviewSong::getRequestURL($Song->getID()), "Added Review Tag successfully. There's no going. You just go...", 5);
 
-        if($ReviewEntry) {
-            $ReviewEntry->update($Request, $review, $reviewTitle, $status);
-            return new RedirectResponse(ReviewSong::getRequestURL($Song->getID()), "Updated Song Review. Re(view)directing...", 5);
+            case 'remove-review-tag':
+                list($tagName, $tagValue) = explode(';', $Form->validateField($Request, self::PARAM_REVIEW_REMOVE_TAG), 2);
+                $ReviewEntry->removeTag($Request, $tagName, $tagValue);
+                return new RedirectResponse(ReviewSong::getRequestURL($Song->getID()), "Removed tag successfully. Re(move)directing...", 5);
 
-        } else {
-            SongReviewEntry::addToSong($Request, $Song->getID(), $Account->getFingerprint(), $review, $reviewTitle, $status);
-            return new RedirectResponse(ReviewSong::getRequestURL($Song->getID()), "Added Song Review. Re(view)creating...", 5);
+            case 'publish':
+                $status = $ReviewEntry->getStatusFlags();
+                $status |= SongReviewEntry::STATUS_PUBLISHED;
+                $ReviewEntry->update($Request, null, null, $status);
+                return new RedirectResponse(ReviewSong::getRequestURL($Song->getID()), "Published Song Review. omg omg omg...", 5);
 
+            case 'update':
+                $status = $Form->validateField($Request, self::PARAM_SONG_STATUS);
+                $status = array_sum($status);
+                $review = $Form->validateField($Request, self::PARAM_SONG_REVIEW);
+                $reviewTitle = $Form->validateField($Request, self::PARAM_SONG_REVIEW_TITLE);
+                $ReviewEntry->update($Request, $review, $reviewTitle, $status);
+                return new RedirectResponse(ReviewSong::getRequestURL($Song->getID()), "Updated Song Review. Re(view)directing...", 5);
+
+            case 'create':
+                $status = $Form->validateField($Request, self::PARAM_SONG_STATUS);
+                $status = array_sum($status);
+                $review = $Form->validateField($Request, self::PARAM_SONG_REVIEW);
+                $reviewTitle = $Form->validateField($Request, self::PARAM_SONG_REVIEW_TITLE);
+                SongReviewEntry::addToSong($Request, $Song->getID(), $Account->getFingerprint(), $review, $reviewTitle, $status);
+                return new RedirectResponse(ReviewSong::getRequestURL($Song->getID()), "Added Song Review. Re(view)creating...", 5);
+
+            default:
+                throw new \InvalidArgumentException("Invalid submit: " . $submit);
         }
-
 	}
 
 	// Static

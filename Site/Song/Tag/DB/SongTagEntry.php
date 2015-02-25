@@ -136,7 +136,7 @@ class SongTagEntry implements IBuildable, IKeyMap, IRenderHTML
             ->delete()
             ->where(SongTagTable::COLUMN_SONG_ID, $songID)
             ->where(SongTagTable::COLUMN_TAG, $tag)
-            ->where(SongTagTable::COLUMN_TAG, $tagValue)
+            ->where(SongTagTable::COLUMN_VALUE, $tagValue)
             ->execute($Request);
 
         if(!$delete)

@@ -162,7 +162,8 @@ class SongEntry implements IBuildable, IKeyMap, ISerializable
         $tagList = array();
         foreach($tags as &$tag) {
             list($key, $value) = explode('::', $tag);
-            $tagList[$key] = $value;
+            if($key)
+                $tagList[$key] = $value;
         }
         return $tagList;
     }
