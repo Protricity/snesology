@@ -1,11 +1,11 @@
 <?php
 namespace Site\Account\DB;
 
-use CPath\Data\Schema\IReadableSchema;
 use CPath\Data\Schema\PDO\AbstractPDOPrimaryKeyTable as AbstractBase;
-use CPath\Data\Schema\TableSchema;
-use Site\Account\DB\AccountEntry as Entry;
 use Site\DB\SiteDB as DB;
+use Site\Account\DB\AccountEntry as Entry;
+use CPath\Data\Schema\TableSchema;
+use CPath\Data\Schema\IReadableSchema;
 
 /**
  * Class AccountTable

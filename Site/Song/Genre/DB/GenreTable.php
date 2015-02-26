@@ -1,11 +1,11 @@
 <?php
 namespace Site\Song\Genre\DB;
 
-use CPath\Data\Schema\IReadableSchema;
 use CPath\Data\Schema\PDO\AbstractPDOPrimaryKeyTable as AbstractBase;
-use CPath\Data\Schema\TableSchema;
 use Site\DB\SiteDB as DB;
 use Site\Song\Genre\DB\GenreEntry as Entry;
+use CPath\Data\Schema\TableSchema;
+use CPath\Data\Schema\IReadableSchema;
 
 /**
  * Class GenreTable

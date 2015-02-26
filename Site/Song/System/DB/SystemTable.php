@@ -1,11 +1,11 @@
 <?php
 namespace Site\Song\System\DB;
 
-use CPath\Data\Schema\IReadableSchema;
 use CPath\Data\Schema\PDO\AbstractPDOPrimaryKeyTable as AbstractBase;
-use CPath\Data\Schema\TableSchema;
 use Site\DB\SiteDB as DB;
 use Site\Song\System\DB\SystemEntry as Entry;
+use CPath\Data\Schema\TableSchema;
+use CPath\Data\Schema\IReadableSchema;
 
 /**
  * Class SystemTable
