@@ -44,7 +44,7 @@ class CreatePath implements IExecutable, IBuildable, IRoutable, ITestable
 	const TITLE = 'Create a new Path';
 
 	const FORM_ACTION = '/create/path/';
-	const FORM_ACTION2 = '/paths';
+	const FORM_ACTION2 = '/paths/';
 	const FORM_METHOD = 'POST';
 	const FORM_NAME = 'create-path';
 

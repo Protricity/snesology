@@ -46,7 +46,7 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
 	const TITLE = 'Create a new Song';
 
 	const FORM_ACTION = '/create/song/';
-	const FORM_ACTION2 = '/songs';
+	const FORM_ACTION2 = '/songs/';
 	const FORM_METHOD = 'POST';
 	const FORM_NAME = 'create-song';
 

@@ -38,7 +38,7 @@ class AccountHome implements IExecutable, IBuildable, IRoutable
 {
 	const TITLE = 'Account Home';
 
-	const FORM_ACTION = '/home';
+	const FORM_ACTION = '/home/';
 	const FORM_METHOD = 'POST';
 	const FORM_NAME = __CLASS__;
 

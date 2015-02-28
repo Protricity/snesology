@@ -34,7 +34,7 @@ class SiteMap implements IRouteMap, IBuildable
     function mapRoutes(IRouteMapper $Map) {
 		return
 			// @group Site\Account\AccountHome
-			$Map->route('ANY /home', 'Site\\Account\\AccountHome', 272, 'My Account') ||
+			$Map->route('ANY /home/', 'Site\\Account\\AccountHome', 272, 'My Account') ||
 
 			// @group Site\Account\Invite
 			$Map->route('ANY /invite/', 'Site\\Account\\Invite') ||
@@ -49,8 +49,8 @@ class SiteMap implements IRouteMap, IBuildable
 			$Map->route('ANY /register/', 'Site\\Account\\Register', 288, 'Register') ||
 
 			// @group Site\Account\SearchAccounts
-			$Map->route('ANY /accounts', 'Site\\Account\\SearchAccounts') ||
-			$Map->route('ANY /search/accounts', 'Site\\Account\\SearchAccounts') ||
+			$Map->route('ANY /accounts/', 'Site\\Account\\SearchAccounts') ||
+			$Map->route('ANY /search/accounts/', 'Site\\Account\\SearchAccounts') ||
 
 			// @group Site\Account\ViewAccount
 			$Map->route('ANY /a/:id', 'Site\\Account\\ViewAccount') ||
@@ -59,14 +59,14 @@ class SiteMap implements IRouteMap, IBuildable
 
 			// @group Site\Path\CreatePath
 			$Map->route('ANY /create/path/', 'Site\\Path\\CreatePath') ||
-			$Map->route('ANY /paths', 'Site\\Path\\CreatePath', 272, 'Paths') ||
+			$Map->route('ANY /paths/', 'Site\\Path\\CreatePath', 272, 'Paths') ||
 
 			// @group Site\Path\ManagePath
 			$Map->route('ANY /manage/path/:path', 'Site\\Path\\ManagePath') ||
 
 			// @group Site\Path\SearchPaths
-			$Map->route('ANY /paths', 'Site\\Path\\SearchPaths') ||
-			$Map->route('ANY /search/paths', 'Site\\Path\\SearchPaths') ||
+			$Map->route('ANY /paths/', 'Site\\Path\\SearchPaths') ||
+			$Map->route('ANY /search/paths/', 'Site\\Path\\SearchPaths') ||
 
 			// @group Site\Relay\CreateLogEntry
 			$Map->route('ANY /create/relay-log', 'Site\\Relay\\CreateLogEntry') ||
@@ -79,7 +79,7 @@ class SiteMap implements IRouteMap, IBuildable
 
 			// @group Site\Song\CreateSong
 			$Map->route('ANY /create/song/', 'Site\\Song\\CreateSong') ||
-			$Map->route('ANY /songs', 'Site\\Song\\CreateSong', 272, 'Songs') ||
+			$Map->route('ANY /songs/', 'Site\\Song\\CreateSong', 272, 'Songs') ||
 
 			// @group Site\Song\ManageSong
 			$Map->route('ANY /manage/song/:id', 'Site\\Song\\ManageSong') ||
@@ -94,9 +94,6 @@ class SiteMap implements IRouteMap, IBuildable
 			// @group Site\Song\ViewSong
 			$Map->route('ANY /s/:id', 'Site\\Song\\ViewSong') ||
 			$Map->route('ANY /view/song/:id', 'Site\\Song\\ViewSong') ||
-
-			// @group __blank_template
-			$Map->route('ANY /order', 'Site\\Render\\BlankTemplate') ||
 
 			// @group __default_template
 			$Map->route('ANY *', 'Site\\Render\\DefaultTemplate') ||

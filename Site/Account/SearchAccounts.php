@@ -27,8 +27,8 @@ class SearchAccounts implements IExecutable, IBuildable, IRoutable
 {
 	const TITLE = 'Search Accounts';
 
-	const FORM_ACTION = '/accounts';
-	const FORM_ACTION2 = '/search/accounts';
+	const FORM_ACTION = '/accounts/';
+	const FORM_ACTION2 = '/search/accounts/';
 	const FORM_METHOD = 'GET';
 	const FORM_NAME = __CLASS__;
 	const CLS_TABLE_ACCOUNT_SEARCH = 'search-account';

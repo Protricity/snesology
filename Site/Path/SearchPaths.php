@@ -28,8 +28,8 @@ class SearchPaths implements IExecutable, IBuildable, IRoutable
 {
 	const TITLE = 'Search Paths';
 
-	const FORM_ACTION = '/paths';
-	const FORM_ACTION2 = '/search/paths';
+	const FORM_ACTION = '/paths/';
+	const FORM_ACTION2 = '/search/paths/';
 	const FORM_METHOD = 'GET';
 	const FORM_NAME = 'search-paths';
 

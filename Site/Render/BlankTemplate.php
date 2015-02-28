@@ -66,7 +66,7 @@ class BlankTemplate extends HTMLContainer implements IRoutable, IBuildable {
 	 * Handle this request and render any content
 	 * @param IBuildRequest $Request the build request inst for this build session
 	 * @return void
-	 * @build --disable 0
+	 * @build --disable 1
 	 * Note: Use doctag 'build' with '--disable 1' to have this IBuildable class skipped during a build
 	 */
 	static function handleBuildStatic(IBuildRequest $Request) {
