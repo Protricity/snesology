@@ -19,7 +19,9 @@ class Config {
 	static $REGISTRATION_LIMIT = 8640000;
 
     public static $ChatSocketURI = 'ws://localhost:7845/';
-	public static $TemplateClass = 'Site\\Render\\DefaultTemplate';
+    public static $ChatSocketPath = 'socket';
+
+    public static $TemplateClass = 'Site\\Render\\DefaultTemplate';
     public static $AllowedTags = array(
         'b',
         'i',

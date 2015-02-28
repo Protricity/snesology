@@ -55,7 +55,7 @@ class WebSocket extends Application
 //			),
 		));
 
-		$this->mServer->registerApplication('listen', $this);
+		$this->mServer->registerApplication(Config::$ChatSocketPath, $this);
 		$this->mServer->run();
 	}
 
