@@ -37,6 +37,8 @@ use CPath\UnitTest\IUnitTestRequest;
 use Site\Account\DB\AccountEntry;
 use Site\Account\DB\AccountTable;
 use Site\Config;
+use Site\PGP\Commands\PGPDeletePublicKeyCommand;
+use Site\PGP\Commands\PGPImportPublicKeyCommand;
 use Site\PGP\Commands\PGPSearchCommand;
 use Site\PGP\Exceptions\PGPKeyAlreadyImported;
 use Site\PGP\PublicKey;
@@ -193,16 +195,18 @@ Version: GnuPG v1
 
 	    $publicKeyString = $Form->validateField($Request, self::PARAM_PUBLIC_KEY, 0);
 
-	    try {
-            // todo: import before db
+        $PGPImport = new PGPImportPublicKeyCommand($publicKeyString);
+        $PGPImport->setPrimaryKeyRing(AccountEntry::KEYRING_NAME);
+        $PGPImport->execute($Request);
+        $keyID = $PGPImport->getKeyID();
 
-		    $Account = AccountEntry::create($Request, $publicKeyString, $inviteeEmail, $inviterFingerprint);
-		    $fingerprint = $Account->getFingerprint();
-		    $this->mNewAccountFingerprint = $fingerprint;
+        $Account = AccountEntry::create($Request, $publicKeyString, $inviteeEmail, $inviterFingerprint);
+        $fingerprint = $Account->getFingerprint();
+        $this->mNewAccountFingerprint = $fingerprint;
 
-	    } catch (PGPKeyAlreadyImported $ex) {
-		    throw new ValidationException($Form, $ex->getMessage());
-	    }
+//	    } catch (PGPKeyAlreadyImported $ex) {
+//		    throw new ValidationException($Form, $ex->getMessage());
+//	    }
 
 	    $Account = AccountEntry::get($fingerprint);
 
@@ -332,9 +336,15 @@ wC4LtwPVHIpRsVpM3/4Z7eakculsOi5+J/wz93xr
 
 ;");
 
-        $Response = $Register->execute($Test);
+        try {
+            $Response = $Register->execute($Test);
+        } catch (PGPKeyAlreadyImported $ex) {
 
+        }
 
+        $PGPDelete = new PGPDeletePublicKeyCommand('3ad63323f7969265');
+        $PGPDelete->setPrimaryKeyRing(AccountEntry::KEYRING_NAME);
+        $PGPDelete->execute($Test);
     }
 }
 

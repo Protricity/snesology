@@ -14,7 +14,7 @@ use Site\PGP\PGPCommand;
 class PGPDeletePublicKeyCommand extends PGPCommand
 {
 	const ALLOW_STD_ERROR = true;
-	const CMD             = "--batch --status-fd 1 --delete-key %s";
+	const CMD             = "--batch --status-fd 1 --delete-key --yes %s";
 
 	public function __construct($fingerprint) {
 		$command = sprintf(static::CMD, preg_replace('/[^\w\d]*/', '', $fingerprint));
