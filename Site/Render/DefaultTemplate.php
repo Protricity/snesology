@@ -15,7 +15,9 @@ use CPath\Render\HTML\Header\HeaderConfig;
 use CPath\Render\HTML\Header\HTMLMetaTag;
 use CPath\Render\HTML\HTMLConfig;
 use CPath\Render\HTML\HTMLContainer;
+use CPath\Render\HTML\HTMLMimeType;
 use CPath\Render\HTML\HTMLResponseBody;
+use CPath\Render\HTML\IHTMLContainer;
 use CPath\Render\HTML\IHTMLValueRenderer;
 use CPath\Request\IRequest;
 use CPath\Response\IResponse;
@@ -28,13 +30,12 @@ use CPath\Route\RouteIndex;
 use CPath\Route\RouteRenderer;
 use Site\Account\ViewAccount;
 use Site\Config;
-use Site\PaymentSource\ManagePaymentSource;
+use Site\Path\DB\PathEntry;
+use Site\Path\IProcessSubPaths;
+use Site\Path\ManagePath;
 use Site\PGP\PGPSupportHeaders;
-use Site\Product\ManageProduct;
 use Site\SiteMap;
 use Site\Song\ManageSong;
-use Site\Transaction\ManageTransaction;
-use Site\Wallet\ManageWallet;
 
 class DefaultTemplate extends HTMLContainer implements IRoutable, IBuildable {
 
@@ -101,9 +102,13 @@ class DefaultTemplate extends HTMLContainer implements IRoutable, IBuildable {
 	 * If an object is returned, it is passed along to the next handler
 	 */
 	static function routeRequestStatic(IRequest $Request, Array &$Previous = array(), $RouteRenderer=null, $args=array()) {
+        if(!$Request->getMimeType() instanceof HTMLMimeType)
+            return false;
+
 		static $customLoaded = false;
 		$customLoaded ?: HTMLConfig::addValueRenderer(new CustomHTMLValueRenderer($Request));
 		$customLoaded = true;
+
 
 		$class = Config::$TemplateClass;
 		/** @var DefaultTemplate $Template */
@@ -147,6 +152,25 @@ class DefaultTemplate extends HTMLContainer implements IRoutable, IBuildable {
 		//new HTMLAjaxSupportHeaders(),
 			new PGPSupportHeaders()
 		);
+//
+//        foreach($SubPaths as $SubPath) {
+//            $processed = false;
+//            foreach($Previous as $Obj) {
+//                if($Obj instanceof IProcessSubPaths) {
+//                    $processed = $Obj->processSubPath($SubPath) ?: $processed;
+//                }
+//                if($Obj instanceof IHTMLContainer) {
+//                    foreach($Obj->getContentRecursive() as $Content) {
+//                        if($Content instanceof IProcessSubPaths) {
+//                            $processed = $Content->processSubPath($SubPath) ?: $processed;
+//                        }
+//                    }
+//                }
+//            }
+//            if(!$processed)
+//                $Template->mNavBar->addContent($SubPath);
+//        }
+
 		$Template->renderHTML($Request);
 		return true;
 	}
@@ -197,6 +221,12 @@ class CustomHTMLValueRenderer implements IHTMLValueRenderer {
                 $href = $value;
                 echo "<a href='{$href}'>", $arg1 ?: $value, "</a>";
                 return true;
+
+            case 'path':
+                $href = $this->domain . ltrim(ManagePath::getRequestURL($value), '/');
+                echo "<a href='{$href}'>", $arg1 ?: $value, "</a>";
+                return true;
+
 		}
 		return false;
 	}

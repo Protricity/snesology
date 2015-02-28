@@ -14,6 +14,9 @@
 
     var PARAM_FINGERPRINT = 'fingerprint';
     var PARAM_USER_SELECT = 'user-select';
+    var PARAM_PASSPHRASE = 'passphrase';
+
+    var FIELDSET_PASSPHRASE = 'fieldset-passphrase';
 
     var FORM_NAME = 'login';
 
@@ -150,6 +153,10 @@
                     return;
 
                 Target.trigger('info', 'Message has been decrypted successfully');
+
+                var Form = jQuery(Target[0].form);
+                Form.find('.' + FIELDSET_PASSPHRASE).fadeOut();
+
 
                 var count = 40;
                 var end = 255;

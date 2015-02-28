@@ -38,6 +38,7 @@ use Site\PGP\Commands\PGPSearchCommand;
 use Site\PGP\Exceptions\PGPKeyAlreadyImported;
 use Site\PGP\PublicKey;
 use Site\SiteMap;
+use Site\Path\HTML\HTMLPathTip;
 
 class Register implements IExecutable, IBuildable, IRoutable
 {
@@ -67,9 +68,10 @@ Version: GnuPG v1
 ...
 -----END PGP PUBLIC KEY BLOCK-----";
 
-	private $mNewAccountFingerprint = null;
+    const TIPS_GEN = "This fieldset generates a new PGP Key pair and stores it on your browser. Only the public key is sent to the server";
+    const TIPS_PGP = "This fieldset contains the PGP Public Key used to create your new account";
 
-	private static $mTestMode = false;
+    private $mNewAccountFingerprint = null;
 
 	public function getRequestPath() {
 		return self::FORM_ACTION;
@@ -107,11 +109,13 @@ Version: GnuPG v1
 		    new HTMLElement('fieldset', 'fieldset-generate',
 			    new HTMLElement('legend', 'legend-generate toggle', "Generate a new PGP key pair to secure your personal information"),
 
+                new HTMLPathTip($Request, '#gen-tips', self::TIPS_GEN),
+
 			    "Choose a new user ID<br/>",
-			    new HTMLInputField(self::PARAM_USER, null, null, 'field-user'),
+			    new HTMLInputField(self::PARAM_USER),
 
 			    "<br/><br/>Optionally provide an email address for others to see<br/>",
-			    new HTMLInputField(self::PARAM_EMAIL, $inviteeEmail, 'email', 'field-email',
+			    new HTMLInputField(self::PARAM_EMAIL,
                     ($inviteeEmail ? new Attributes('disabled', 'disabled') : null)
                 ),
 
@@ -127,6 +131,8 @@ Version: GnuPG v1
 		    "<br/><br/>",
 		    new HTMLElement('fieldset', 'fieldset-public-key',
 			    new HTMLElement('legend', 'legend-public-key toggle', "Your PGP Public Key"),
+
+                new HTMLPathTip($Request, '#pgp-tips', self::TIPS_PGP),
 
 			    "Enter a PGP public key you'll use to identify yourself publicly<br/>",
 			    new HTMLTextAreaField(self::PARAM_PUBLIC_KEY, null, 'field-public-key',
@@ -182,7 +188,7 @@ Version: GnuPG v1
 		    return $Form;
 
 
-	    $publicKeyString = $Form->validateField($Request, self::PARAM_PUBLIC_KEY);
+	    $publicKeyString = $Form->validateField($Request, self::PARAM_PUBLIC_KEY, 0);
 
 	    try {
             // todo: import before db

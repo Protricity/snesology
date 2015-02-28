@@ -31,12 +31,13 @@ use CPath\Response\IResponse;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
 use Site\Account\DB\AccountEntry;
+use Site\Path\HTML\HTMLPathTip;
 use Site\SiteMap;
 
 class Login implements IExecutable, IBuildable, IRoutable
 {
-	const CLS_FIELDSET_ACCOUNT = 'fieldset-account';
-	const CLS_FIELDSET_CONFIG = 'fieldset-account-config';
+    const FIELDSET_PASSPHRASE = 'fieldset-passphrase';
+    const FIELDSET_CHALLENGE = 'fieldset-challenge';
 
 	const TITLE = 'Login';
 
@@ -52,7 +53,14 @@ class Login implements IExecutable, IBuildable, IRoutable
 	const PARAM_CHALLENGE_ANSWER = 'challenge-answer';
 	const PARAM_PASSPHRASE = 'passphrase';
 
-	/**
+    const TIP_SELECT = 'Select your user ID from the menu.
+If your user ID does not appear, it may not be stored on your browser';
+    const TIP_CHALLENGE = 'This is your login <b>grant challenge</b>.
+In order to log in, the challenge must be decrypted using your <b>private key</b> in order to prove your identity.
+If your private key is stored on your browser, the challenge should be automatically solved.
+Once the <b>challenge answer</b> is entered, you may log in';
+
+    /**
 	 * Execute a command and return a response. Does not render
 	 * @param IRequest $Request
 	 * @throws \Exception
@@ -73,12 +81,15 @@ class Login implements IExecutable, IBuildable, IRoutable
 
 			new HTMLElement('legend', 'content-title', 'Log in'), // as ' . $this->getUser()->getPGPKey()->getUserID()),
 
-			new HTMLElement('fieldset',
+			new HTMLElement('fieldset', 'inline',
 				new HTMLElement('legend', 'legend-submit', "Enter user id"),
+
+                new HTMLPathTip($Request, '#tip-select', self::TIP_SELECT),
 
 				new HTMLInputField(self::PARAM_FINGERPRINT,
 					new RequiredValidation()
 				),
+                "<br/><br/>",
 				new HTMLSubmit('Submit')
 			)
 		);
@@ -108,21 +119,21 @@ class Login implements IExecutable, IBuildable, IRoutable
 
 			new HTMLInputField(self::PARAM_FINGERPRINT, $fingerprint, 'hidden'),
 
-			new HTMLElement('fieldset', 'fieldset-challenge toggle',
+			new HTMLElement('fieldset', self::FIELDSET_CHALLENGE . ' toggle',
 				new HTMLElement('legend', 'legend-challenge', "Grant Challenge"),
 
-				new HTMLElement('fieldset', 'fieldset-passphrase inline',
+                new HTMLPathTip($Request, '#tip-challenge', self::TIP_CHALLENGE),
+
+                new HTMLElement('fieldset', self::FIELDSET_PASSPHRASE,
 					new HTMLElement('legend', 'legend-passphrase', "Please enter PGP Passphrase"),
 
 					new HTMLPasswordField(self::PARAM_PASSPHRASE,
 						new Attributes('disabled', 'disabled')
-					),
+					)
 
-					"<br/><br/>"
 				),
 
-				"<br/><br/>",
-
+                "<br/>Encrypted Challenge<br/>",
 				$FieldChallenge = new HTMLTextAreaField(self::PARAM_CHALLENGE, $challenge,
 					new Attributes('rows', 14, 'cols', 80)
 				),

@@ -4,3 +4,9 @@
 [submodule "Site/PGP/assets/libs/openpgp"]
         path = Site/PGP/assets/libs/openpgp
         url = https://github.com/singpolyma/openpgp-php.git
+[submodule "libs/php/wrench"]
+	path = libs/php/wrench
+	url = https://github.com/varspool/Wrench.git
+[submodule "Site/libs/php/wrench"]
+	path = Site/libs/php/wrench
+	url = https://github.com/varspool/Wrench.git

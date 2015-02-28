@@ -1,0 +1,39 @@
+
+.path-tip {
+    display: inline-block;
+    background: url("img/tip_icon.gif") no-repeat center;
+    width: 14px;
+    height: 14px;
+    float:right;
+    position: relative;
+
+    /*padding: 0 1em 0 1em;*/
+    margin-top: -6px;
+    margin-right: -3px;
+}
+
+.path-tip .path-tip-title {
+    font-weight: bold;
+}
+
+.path-tip .path-tip-content {
+    z-index:10;
+    display:none;
+    padding:14px 20px;
+    margin-top:-30px;
+    margin-left: 14px;
+    width:300px;
+    line-height:16px;
+
+    border-radius:8px;
+    box-shadow: 5px 5px 8px #CCC;
+}
+
+.path-tip .path-tip-content:hover,
+.path-tip:hover .path-tip-content {
+    display:inline;
+    position:absolute;
+    color:#111;
+    border:1px solid #DCA;
+    background:#fffAF0;
+}

@@ -2,6 +2,8 @@
 use CPath\Request\Request;
 use CPath\Route\CPathMap;
 
+chdir('..');
+
 require_once('Site/SiteMap.php');
 
 $Request = Request::create('CLI /cpath/test', array(), new \CPath\Render\Text\TextMimeType());

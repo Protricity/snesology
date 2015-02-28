@@ -5,7 +5,7 @@
  * Date: 1/27/2015
  * Time: 1:56 PM
  */
-namespace Site\Song;
+namespace Site\Path;
 
 use CPath\Build\IBuildable;
 use CPath\Build\IBuildRequest;
@@ -24,6 +24,7 @@ use CPath\Request\Executable\IExecutable;
 use CPath\Request\Form\IFormRequest;
 use CPath\Request\IRequest;
 use CPath\Request\Session\ISessionRequest;
+use CPath\Request\Validation\RegexValidation;
 use CPath\Request\Validation\RequiredValidation;
 use CPath\Response\Common\RedirectResponse;
 use CPath\Response\IResponse;
@@ -32,34 +33,25 @@ use CPath\Route\RouteBuilder;
 use CPath\UnitTest\ITestable;
 use CPath\UnitTest\IUnitTestRequest;
 use Site\Account\DB\AccountEntry;
+use Site\Relay\DB\RelayLogEntry;
+use Site\Relay\DB\RelayLogTable;
 use Site\SiteMap;
-use Site\Song\DB\SongEntry;
-use Site\Song\DB\SongTable;
-use Site\Song\Genre\DB\GenreEntry;
-use Site\Song\Genre\DB\SongGenreEntry;
-use Site\Song\System\DB\SongSystemEntry;
-use Site\Song\System\DB\SystemEntry;
-use Site\Song\Tag\DB\SongTagEntry;
+use Site\Path\DB\PathEntry;
+use Site\Path\DB\PathTable;
 
-class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
+class CreatePath implements IExecutable, IBuildable, IRoutable, ITestable
 {
-	const TITLE = 'Create a new Song';
+	const TITLE = 'Create a new Path';
 
-	const FORM_ACTION = '/create/song/';
-	const FORM_ACTION2 = '/songs';
+	const FORM_ACTION = '/create/path/';
+	const FORM_ACTION2 = '/paths';
 	const FORM_METHOD = 'POST';
-	const FORM_NAME = 'create-song';
+	const FORM_NAME = 'create-path';
 
-    const PARAM_SONG_TITLE = 'song-title';
-    const PARAM_SONG_GENRES = 'song-genres';
-    const PARAM_SONG_SYSTEMS = 'song-systems';
-    const PARAM_SONG_DESCRIPTION = 'song-description';
-
-    private $newSongID;
-
-    public function getNewSongID() {
-        return $this->newSongID;
-    }
+    const PARAM_PATH = 'path';
+    const PARAM_PATH_TITLE = 'path-title';
+    const PARAM_PATH_CONTENT = 'path-content';
+    const PARAM_PATH_STATUS = 'path-status';
 
     /**
 	 * Execute a command and return a response. Does not render
@@ -72,49 +64,45 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
 		if (!$SessionRequest instanceof ISessionRequest)
 			throw new \Exception("Session required");
 
-        $Account = AccountEntry::loadFromSession($SessionRequest);
-
-        $systemList = SystemEntry::getAll();
-        $genreList = GenreEntry::getAll();
+        AccountEntry::loadFromSession($SessionRequest);
 
 		$Form = new HTMLForm(self::FORM_METHOD, $Request->getPath(), self::FORM_NAME,
 			new HTMLMetaTag(HTMLMetaTag::META_TITLE, self::TITLE),
-			new HTMLHeaderScript(__DIR__ . '/assets/song.js'),
-			new HTMLHeaderStyleSheet(__DIR__ . '/assets/song.css'),
+//			new HTMLHeaderScript(__DIR__ . '/assets/path.js'),
+//			new HTMLHeaderStyleSheet(__DIR__ . '/assets/path.css'),
 
-			new HTMLElement('fieldset', 'fieldset-create-song',
-				new HTMLElement('legend', 'legend-song', self::TITLE),
+			new HTMLElement('fieldset', 'fieldset-create-path inline',
+				new HTMLElement('legend', 'legend-path', self::TITLE),
 
-                new HTMLElement('label', null, "Song Title:<br/>",
-                    new HTMLInputField(self::PARAM_SONG_TITLE,
-                        new Attributes('placeholder', 'My Song Title'),
+                new HTMLElement('label', null, "New Path:<br/>",
+                    new HTMLInputField(self::PARAM_PATH, (isset($Request[self::PARAM_PATH]) ? $Request[self::PARAM_PATH] : null),
+                        new Attributes('placeholder', 'i.e. "/register/#tips"'),
+                        new RequiredValidation(),
+                        new RegexValidation('/[a-z0-9\/_#-]+/', "Paths may only contain alpha-numeric characters and the special characters '/' and '#'")
+                    )
+                ),
+
+                "<br/><br/>",
+                new HTMLElement('label', null, "Path Title:<br/>",
+                    new HTMLInputField(self::PARAM_PATH_TITLE,
+                        new Attributes('placeholder', 'i.e. "Registration Tips"'),
                         new RequiredValidation()
                     )
                 ),
 
-
                 "<br/><br/>",
-                new HTMLElement('label', null, "Description:<br/>",
-                    new HTMLTextAreaField(self::PARAM_SONG_DESCRIPTION,
-                        new Attributes('placeholder', 'Enter a song description'),
+                new HTMLElement('label', null, "Path Content:<br/>",
+                    new HTMLTextAreaField(self::PARAM_PATH_CONTENT,
+                        new Attributes('placeholder', 'Enter content for this path'),
                         new Attributes('rows', 10, 'cols', 40),
                         new RequiredValidation()
                     )
                 ),
 
                 "<br/><br/>",
-                new HTMLElement('label', null, "Game Systems:<br/>",
-                    new HTMLSelectField(self::PARAM_SONG_SYSTEMS . '[]', $systemList,
-                        new Attributes('multiple', 'multiple'),
-                        new RequiredValidation()
-                    )
-                ),
-
-                "<br/><br/>",
-                new HTMLElement('label', null, "Genres:<br/>",
-                    new HTMLSelectField(self::PARAM_SONG_GENRES . '[]', $genreList,
-                        new Attributes('multiple', 'multiple'),
-                        new RequiredValidation()
+                new HTMLElement('label', null, "Status:<br/>",
+                    $SelectStatus = new HTMLSelectField(self::PARAM_PATH_STATUS . '[]', PathEntry::$StatusOptions,
+                        new Attributes('multiple', 'multiple')
                     )
                 ),
 
@@ -129,40 +117,29 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
 
         $Form->setFormValues($Request);
 
-        $genres = $Form->validateField($Request, self::PARAM_SONG_GENRES);
-        $systems = $Form->validateField($Request, self::PARAM_SONG_SYSTEMS);
-        $title = $Form->validateField($Request, self::PARAM_SONG_TITLE);
-        $description = $Form->validateField($Request, self::PARAM_SONG_DESCRIPTION);
+        $path = $Form->validateField($Request, self::PARAM_PATH);
+        $title = $Form->validateField($Request, self::PARAM_PATH_TITLE);
+        $content = $Form->validateField($Request, self::PARAM_PATH_CONTENT);
+        $status = $Form->validateField($Request, self::PARAM_PATH_STATUS);
+        $status = array_sum((array)$status);
 
-        $MatchingSong = SongEntry::table()
+        $MatchingPath = PathEntry::table()
             ->select()
-            ->where(SongTable::COLUMN_TITLE, $title)
-            ->where(SongTable::COLUMN_STATUS, SongEntry::STATUS_PUBLISHED, '&?')
+            ->where(PathTable::COLUMN_PATH, $path)
             ->fetch();
 
-        if($MatchingSong)
-            throw new \InvalidArgumentException("A published song already has this name. What gives!?");
+        if($MatchingPath)
+            throw new \InvalidArgumentException("A published path already has this name. What gives!?");
 
-		$Song = SongEntry::create($Request, $title, $description);
-        foreach($genres as $genre) {
-            SongGenreEntry::addToSong($Request, $Song->getID(), $genre);
-        }
+		PathEntry::create($Request, $path, $title, $content, $status);
 
-        foreach($systems as $system) {
-            SongSystemEntry::addToSong($Request, $Song->getID(), $system);
-        }
-
-        $Song->addTag($Request, SongTagEntry::TAG_ENTRY_ACCOUNT, $Account->getFingerprint());
-
-        $this->newSongID = $Song->getID();
-
-        return new RedirectResponse(ManageSong::getRequestURL($Song->getID()), "Song created successfully. Redeflecting...", 5);
+        return new RedirectResponse(ManagePath::getRequestURL($path), "Path created successfully. How empathic is that...", 5);
 	}
 
 	// Static
 
-	public static function getRequestURL() {
-		return self::FORM_ACTION;
+	public static function getRequestURL($newPath=null) {
+		return self::FORM_ACTION . ($newPath ? '?' . self::PARAM_PATH . '=' . urlencode($newPath) : '');
 	}
 
 	/**
@@ -194,7 +171,7 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
 		$RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION2, __CLASS__,
 			IRequest::NAVIGATION_ROUTE |
 			IRequest::MATCH_SESSION_ONLY,
-			"Songs");
+			"Paths");
 	}
 
     /**
@@ -209,18 +186,15 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
         $TestAccount = new AccountEntry('test-fp');
         $Session[AccountEntry::SESSION_KEY] = serialize($TestAccount);
 
-        $CreateSong = new CreateSong();
+        $CreatePath = new CreatePath();
 
         $Test->clearRequestParameters();
-        $Test->setRequestParameter(self::PARAM_SONG_TITLE, 'test-song-title');
-        $Test->setRequestParameter(self::PARAM_SONG_DESCRIPTION, 'test-song-description');
-        $Test->setRequestParameter(self::PARAM_SONG_GENRES, array('test-song-genre'));
-        $Test->setRequestParameter(self::PARAM_SONG_SYSTEMS, array('test-song-system'));
-        $CreateSong->execute($Test);
+        $Test->setRequestParameter(self::PARAM_PATH, 'test-path');
+        $Test->setRequestParameter(self::PARAM_PATH_TITLE, 'test-path-title');
+        $Test->setRequestParameter(self::PARAM_PATH_CONTENT, 'test-path-content');
+        $CreatePath->execute($Test);
 
-        $id = $CreateSong->getNewSongID();
-
-        SongEntry::delete($Test, $id);
+        PathEntry::table()->delete(PathTable::COLUMN_PATH, 'test-path');
 
     }
 }

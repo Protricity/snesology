@@ -5,7 +5,6 @@ use CPath\Data\Schema\PDO\AbstractPDOPrimaryKeyTable as AbstractBase;
 use Site\DB\SiteDB as DB;
 use Site\Song\System\DB\SystemEntry as Entry;
 use CPath\Data\Schema\TableSchema;
-use CPath\Data\Schema\IReadableSchema;
 
 /**
  * Class SystemTable
@@ -16,7 +15,7 @@ use CPath\Data\Schema\IReadableSchema;
  * @method Entry fetchOne($whereColumn, $whereValue=null, $compare='=?', $selectColumns=null) fetch a single SystemEntry
  * @method Entry[] fetchAll($whereColumn, $whereValue=null, $compare='=?', $selectColumns=null) fetch an array of SystemEntry[]
  */
-class SystemTable extends AbstractBase implements IReadableSchema {
+class SystemTable extends AbstractBase {
 	const TABLE_NAME = 'system';
 	const FETCH_CLASS = 'Site\\Song\\System\\DB\\SystemEntry';
 	const SELECT_COLUMNS = 'id, name, status, created';

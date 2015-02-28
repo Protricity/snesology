@@ -53,6 +53,10 @@ class AccountEntry implements IBuildable, IKeyMap, ISerializable, IRenderHTML
 
 	const KEYRING_NAME = 'accounts.gpg';
 
+    public function __construct($fingerprint=null) {
+        $fingerprint === null ?: $this->fingerprint = $fingerprint;
+    }
+
 	/**
 	 * @column VARCHAR(64) PRIMARY KEY
 	 * @select

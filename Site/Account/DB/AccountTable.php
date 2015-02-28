@@ -5,7 +5,6 @@ use CPath\Data\Schema\PDO\AbstractPDOPrimaryKeyTable as AbstractBase;
 use Site\DB\SiteDB as DB;
 use Site\Account\DB\AccountEntry as Entry;
 use CPath\Data\Schema\TableSchema;
-use CPath\Data\Schema\IReadableSchema;
 
 /**
  * Class AccountTable
@@ -16,7 +15,7 @@ use CPath\Data\Schema\IReadableSchema;
  * @method Entry fetchOne($whereColumn, $whereValue=null, $compare='=?', $selectColumns=null) fetch a single AccountEntry
  * @method Entry[] fetchAll($whereColumn, $whereValue=null, $compare='=?', $selectColumns=null) fetch an array of AccountEntry[]
  */
-class AccountTable extends AbstractBase implements IReadableSchema {
+class AccountTable extends AbstractBase {
 	const TABLE_NAME = 'account';
 	const FETCH_CLASS = 'Site\\Account\\DB\\AccountEntry';
 	const SELECT_COLUMNS = 'fingerprint, email, name, created, inviter_fingerprint';

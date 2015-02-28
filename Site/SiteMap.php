@@ -57,6 +57,23 @@ class SiteMap implements IRouteMap, IBuildable
 			$Map->route('ANY /account/:id', 'Site\\Account\\ViewAccount') ||
 			$Map->route('ANY /view/account/:id', 'Site\\Account\\ViewAccount') ||
 
+			// @group Site\Path\CreatePath
+			$Map->route('ANY /create/path/', 'Site\\Path\\CreatePath') ||
+			$Map->route('ANY /paths', 'Site\\Path\\CreatePath', 272, 'Paths') ||
+
+			// @group Site\Path\ManagePath
+			$Map->route('ANY /manage/path/:path', 'Site\\Path\\ManagePath') ||
+
+			// @group Site\Path\SearchPaths
+			$Map->route('ANY /paths', 'Site\\Path\\SearchPaths') ||
+			$Map->route('ANY /search/paths', 'Site\\Path\\SearchPaths') ||
+
+			// @group Site\Relay\CreateLogEntry
+			$Map->route('ANY /create/relay-log', 'Site\\Relay\\CreateLogEntry') ||
+
+			// @group Site\Relay\PathLog
+			$Map->route('ANY /relay/:path', 'Site\\Relay\\PathLog') ||
+
 			// @group Site\SiteIndex
 			$Map->route('ANY /', 'Site\\SiteIndex') ||
 
