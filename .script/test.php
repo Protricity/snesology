@@ -4,7 +4,7 @@ use CPath\Route\CPathMap;
 
 chdir('..');
 
-require_once('Site/SiteMap.php');
+require_once(dirname(__DIR__) . '/Site/SiteMap.php');
 
 $Request = Request::create('CLI /cpath/test', array(), new \CPath\Render\Text\TextMimeType());
 //$Request->setMimeType(new TextMimeType());
