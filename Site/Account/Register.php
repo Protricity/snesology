@@ -32,7 +32,10 @@ use CPath\Request\Validation\ValidationCallback;
 use CPath\Response\Common\RedirectResponse;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
+use CPath\UnitTest\ITestable;
+use CPath\UnitTest\IUnitTestRequest;
 use Site\Account\DB\AccountEntry;
+use Site\Account\DB\AccountTable;
 use Site\Config;
 use Site\PGP\Commands\PGPSearchCommand;
 use Site\PGP\Exceptions\PGPKeyAlreadyImported;
@@ -40,7 +43,7 @@ use Site\PGP\PublicKey;
 use Site\SiteMap;
 use Site\Path\HTML\HTMLPathTip;
 
-class Register implements IExecutable, IBuildable, IRoutable
+class Register implements IExecutable, IBuildable, IRoutable, ITestable
 {
 	const CLS_FIELDSET_TOOLS = 'fieldset-tools';
 	const CLS_FORM = 'form-register';
@@ -287,5 +290,51 @@ Version: GnuPG v1
 //		$TestUser->importPrivateKey($Test, $privateKey);
 //
 //	}
+    /**
+     * Perform a unit test
+     * @param IUnitTestRequest $Test the unit test request inst for this test session
+     * @return void
+     * @test --disable 0
+     * Note: Use doctag 'test' with '--disable 1' to have this ITestable class skipped during a build
+     */
+    static function handleStaticUnitTest(IUnitTestRequest $Test) {
+        $Register = new Register();
+
+        $OldTestAccount = AccountEntry::table()
+            ->fetch(AccountTable::COLUMN_EMAIL, 'test-user@email.com');
+
+        if($OldTestAccount)
+            AccountEntry::delete($Test, $OldTestAccount->getFingerprint());
+
+        $Test->setRequestParameter(self::PARAM_EMAIL, 'test-user@email.com');
+        $Test->setRequestParameter(self::PARAM_USER, 'test-user');
+        $Test->setRequestParameter(self::PARAM_PUBLIC_KEY, "-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: OpenPGP.js v0.8.2
+Comment: http://openpgpjs.org
+
+xo0EVPE+twEEAJj43I2tMlPN0F2LKAySznAv0HBeCAwLD+I/vCwDzdehQuYa
+VBIues1ATl4IR1eOeHLX/9F2DdlfiR5aZKut605B++WflRuZluEN55tsulkm
+ztcW8HZ/ANRMgcFjd03yc8LYYGcfzApkShlxmUU7jlVlca7m0Ysc8TrIPFkK
+gd4DABEBAAHNH3Rlc3QtdXNlciA8dGVzdC11c2VyQGVtYWlsLmNvbT7CsgQQ
+AQgAJgUCVPE+uAYLCQgHAwIJEGhiAsB44CiXBBUIAgoDFgIBAhsDAh4BAAAv
+pQQAgMpH0SMGzWZlIOoydK8/qm2bayrurFd1GaRpCgv2o2zQLnQMsz/tTQ75
+4a7oS4kRY73dgsKlqnyb7P0vCeQ+fHgULgHK+1pGmZwXsNkL10xf4xiDfG7/
+p9ippCuBhP5//1CzgWXXwbhW15xcZyXHOZbD9JODBERIJ6NxnbGCnBLOjQRU
+8T64AQQAhnDuHcmu/pNbp1xvYQkVBEFxqjJQHNchDJO8Cjjm11OPurTiv3s7
+XeYRFH/4ulXihJnRpWjZxaoM+CmOIuWbYdaw1emgpWPjyeGqs8XtWzPg4tEl
+Bg7WaP7RtlALpjg++PN71T/Gu9oqfxqx2tFp+6grUV0zvd8yV8dmIBob1UUA
+EQEAAcKfBBgBCAATBQJU8T64CRBoYgLAeOAolwIbDAAAxe4D/3kSuu3eUu79
+9+0BBlZu35fzwy9Q+T/KzUQTGOHv8Kle8e/rlFyN1PpG8nHVv8DWQNb58ETk
+x5HywLEjP++B8H5ldWilYa5NfOvPaZai76qRBrzqaLsrwd5sL5QHxUkxIuOa
+wC4LtwPVHIpRsVpM3/4Z7eakculsOi5+J/wz93xr
+=cbho
+-----END PGP PUBLIC KEY BLOCK-----
+
+;");
+
+        $Response = $Register->execute($Test);
+
+
+    }
 }
 

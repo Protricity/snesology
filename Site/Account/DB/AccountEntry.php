@@ -263,7 +263,7 @@ class AccountEntry implements IBuildable, IKeyMap, ISerializable, IRenderHTML
 		$passphrase = uniqid("CH");
 		$json = json_decode(static::JSON_PASSPHRASE_COMMENTS, true);
 		$json[self::FIELD_PASSPHRASE] = $passphrase;
-		$json = json_encode($json, JSON_PRETTY_PRINT);
+		$json = json_encode($json, 128);
 
 		$encryptedPassword = crypt($passphrase);
 
