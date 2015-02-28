@@ -10,6 +10,7 @@ namespace Site\Relay;
 
 use CPath\Request\Session\SessionRequest;
 use Site\Account\DB\AccountEntry;
+use Site\Config;
 use Site\Relay\Socket\SocketRequest;
 use Site\SiteMap;
 use Wrench\Application\Application;
@@ -31,16 +32,11 @@ if(!empty($argv) && realpath($argv[0]) ===  __FILE__) {
 
 class WebSocket extends Application 
 {
-	const CLIENT_PORT = 7845;
-	const CLIENT_HOST = '127.0.0.1';
-
 	/** @var Server */
 	private $mServer = null;
 
     /** @var AccountEntry[] */
 	private $mSessionClients = array();
-	private $mWatches = array();
-//	private $_clients = array();
 
     private $domain = null;
 
@@ -50,8 +46,8 @@ class WebSocket extends Application
 
 	function run() {
 
-		$this->mServer = new Server('ws://' . self::CLIENT_HOST . ':' . self::CLIENT_PORT . '/', array(
-     'check_origin'               => false,
+		$this->mServer = new Server(Config::$ChatSocketURI, array(
+            'check_origin'               => false,
 			'allowed_origins'            => array()
 //				'localhost',
 //                '192.168.0.108',
@@ -61,11 +57,6 @@ class WebSocket extends Application
 
 		$this->mServer->registerApplication('listen', $this);
 		$this->mServer->run();
-	}
-
-	static function createClient() {
-		$Client = new Client('ws://' . self::CLIENT_HOST . ':' . self::CLIENT_PORT . '//', 'http://localhost');
-		return $Client;
 	}
 
 	/**
