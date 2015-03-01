@@ -81,7 +81,7 @@ Once the <b>challenge answer</b> is entered, you may log in';
 
 			new HTMLElement('legend', 'content-title', 'Log in'), // as ' . $this->getUser()->getPGPKey()->getUserID()),
 
-			new HTMLElement('fieldset', 'inline',
+			new HTMLElement('fieldset',
 				new HTMLElement('legend', 'legend-submit', "Enter user id"),
 
                 new HTMLPathTip($Request, '#tip-select', self::TIP_SELECT),

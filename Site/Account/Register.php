@@ -42,6 +42,7 @@ use Site\PGP\Commands\PGPImportPublicKeyCommand;
 use Site\PGP\Commands\PGPSearchCommand;
 use Site\PGP\Exceptions\PGPKeyAlreadyImported;
 use Site\PGP\PublicKey;
+use Site\Relay\PathLog;
 use Site\SiteMap;
 use Site\Path\HTML\HTMLPathTip;
 
@@ -180,12 +181,19 @@ Version: GnuPG v1
 			    )
 		    ),
 
-		    "<br/><br/>",
-		    new HTMLElement('fieldset', 'fieldset-submit',
-			    new HTMLElement('legend', 'legend-submit', "Submit Registration"),
-			    new HTMLButton(self::PARAM_SUBMIT, 'Register', null, 'submit', 'field-submit'),
-			    new HTMLButton(self::PARAM_RESET, 'Reset Form', null, 'reset', 'field-reset')
-		    )
+            "<br/><br/>",
+            new HTMLElement('fieldset', 'fieldset-submit',
+                new HTMLElement('legend', 'legend-submit', "Submit Registration"),
+                new HTMLButton(self::PARAM_SUBMIT, 'Register', null, 'submit', 'field-submit'),
+                new HTMLButton(self::PARAM_RESET, 'Reset Form', null, 'reset', 'field-reset')
+            )
+
+//            "<br/><br/>",
+//            new HTMLElement('fieldset', 'fieldset-chat',
+//                new HTMLElement('legend', 'legend-chat', "Chat: " . $Request->getPath()),
+//
+//                new ExecutableRenderer(new PathLog($Request->getPath()))
+//            )
 	    );
 
 	    $Form->setFormValues($Request);

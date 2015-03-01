@@ -225,7 +225,7 @@
 
                 var InputUserIDList = InputUserID.next('[name=' + PARAM_USER_SELECT + ']');
                 if(InputUserIDList.length === 0) {
-                    InputUserID.after(InputUserIDList = jQuery('<select name="' + PARAM_USER_SELECT + '" />'));
+                    InputUserID.after(InputUserIDList = jQuery('<select class="input" name="' + PARAM_USER_SELECT + '" />'));
                     InputUserIDList.hide();
                     InputUserIDList.change(function() {
                         document.location.href = Form.attr('action') + '?' + PARAM_FINGERPRINT + '=' + InputUserIDList.val();

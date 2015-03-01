@@ -136,7 +136,7 @@ class DefaultTemplate extends HTMLContainer implements IRoutable, IBuildable {
 		header('X-Location: ' . $_SERVER['REQUEST_URI']);
 
 		$Template->mHeaderTitle->addAll(
-			'DEMO MODE - ' . $Request->getMethodName() . ' ' . $Request->getPath()
+			'BETA TEST - ' . $Request->getMethodName() . ' ' . $Request->getPath()
 		);
 
 		$Template->addMetaTag(HTMLMetaTag::META_CONTENT_TYPE, 'text/html; charset=utf-8');
