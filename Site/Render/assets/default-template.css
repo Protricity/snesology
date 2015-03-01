@@ -11,19 +11,42 @@ section, div.section {
     /** background-color: #eee; **/
     border-width: thick;
     border-style: groove;
-    overflow: hidden;
+    /* overflow: hidden; */
 
-    padding: 16px;
-    margin: 2px;
+    padding: 12px;
+    margin: 6px;
+    /* display: block; */
+    /* min-width: 400px; */
 }
 
 .header {
     background: url("img/header1.jpg") no-repeat center;
-    margin: 0 auto;
+    /* margin: 0 auto; */
     width: 764px;
-    height: 160px;
+    height: 199px;
+    /* display: block; */
 }
 
+
+.footer {
+    height: 35px;
+    clear:both;
+    min-height: 20pt;
+    padding: 1pt;
+
+    /* margin: 0 auto; */
+    /* width: 764px; */
+    display: inline-block;
+    min-width: 784px;
+}
+
+.footer div.logos {
+    float: none;
+    background: #eee url("img/footer.jpg") no-repeat;
+    width: inherit;
+    height: inherit;
+    /* width: 809px; */;
+}
 
 /*.console {*/
 /*background-color: #000;*/
@@ -32,7 +55,8 @@ section, div.section {
 
 .navbar {
     float: left;
-    max-width: 14em;
+    /* max-width: 14em; */
+    display: inline-block;
 }
 
 .navbar a {
@@ -87,8 +111,8 @@ section, div.section {
 
     width: 40px;
 
+    width: 100px;
     height: 20px;
-
     padding: 10px;
 
     margin: 1em;
@@ -106,22 +130,10 @@ section, div.section {
 }
 
 .content {
+    display: inline-block;  
+    min-width: 590px;
 }
 
-.footer {
-    height: 35px;
-    clear:both;
-    min-height: 20pt;
-    padding: 1pt;
-
-}
-
-.footer div.logos {
-    float: none;
-    background: #eee url("img/footer.jpg") no-repeat;
-    width: inherit;
-    height: inherit;
-}
 
 /*.footer.fixed {*/
 /*position: fixed;*/
@@ -215,6 +227,7 @@ fieldset {
     border-style: ridge;
     margin: 0 0.2em 0.5em 0;
     vertical-align: top;
+    /* width: 1027px; */
 }
 
 fieldset.inline {

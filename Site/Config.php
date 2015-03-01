@@ -20,6 +20,7 @@ class Config {
 
     public static $ChatSocketURI = 'ws://localhost:7845/';
     public static $ChatSocketPath = 'socket';
+    public static $SocketDomainPath = null;
 
     public static $TemplateClass = 'Site\\Render\\DefaultTemplate';
     public static $AllowedTags = array(
