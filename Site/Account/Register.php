@@ -119,7 +119,7 @@ Version: GnuPG v1
 			    "Choose a new user ID<br/>",
 			    new HTMLInputField(self::PARAM_USER),
 
-			    "<br/><br/>Optionally provide an email address for others to see<br/>",
+			    "<br/><br/>Please provide a public email address<br/>",
 			    new HTMLInputField(self::PARAM_EMAIL,
                     ($inviteeEmail ? new Attributes('disabled', 'disabled') : null)
                 ),

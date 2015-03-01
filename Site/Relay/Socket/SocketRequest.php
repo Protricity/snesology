@@ -28,7 +28,7 @@ class SocketRequest extends Request implements IFormRequest, ISessionRequest
 	}
 
     function getDomainPath($withDomain = false) {
-        echo "NO DOMAIN";
+        return "NO DOMAIN";
     }
 
 

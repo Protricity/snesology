@@ -8,6 +8,7 @@
 namespace Site\Relay;
 
 
+use CPath\Render\Text\TextMimeType;
 use CPath\Request\Session\SessionRequest;
 use Site\Account\DB\AccountEntry;
 use Site\Config;
@@ -140,8 +141,11 @@ class WebSocket extends Application
             $isSession = true;
         }
 
-        $Request = new SocketRequest($connection, 'POST', $action, $json);
-        SiteMap::route($Request);
+        $Request = new SocketRequest($connection, 'POST', $action, $json, new TextMimeType());
+        $rendered = SiteMap::route($Request);
+        if(!$rendered) {
+            echo "Nothing rendered: " . $Request->getPath();
+        }
 
         if($isSession) {
             session_write_close();
