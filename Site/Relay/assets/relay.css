@@ -1,11 +1,12 @@
 
 form.form-relay-log .log-container {
-    height: 100pt;
-    width: 500pt;
+    height: 160pt;
+    /* width: 500pt; */
     overflow: auto;
 }
 
 form.form-relay-log input[name=log] {
-    width: 500pt;
+    /* width: 448pt; */
+    margin-top: 5pt;
 }
 

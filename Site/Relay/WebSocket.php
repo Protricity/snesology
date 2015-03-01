@@ -39,10 +39,7 @@ class WebSocket extends Application
     /** @var AccountEntry[] */
 	private $mSessionClients = array();
 
-    private $domain = null;
-
-    public function __construct($domain=null) {
-        $this->domain = $domain;
+    public function __construct() {
     }
 
 	function run() {
@@ -124,15 +121,18 @@ class WebSocket extends Application
         $action = $json['action'];
         unset($json['action']);
 
-        if($this->domain) {
-            if(strpos($action, $this->domain) !== 0) {
-                echo "Not within domain: ", $action;
+        $domainPath = Config::$SocketDomainPath;
+        if($domainPath) {
+            if(strpos($action, $domainPath) !== 0) {
+                echo "Not within domain path ({$domainPath}): ", $action;
                 return false;
             }
 
-            $action = substr($action, strlen($this->domain));
+            $action = substr($action, strlen($domainPath));
             $action = '/' . ltrim($action, '/');
         }
+
+        echo $action, "\n\n\n\n";
 
         $isSession = false;
         if($sessionID = $this->hasSessionID($connection)) {

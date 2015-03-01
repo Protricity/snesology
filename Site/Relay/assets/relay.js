@@ -11,7 +11,7 @@
     var PARAM_LOG = 'log';
     var LOG_CONTAINER = 'log-container';
 
-    var CLIENT_PORT = 7846; // 7845;
+    var CLIENT_PORT = 7845; // 7845;
     var WEB_SOCKET_URL = 'ws://' + document.location.host + ':' + CLIENT_PORT + '/socket';
     var RECONNECT_TIMEOUT = 5000;
 
@@ -32,6 +32,8 @@
             if(pending > 1)
                 throw new Error("Too many pending activeRequests");
             pending++;
+            
+            LogContainer.scrollTop(LogContainer[0].scrollHeight);
 
             Form.on('submit', function(e, ajax) {
                 e.preventDefault();
@@ -46,6 +48,11 @@
                     data['action'] = Form.attr('action');
                     console.log("Sending: ", data);
                     ChatSocket.send(JSON.stringify(data));
+                    
+                    Input.val('');
+                    LogContainer.append('<div class="relay-log"><span class="relay-account">' + data.account.name + '</span> ' + data.log + '</span>');
+                    LogContainer.scrollTop(LogContainer[0].scrollHeight);
+
                     return;
                 }
 
