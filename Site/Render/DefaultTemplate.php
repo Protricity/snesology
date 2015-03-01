@@ -220,7 +220,7 @@ class CustomHTMLValueRenderer implements IHTMLValueRenderer {
             case 'url-cover-front':
             case 'url-cover-back':
                 $href = $value;
-                echo "<a href='{$href}'>", $arg1 ?: $value, "</a>";
+                echo "<a href='{$href}'>", $arg1 ?: 'link', "</a>";
                 return true;
 
             case 'path':

@@ -32,6 +32,7 @@ use CPath\Route\RouteBuilder;
 use CPath\UnitTest\ITestable;
 use CPath\UnitTest\IUnitTestRequest;
 use Site\Account\DB\AccountEntry;
+use Site\Path\HTML\HTMLPathTip;
 use Site\SiteMap;
 use Site\Song\DB\SongEntry;
 use Site\Song\DB\SongTable;
@@ -54,6 +55,7 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
     const PARAM_SONG_GENRES = 'song-genres';
     const PARAM_SONG_SYSTEMS = 'song-systems';
     const PARAM_SONG_DESCRIPTION = 'song-description';
+    const TIPS_CREATE_SONG = "<div class='path-tip'></div><b>Create a new song entry</b><br/><br/>This fieldset enters a new song into the database";
 
     private $newSongID;
 
@@ -84,6 +86,8 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
 
 			new HTMLElement('fieldset', 'fieldset-create-song',
 				new HTMLElement('legend', 'legend-song', self::TITLE),
+
+                new HTMLPathTip($Request, '#gen-tips', self::TIPS_CREATE_SONG),
 
                 new HTMLElement('label', null, "Song Title:<br/>",
                     new HTMLInputField(self::PARAM_SONG_TITLE,

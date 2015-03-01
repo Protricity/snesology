@@ -51,9 +51,6 @@ section, div.section {
     border-width: 0 3px 3px 0;
 }
 
-.navbar a {
-}
-
 .navbar a:hover {
     background-color: #ccc;
 }
@@ -68,6 +65,9 @@ section, div.section {
 .navbar a {
     background: url("img/button.jpg") left;
     background-size: cover;
+
+    color: #338;
+    /* box-shadow: inset 1px 1px 1px #ddd; */
 
     font-family: sans-serif;
     font-weight: bold;
@@ -85,9 +85,15 @@ section, div.section {
     text-align: center;
 }
 
+.navbar a:visited {
+    color: #333;
+}
+
 .navbar a:hover {
     background-image: url("img/buttonpress.jpg");
     font-style: italic;
+
+    box-shadow: inset 1px 1px 1px #666;
 }
 
 .navbar a + a {
@@ -143,6 +149,11 @@ section.centered form {
 section.centered form * {
     text-align: left;
 }
+
+
+a { color: #66F; }
+a:visited { color: #99B; }
+
 
 /** Message Boxes **/
 

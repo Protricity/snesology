@@ -54,12 +54,17 @@ class SearchSongs implements IExecutable, IBuildable, IRoutable
 			->limit("{$row_count} OFFSET {$offset}");
 
 		$SearchTable = new HTMLPDOQueryTable($SearchQuery);
-		$SearchTable->addSearchColumn(SongTable::COLUMN_ID, 'song-id');
-		$SearchTable->addSearchColumn(SongTable::COLUMN_TITLE, 'song-title');
+        $SearchTable->addColumn('song-id');
+        $SearchTable->addColumn('song-title');
+        $SearchTable->addColumn('song-status');
+        $SearchTable->addColumn('song-created');
+
+        $SearchTable->addSearchColumn(SongTable::COLUMN_ID, 'song-id');
+        $SearchTable->addSearchColumn(SongTable::COLUMN_TITLE, 'song-title');
         $SearchTable->addSearchColumn(SongTable::COLUMN_STATUS, 'song-status');
         $SearchTable->addSearchColumn(SongTable::COLUMN_CREATED, 'song-created');
 
-		$SearchTable->validateRequest($Request);
+        $SearchTable->validateRequest($Request);
 
 		$Form = new HTMLForm(self::FORM_METHOD, $Request->getPath(), self::FORM_NAME,
 			new HTMLMetaTag(HTMLMetaTag::META_TITLE, self::TITLE),
