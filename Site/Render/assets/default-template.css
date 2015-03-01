@@ -74,49 +74,24 @@ section, div.section {
 }
 
 .navbar a {
-
     background: url("img/button.jpg") left;
-    
+    background-size: cover;
 
     font-family: sans-serif;
+    font-weight: bold;
+    text-decoration: none;
+    /* font-weight: normal; */
     
-
-    font: small-caption;
-    
-
-    font-weight: normal;
-    
-    
-
-    ALIGN-SELF: center;
-
     display: block;
-    
-    
-
-    /* background-color: #DDE; */
-    
-
-    border: 1pt solid #FB0F19;
-    
-    
-
-    box-shadow: outset 0 .3em .5em #999;
-
-    /* padding: 1em 1.5em 1em 1.5em; */
-    
 
     font-size: small;
-    
+    width: 136px;
+    height: 30px;
 
-    width: 40px;
-
-    width: 100px;
-    height: 20px;
-    padding: 10px;
-
+    padding-top: 15px;
     margin: 1em;
 
+    text-align: center;
 }
 
 .navbar a:hover {
@@ -131,7 +106,7 @@ section, div.section {
 
 .content {
     display: inline-block;  
-    min-width: 590px;
+    min-width: 555px;
 }
 
 
@@ -162,16 +137,12 @@ tr:hover {
 
 body {
 
-  width: 809px;
-  
+  max-width: 920px;
+  color: #FFF;
 
   margin: 0 auto;
-  
-
   background-color: #000;
-    
-
-  font-family: monospace;
+    font-family: monospace;
     /** margin: 0 0 0 0; **/
 }
 
