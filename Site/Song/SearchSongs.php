@@ -9,6 +9,8 @@ namespace Site\Song;
 
 use CPath\Build\IBuildable;
 use CPath\Build\IBuildRequest;
+use CPath\Render\HTML\Attribute\Attributes;
+use CPath\Render\HTML\Attribute\StyleAttributes;
 use CPath\Render\HTML\Element\Form\HTMLButton;
 use CPath\Render\HTML\Element\Form\HTMLForm;
 use CPath\Render\HTML\Element\HTMLElement;
@@ -55,14 +57,16 @@ class SearchSongs implements IExecutable, IBuildable, IRoutable
 
 		$SearchTable = new HTMLPDOQueryTable($SearchQuery);
         $SearchTable->addColumn('song-id');
-        $SearchTable->addColumn('song-title');
-        $SearchTable->addColumn('song-status');
-        $SearchTable->addColumn('song-created');
+        $SearchTable->addColumn('song-created', 'created');
+        $SearchTable->addColumn('song-title', 'title');
+        $SearchTable->addColumn('song-status', 'status');
+        $SearchTable->addColumn('song-genres', 'genres');
+        $SearchTable->addColumn('song-systems', 'systems');
 
         $SearchTable->addSearchColumn(SongTable::COLUMN_ID, 'song-id');
-        $SearchTable->addSearchColumn(SongTable::COLUMN_TITLE, 'song-title');
-        $SearchTable->addSearchColumn(SongTable::COLUMN_STATUS, 'song-status');
-        $SearchTable->addSearchColumn(SongTable::COLUMN_CREATED, 'song-created');
+        $SearchTable->addSearchColumn(SongTable::COLUMN_TITLE, 'title');
+        $SearchTable->addSearchColumn(SongTable::COLUMN_STATUS, 'status');
+        $SearchTable->addSearchColumn(SongTable::COLUMN_CREATED, 'created');
 
         $SearchTable->validateRequest($Request);
 
@@ -73,9 +77,9 @@ class SearchSongs implements IExecutable, IBuildable, IRoutable
 
 //			new HTMLElement('h3', null, self::TITLE),
 
-			new HTMLElement('fieldset',
+			new HTMLElement('fieldset', 
 				new HTMLElement('legend', 'legend-submit', self::TITLE),
-
+//                new StyleAttributes('width', '80%'),
 				$SearchTable,
 				$Pagination,
 

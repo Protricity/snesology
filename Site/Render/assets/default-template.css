@@ -175,11 +175,13 @@ div.error {
 /** Form **/
 
 form {
-    position: relative;
+    /* position: relative; */
     font-kerning: initial;
-    font-family: monospace;
-    display: inline-block;
-    clear: left;
+    /* font-family: monospace; */
+    /* display: inline-block; */
+    /* clear: left; */
+    /* padding: 1em; */
+    /* width: 68%; */
 }
 
 form > legend,
@@ -197,7 +199,7 @@ form > legend {
 fieldset {
     border-radius: 4px;
     border: 5pt ridge #EFEFEF;
-    margin: 0 0.2em 0.5em 0;
+    margin: 1em 1em 1em 1em;
     vertical-align: top;
     /* width: 1027px; */
 }
