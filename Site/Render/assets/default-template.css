@@ -6,19 +6,22 @@
 /** Page Layout **/
 
 section, div.section {
-    /*margin: 0 0 0 0;*/
-    margin: 0 1px 1px 0;
-    border: 1px solid #CCC;
+    border-color: darkorange;
 
-    background-color: #eee;
+    /** background-color: #eee; **/
+    border-width: thick;
+    border-style: groove;
     overflow: hidden;
 
-    padding: 15px;
+    padding: 16px;
+    margin: 2px;
 }
 
 .header {
-    background: url("img/header.jpg") no-repeat;
-    height: 109px;
+    background: url("img/header1.jpg") no-repeat center;
+    margin: 0 auto;
+    width: 764px;
+    height: 160px;
 }
 
 
@@ -81,11 +84,10 @@ section, div.section {
 }
 
 .footer div.logos {
-    float:right;
-    margin:5px;
+    float: none;
     background: #eee url("img/footer.jpg") no-repeat;
-    width: 114px;
-    height: 28px;
+    width: inherit;
+    height: inherit;
 }
 
 /*.footer.fixed {*/
@@ -114,8 +116,12 @@ tr:hover {
 /** Body **/
 
 body {
+
+  width: 809px;
+  margin: 0 auto;
+  background-color: #000;
     font-family: monospace;
-    margin: 0 0 0 0;
+    /** margin: 0 0 0 0; **/
 }
 
 /** Page **/
