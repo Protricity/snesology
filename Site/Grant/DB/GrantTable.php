@@ -5,7 +5,6 @@ use CPath\Data\Schema\PDO\AbstractPDOPrimaryKeyTable as AbstractBase;
 use Site\DB\SiteDB as DB;
 use Site\Grant\DB\GrantEntry as Entry;
 use CPath\Data\Schema\TableSchema;
-use CPath\Data\Schema\IReadableSchema;
 
 /**
  * Class GrantTable
@@ -16,7 +15,7 @@ use CPath\Data\Schema\IReadableSchema;
  * @method Entry fetchOne($whereColumn, $whereValue=null, $compare='=?', $selectColumns=null) fetch a single GrantEntry
  * @method Entry[] fetchAll($whereColumn, $whereValue=null, $compare='=?', $selectColumns=null) fetch an array of GrantEntry[]
  */
-class GrantTable extends AbstractBase implements IReadableSchema {
+class GrantTable extends AbstractBase {
 	const TABLE_NAME = 'grant';
 	const FETCH_CLASS = 'Site\\Grant\\DB\\GrantEntry';
 	const SELECT_COLUMNS = 'id, grant_fingerprint, content_key, created, class';

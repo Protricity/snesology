@@ -12,8 +12,10 @@ use CPath\Build\IBuildRequest;
 use CPath\Render\HTML\Attribute\Attributes;
 use CPath\Render\HTML\Attribute\StyleAttributes;
 use CPath\Render\HTML\Element\Form\HTMLButton;
+use CPath\Render\HTML\Element\Form\HTMLCheckBoxField;
 use CPath\Render\HTML\Element\Form\HTMLForm;
 use CPath\Render\HTML\Element\Form\HTMLInputField;
+use CPath\Render\HTML\Element\Form\HTMLRangeInputField;
 use CPath\Render\HTML\Element\Form\HTMLSelectField;
 use CPath\Render\HTML\Element\Form\HTMLTextAreaField;
 use CPath\Render\HTML\Element\HTMLElement;
@@ -84,8 +86,8 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable
 
         $Form = new HTMLForm(self::FORM_METHOD, $Request->getPath(), self::FORM_NAME,
 			new HTMLMetaTag(HTMLMetaTag::META_TITLE, self::TITLE),
-			new HTMLHeaderScript(__DIR__ . '/assets/song.js'),
-			new HTMLHeaderStyleSheet(__DIR__ . '/assets/song.css'),
+			new HTMLHeaderScript(__DIR__ . '/assets/review.js'),
+			new HTMLHeaderStyleSheet(__DIR__ . '/assets/review.css'),
 
             new HTMLElement('fieldset', 'fieldset-review-song inline',
                 new HTMLElement('legend', 'legend-song', "Review '" . $Song->getTitle() . "'"),
@@ -108,6 +110,7 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable
 
                 "<br/>Allowed Tags:<br/>",
                 "<div class='info'>&#60;" . implode('&#62;, &#60;', Config::$AllowedTags) . '&#62;</div>',
+
                 "<br/><br/>",
                 new HTMLElement('label', null, "Status:<br/>",
                     $SelectStatus = new HTMLSelectField(self::PARAM_SONG_STATUS . '[]', SongReviewEntry::$StatusOptions,
@@ -150,8 +153,21 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable
 
                 "<br/><br/>",
                 new HTMLElement('label', null, "Tag Value<br/>",
-                    new HTMLInputField(self::PARAM_REVIEW_TAG_VALUE
+                    new HTMLInputField(self::PARAM_REVIEW_TAG_VALUE, null, null, 'input tag-type tag-type-' . ReviewTagEntry::TAG_TYPE_STRING),
+
+                    new HTMLInputField(self::PARAM_REVIEW_TAG_VALUE, 0, 'hidden', 'input tag-type tag-type-' . ReviewTagEntry::TAG_TYPE_BOOLEAN),
+                    new HTMLCheckBoxField(self::PARAM_REVIEW_TAG_VALUE, false, 1, 'input tag-type tag-type-' . ReviewTagEntry::TAG_TYPE_BOOLEAN,
+                        new StyleAttributes('display', 'none')
+                    ),
+
+                    new HTMLInputField(self::PARAM_REVIEW_TAG_VALUE, null, null, 'input tag-type tag-type-' . ReviewTagEntry::TAG_TYPE_5STAR,
+                        new Attributes('size', 1)
+                    ),
+                    new HTMLRangeInputField(self::PARAM_REVIEW_TAG_VALUE, 0, 0, 5, 0.1, 'input tag-type tag-type-' . ReviewTagEntry::TAG_TYPE_5STAR,
+                        new Attributes('oninput', 'var i=jQuery(this); i.siblings("input").val(i.val())'),
+                        new StyleAttributes('display', 'none')
                     )
+
                 ),
 
                 "<br/><br/>",

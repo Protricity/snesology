@@ -29,6 +29,8 @@ use CPath\Response\Common\RedirectResponse;
 use CPath\Response\IResponse;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
+use CPath\UnitTest\ITestable;
+use CPath\UnitTest\IUnitTestRequest;
 use Site\Account\DB\AccountEntry;
 use Site\SiteMap;
 use Site\Song\DB\SongEntry;
@@ -39,12 +41,12 @@ use Site\Song\System\DB\SongSystemEntry;
 use Site\Song\System\DB\SystemEntry;
 use Site\Song\Tag\DB\SongTagEntry;
 
-class CreateSong implements IExecutable, IBuildable, IRoutable
+class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
 {
 	const TITLE = 'Create a new Song';
 
 	const FORM_ACTION = '/create/song/';
-	const FORM_ACTION2 = '/songs';
+	const FORM_ACTION2 = '/songs/';
 	const FORM_METHOD = 'POST';
 	const FORM_NAME = 'create-song';
 
@@ -52,6 +54,12 @@ class CreateSong implements IExecutable, IBuildable, IRoutable
     const PARAM_SONG_GENRES = 'song-genres';
     const PARAM_SONG_SYSTEMS = 'song-systems';
     const PARAM_SONG_DESCRIPTION = 'song-description';
+
+    private $newSongID;
+
+    public function getNewSongID() {
+        return $this->newSongID;
+    }
 
     /**
 	 * Execute a command and return a response. Does not render
@@ -146,6 +154,8 @@ class CreateSong implements IExecutable, IBuildable, IRoutable
 
         $Song->addTag($Request, SongTagEntry::TAG_ENTRY_ACCOUNT, $Account->getFingerprint());
 
+        $this->newSongID = $Song->getID();
+
         return new RedirectResponse(ManageSong::getRequestURL($Song->getID()), "Song created successfully. Redeflecting...", 5);
 	}
 
@@ -186,4 +196,31 @@ class CreateSong implements IExecutable, IBuildable, IRoutable
 			IRequest::MATCH_SESSION_ONLY,
 			"Songs");
 	}
+
+    /**
+     * Perform a unit test
+     * @param IUnitTestRequest $Test the unit test request inst for this test session
+     * @return void
+     * @test --disable 0
+     * Note: Use doctag 'test' with '--disable 1' to have this ITestable class skipped during a build
+     */
+    static function handleStaticUnitTest(IUnitTestRequest $Test) {
+        $Session = &$Test->getSession();
+        $TestAccount = new AccountEntry('test-fp');
+        $Session[AccountEntry::SESSION_KEY] = serialize($TestAccount);
+
+        $CreateSong = new CreateSong();
+
+        $Test->clearRequestParameters();
+        $Test->setRequestParameter(self::PARAM_SONG_TITLE, 'test-song-title');
+        $Test->setRequestParameter(self::PARAM_SONG_DESCRIPTION, 'test-song-description');
+        $Test->setRequestParameter(self::PARAM_SONG_GENRES, array('test-song-genre'));
+        $Test->setRequestParameter(self::PARAM_SONG_SYSTEMS, array('test-song-system'));
+        $CreateSong->execute($Test);
+
+        $id = $CreateSong->getNewSongID();
+
+        SongEntry::delete($Test, $id);
+
+    }
 }

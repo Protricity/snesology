@@ -53,6 +53,10 @@ class AccountEntry implements IBuildable, IKeyMap, ISerializable, IRenderHTML
 
 	const KEYRING_NAME = 'accounts.gpg';
 
+    public function __construct($fingerprint=null) {
+        $fingerprint === null ?: $this->fingerprint = $fingerprint;
+    }
+
 	/**
 	 * @column VARCHAR(64) PRIMARY KEY
 	 * @select
@@ -259,7 +263,7 @@ class AccountEntry implements IBuildable, IKeyMap, ISerializable, IRenderHTML
 		$passphrase = uniqid("CH");
 		$json = json_decode(static::JSON_PASSPHRASE_COMMENTS, true);
 		$json[self::FIELD_PASSPHRASE] = $passphrase;
-		$json = json_encode($json, JSON_PRETTY_PRINT);
+		$json = json_encode($json, 128);
 
 		$encryptedPassword = crypt($passphrase);
 

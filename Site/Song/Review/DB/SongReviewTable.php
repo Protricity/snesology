@@ -5,7 +5,6 @@ use CPath\Data\Schema\PDO\AbstractPDOTable as AbstractBase;
 use Site\DB\SiteDB as DB;
 use Site\Song\Review\DB\SongReviewEntry as Entry;
 use CPath\Data\Schema\TableSchema;
-use CPath\Data\Schema\IReadableSchema;
 
 /**
  * Class SongReviewTable
@@ -14,7 +13,7 @@ use CPath\Data\Schema\IReadableSchema;
  * @method Entry fetchOne($whereColumn, $whereValue=null, $compare='=?', $selectColumns=null) fetch a single SongReviewEntry
  * @method Entry[] fetchAll($whereColumn, $whereValue=null, $compare='=?', $selectColumns=null) fetch an array of SongReviewEntry[]
  */
-class SongReviewTable extends AbstractBase implements IReadableSchema {
+class SongReviewTable extends AbstractBase {
 	const TABLE_NAME = 'song_review';
 	const FETCH_CLASS = 'Site\\Song\\Review\\DB\\SongReviewEntry';
 	/**

@@ -41,27 +41,26 @@ class SongEntry implements IBuildable, IKeyMap, ISerializable
 //    const STATUS_NONE =                 0x000000;
     const STATUS_PUBLISHED =            0x000001;
 
-    const STATUS_LYRICS =               0x000010;
-    const STATUS_INSTRUMENTAL =         0x000020;
-    const STATUS_SHEET_MUSIC =          0x000040;
+    const STATUS_ORIGINAL =             0x000010;
+    const STATUS_REMIX =                0x000020;
+    const STATUS_COVER =                0x000040;
 
-    const STATUS_GAME =                 0x000100;
-    const STATUS_MOVIE =                0x000200;
+    const STATUS_CHIPTUNE =             0x000100;
 
-    const STATUS_ORIGINAL =             0x001000;
-    const STATUS_REMIX =                0x002000;
-    const STATUS_COVER =                0x004000;
+    const STATUS_LYRICS =               0x001000;
+    const STATUS_INSTRUMENTAL =         0x002000;
+    const STATUS_SHEET_MUSIC =          0x004000;
 
     static $StatusOptions = array(
 //        "Unpublished" =>            self::STATUS_NONE,
         "Published" =>              self::STATUS_PUBLISHED,
 
+        "Chiptune" =>               self::STATUS_CHIPTUNE,
+
         "Lyrics" =>                 self::STATUS_LYRICS,
         "Instrumental" =>           self::STATUS_INSTRUMENTAL,
         "Sheet Music" =>            self::STATUS_SHEET_MUSIC,
 
-        "Game Music" =>             self::STATUS_GAME,
-        "Movie Soundtrack" =>       self::STATUS_MOVIE,
 
         "Original" =>               self::STATUS_ORIGINAL,
         "Remix" =>                  self::STATUS_REMIX,

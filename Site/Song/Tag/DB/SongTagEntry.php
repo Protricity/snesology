@@ -25,6 +25,11 @@ use Site\DB\SiteDB;
  */
 class SongTagEntry implements IBuildable, IKeyMap, IRenderHTML
 {
+    const TAG_TYPE_DEFAULT = 's';
+    const TAG_TYPE_STRING = 's';
+    const TAG_TYPE_BOOLEAN = 'b';
+    const TAG_TYPE_NUMERIC = 'n';
+
     const TAG_URL = 'url';
     const TAG_URL_TORRENT = 'url-torrent';
     const TAG_URL_DOWNLOAD = 'url-download';
@@ -39,9 +44,12 @@ class SongTagEntry implements IBuildable, IKeyMap, IRenderHTML
     const TAG_CONDUCTOR = 'conductor';
     const TAG_LOCATION = 'location';
     const TAG_LEAD_ARTIST = 'lead-artist';
-    const TAG_CODEC = 'codec';
+    const TAG_ENCODING = 'encoding';
+    const TAG_BITRATE = 'bitrate';
 
     const TAG_RELEASE_YEAR = 'release-year';
+
+    const TAG_ORIGINAL_SONG = 'original-song';
 
     const TAG_DURATION = 'duration';
     const TAG_LANGUAGE = 'language';
@@ -64,9 +72,11 @@ class SongTagEntry implements IBuildable, IKeyMap, IRenderHTML
         "Conductor" => self::TAG_CONDUCTOR,
         "Location" => self::TAG_LOCATION,
         "Lead Artist" => self::TAG_LEAD_ARTIST,
-        "Codec" => self::TAG_CODEC,
+        "Encoding" => self::TAG_ENCODING,
+        "Bitrate" => self::TAG_BITRATE,
 
         "Release Year" => self::TAG_RELEASE_YEAR,
+        "Original Song" => self::TAG_ORIGINAL_SONG,
 
         "Duration" => self::TAG_DURATION,
         "Language" => self::TAG_LANGUAGE,

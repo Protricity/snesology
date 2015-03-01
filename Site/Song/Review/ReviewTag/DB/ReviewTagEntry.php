@@ -10,7 +10,6 @@ use CPath\Build\IBuildable;
 use CPath\Build\IBuildRequest;
 use CPath\Data\Map\IKeyMap;
 use CPath\Data\Map\IKeyMapper;
-use CPath\Data\Schema\PDO\PDOSelectBuilder;
 use CPath\Data\Schema\PDO\PDOTableClassWriter;
 use CPath\Data\Schema\PDO\PDOTableWriter;
 use CPath\Data\Schema\TableSchema;
@@ -26,8 +25,13 @@ use Site\DB\SiteDB;
  */
 class ReviewTagEntry implements IBuildable, IKeyMap, IRenderHTML
 {
-    const TAG_RECOMMENDED = 'bool:recommended';
-    const TAG_RATING = 'rate:rating';
+    const TAG_TYPE_DEFAULT = 's';
+    const TAG_TYPE_STRING = 's';
+    const TAG_TYPE_BOOLEAN = 'b';
+    const TAG_TYPE_5STAR = '5s';
+
+    const TAG_RECOMMENDED = 'b:recommended';
+    const TAG_RATING = '5s:rating';
 
     static $TagDefaults = array(
         "Recommended" => self::TAG_RECOMMENDED,
