@@ -101,7 +101,7 @@
         }
 
         var prompt = function(resumeWithPassphrase) {
-            var Form = jQuery(e.target.form);
+            var Form = jQuery(target.form);
             var InputPassphrase = Form.find('input[type=password][name=' + PARAM_PASSPHRASE + ']');
             var passphrase = InputPassphrase.val();
 
@@ -226,6 +226,8 @@
                 var InputUserIDList = InputUserID.next('[name=' + PARAM_USER_SELECT + ']');
                 if(InputUserIDList.length === 0) {
                     InputUserID.after(InputUserIDList = jQuery('<select class="input" name="' + PARAM_USER_SELECT + '" />'));
+                    InputUserIDList.before(document.createTextNode(' '));
+
                     InputUserIDList.hide();
                     InputUserIDList.change(function() {
                         document.location.href = Form.attr('action') + '?' + PARAM_FINGERPRINT + '=' + InputUserIDList.val();

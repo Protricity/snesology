@@ -79,7 +79,7 @@ Once the <b>challenge answer</b> is entered, you may log in';
 			new HTMLHeaderScript(__DIR__ . '\assets\form-login.js'),
 			new HTMLHeaderStyleSheet(__DIR__ . '\assets\form-login.css'),
 
-			new HTMLElement('legend', 'content-title', 'Log in'), // as ' . $this->getUser()->getPGPKey()->getUserID()),
+			new HTMLElement('h2', 'content-title', 'Log in'), // as ' . $this->getUser()->getPGPKey()->getUserID()),
 
 			new HTMLElement('fieldset',
 				new HTMLElement('legend', 'legend-submit', "Enter user id"),

@@ -60,7 +60,7 @@ class Invite implements IExecutable, IBuildable, IRoutable
 //			new HTMLHeaderScript(__DIR__ . '\assets\invite.js'),
 //			new HTMLHeaderStyleSheet(__DIR__ . '\assets\invite.css'),
 
-			new HTMLElement('legend', 'content-title', 'Accept Invitation'), // as ' . $this->getUser()->getPGPKey()->getUserID()),
+			new HTMLElement('h2', 'content-title', 'Accept Invitation'), // as ' . $this->getUser()->getPGPKey()->getUserID()),
 
 			new HTMLElement('fieldset',
 				new HTMLElement('legend', 'legend-submit', "Enter invite content"),

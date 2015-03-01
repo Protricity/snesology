@@ -163,7 +163,7 @@ class PathLog implements IExecutable, IBuildable, IRoutable, ITestable
 	// Static
 
 	public static function getRequestURL($path=null) {
-        return str_replace(':' . self::PARAM_LOG, $path, self::FORM_ACTION);
+        return str_replace(':' . self::PARAM_PATH, urlencode($path), self::FORM_ACTION);
 	}
 
 	/**

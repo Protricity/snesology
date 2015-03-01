@@ -57,9 +57,10 @@ class DefaultTemplate extends HTMLContainer implements IRoutable, IBuildable {
 			$this->mHeader = new HTMLElement('section', 'header',
 				$this->mHeaderTitle = new HTMLElement('h1', 'header-title')
 			),
-			$this->mNavBar = new HTMLElement('section', 'navbar'
-			),
-			$Content = new HTMLElement('section', 'content'
+			$Content = new HTMLElement('section', 'content',
+                $this->mNavBar = new HTMLElement('div', 'navbar'
+
+                )
 			),
 			$Footer = new HTMLElement('section', 'footer',
 				new HTMLElement('div', 'logos')
@@ -136,7 +137,7 @@ class DefaultTemplate extends HTMLContainer implements IRoutable, IBuildable {
 		header('X-Location: ' . $_SERVER['REQUEST_URI']);
 
 		$Template->mHeaderTitle->addAll(
-			'BETA TEST - ' . $Request->getMethodName() . ' ' . $Request->getPath()
+			'BETA - ' . $Request->getMethodName() . ' ' . $Request->getPath()
 		);
 
 		$Template->addMetaTag(HTMLMetaTag::META_CONTENT_TYPE, 'text/html; charset=utf-8');

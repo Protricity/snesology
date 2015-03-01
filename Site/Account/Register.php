@@ -74,8 +74,10 @@ Version: GnuPG v1
 ...
 -----END PGP PUBLIC KEY BLOCK-----";
 
-    const TIPS_GEN = "This fieldset generates a new PGP Key pair and stores it on your browser. Only the public key is sent to the server";
-    const TIPS_PGP = "This fieldset contains the PGP Public Key used to create your new account";
+    const TIPS_GEN = "<div class='path-tip'></div><b>Generate PGP Key Pair</b><br/><br/>This fieldset generates a new PGP Key pair and stores it on your browser. Only the public key is sent to the server";
+    const TIPS_PGP = "<div class='path-tip'></div><b>PGP Public Key</b><br/><br/>This fieldset contains the PGP Public Key used to create your new account";
+    const TIPS_PGP_LOAD_STORAGE = "<div class='path-tip'></div><b>Load from Browser</b><br/><br/>This button will cycle through any PGP Key pairs stored on your browser and load the public key";
+    const TIPS_PGP_LOAD_FILE = "<div class='path-tip'></div><b>Load from File</b><br/><br/>This field allows you to load a PGP Public Key from a text file";
 
     private $mNewAccountFingerprint = null;
 
@@ -171,11 +173,15 @@ Version: GnuPG v1
 			    "<br/>",
 			    new HTMLElement('fieldset', 'fieldset-load-file inline',
 				    new HTMLElement('legend', 'legend-tools toggle', "Load PGP Public Key File"),
+                    new HTMLPathTip($Request, '#gen-tips', self::TIPS_PGP_LOAD_FILE),
+
+                    "Upload:<br/>",
 				    new HTMLFileInputField(self::PARAM_LOAD_FILE, '.pub, .asc', 'field-load')
 			    ),
 			    new HTMLElement('fieldset', 'fieldset-load-storage inline',
 				    new HTMLElement('legend', 'legend-storage toggle', "Load From Storage"),
-				    new HTMLButton(self::PARAM_LOAD_STORAGE, "Load",
+                    new HTMLPathTip($Request, '#gen-tips', self::TIPS_PGP_LOAD_STORAGE),
+                    new HTMLButton(self::PARAM_LOAD_STORAGE, "Load",
 					    new Attributes('disabled', 'disabled')
 				    )
 			    )
@@ -186,14 +192,14 @@ Version: GnuPG v1
                 new HTMLElement('legend', 'legend-submit', "Submit Registration"),
                 new HTMLButton(self::PARAM_SUBMIT, 'Register', null, 'submit', 'field-submit'),
                 new HTMLButton(self::PARAM_RESET, 'Reset Form', null, 'reset', 'field-reset')
-            )
+            ),
 
-//            "<br/><br/>",
-//            new HTMLElement('fieldset', 'fieldset-chat',
-//                new HTMLElement('legend', 'legend-chat', "Chat: " . $Request->getPath()),
-//
+            "<br/><br/>",
+            new HTMLElement('fieldset', 'fieldset-chat',
+                new HTMLElement('legend', 'legend-chat', "Chat: " . $Request->getPath())
+
 //                new ExecutableRenderer(new PathLog($Request->getPath()))
-//            )
+            )
 	    );
 
 	    $Form->setFormValues($Request);

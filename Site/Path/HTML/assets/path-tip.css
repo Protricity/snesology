@@ -1,15 +1,13 @@
 
 .path-tip {
-    display: inline-block;
     background: url("img/tip_icon.gif") no-repeat center;
     width: 14px;
     height: 14px;
     float:right;
-    position: relative;
-
-    /*padding: 0 1em 0 1em;*/
-    margin-top: -6px;
-    margin-right: -3px;
+    /* position: absolute; */
+    right: 0;
+    /* text-align: right; */
+    /* margin-left: 8em; */
 }
 
 .path-tip .path-tip-title {
@@ -26,7 +24,7 @@
     line-height:16px;
 
     border-radius:8px;
-    box-shadow: 5px 5px 8px #CCC;
+    box-shadow: 5px 5px 8px #777;
 }
 
 .path-tip .path-tip-content:hover,

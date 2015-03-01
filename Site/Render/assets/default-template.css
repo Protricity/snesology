@@ -1,4 +1,14 @@
 
+/** Tool Tip Icon **/
+
+
+body .path-tip {
+    background-image: url("img/tooltip.gif");
+    width: 16px;
+    height: 16px;
+}
+
+
 .pending {
     opacity: 0.5;
 }
@@ -8,14 +18,15 @@
 section, div.section {
     border: thick groove darkorange;
 
-    padding: 12px;
+    /* padding: 12px; */
     margin: 6px;
 }
 
 .header {
     background: url("img/header1.jpg") no-repeat center;
-    width: 1024px;
-    height: 199px;
+    /* width: 1024px; */
+    height: 195px;
+    padding: 1em;
 }
 
 
@@ -33,7 +44,11 @@ section, div.section {
 .navbar {
     float: left;
     /* max-width: 14em; */
-    display: inline-block;
+    /* display: inline-block; */
+    padding: 0;
+    margin: 0 1em 0 0;
+    border: groove #D70;
+    border-width: 0 3px 3px 0;
 }
 
 .navbar a {
@@ -64,7 +79,7 @@ section, div.section {
     width: 136px;
     height: 30px;
 
-    padding-top: 15px;
+    padding-top: 16px;
     margin: 1em;
 
     text-align: center;
@@ -80,14 +95,17 @@ section, div.section {
 }
 
 .content {
-    display: inline-block;  
-    min-width: 812px;
+    /* display: inline-block; */  
+    /* min-width: 978px; */
+    min-height: 30em;
     /* margin: auto; */
+    /* padding-top: 0.5em; */
 }
 
 
 h1, h2, h3, h4, h5, h6 {
-    margin-top: 0;
+    /* margin-top: 0; */
+    /* margin: 0.5em; */
 }
 
 
@@ -105,7 +123,7 @@ tr:hover {
 
 body {
 
-  max-width: 1068px;
+  max-width: 1000px;
   color: #FFF;
 
   margin: 0 auto;
@@ -137,9 +155,10 @@ div.error {
     padding: 0 4pt 4pt 4pt;
     margin: 2pt -2pt;
     border-radius: 4pt;
+/*     opacity: 0.2; */
 }
-div.info { background-color: #dde; border-top: 3pt solid #cce; }
-div.error { background-color: #edd; border-top: 3pt solid #ecc; }
+/* div.info { background-color: #dde; border-top: 3pt solid #cce; } */
+/* div.error { background-color: #edd; border-top: 3pt solid #ecc; } */
 
 
 /** Form **/
@@ -148,6 +167,8 @@ form {
     position: relative;
     font-kerning: initial;
     font-family: monospace;
+    display: inline-block;
+    clear: left;
 }
 
 form > legend,
@@ -172,6 +193,7 @@ fieldset {
 
 fieldset.inline {
     display: inline-block;
+    /* position: relative; */
 }
 
 /*form * + label {*/

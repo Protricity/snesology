@@ -77,6 +77,10 @@ class SiteMap implements IRouteMap, IBuildable
 			// @group Site\SiteIndex
 			$Map->route('ANY /', 'Site\\SiteIndex') ||
 
+			// @group Site\SitePages
+			$Map->route('ANY /blog/', 'Site\\SitePages', 288, 'Blog') ||
+			$Map->route('ANY /chat/', 'Site\\SitePages', 272, 'Chat') ||
+
 			// @group Site\Song\CreateSong
 			$Map->route('ANY /create/song/', 'Site\\Song\\CreateSong') ||
 			$Map->route('ANY /songs/', 'Site\\Song\\CreateSong', 272, 'Songs') ||
