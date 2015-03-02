@@ -28,7 +28,9 @@ use CPath\Response\Common\RedirectResponse;
 use CPath\Response\IResponse;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
+use Site\Account\DB\AccountEntry;
 use Site\Path\DB\PathEntry;
+use Site\Request\DB\RequestEntry;
 use Site\SiteMap;
 
 class ManagePath implements IExecutable, IBuildable, IRoutable
@@ -63,6 +65,8 @@ class ManagePath implements IExecutable, IBuildable, IRoutable
 			throw new \Exception("Session required");
 
         $Path = PathEntry::get($this->path);
+
+        $Account = AccountEntry::loadFromSession($SessionRequest);
 
 		$Form = new HTMLForm(self::FORM_METHOD, $Request->getPath(), self::FORM_NAME,
 			new HTMLMetaTag(HTMLMetaTag::META_TITLE, self::TITLE),
@@ -131,6 +135,8 @@ class ManagePath implements IExecutable, IBuildable, IRoutable
 			return $Form;
 
         $submit = $Form->validateField($Request, self::PARAM_SUBMIT);
+
+        RequestEntry::createFromRequest($Request, $Account);
 
         switch($submit) {
             case 'activate':

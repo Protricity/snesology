@@ -37,6 +37,7 @@ use Site\Account\DB\AccountEntry;
 use Site\Config;
 use Site\Path\HTML\HTMLPathTip;
 use Site\Render\PopUpBox\HTMLPopUpBox;
+use Site\Request\DB\RequestEntry;
 use Site\SiteMap;
 use Site\Song\DB\SongEntry;
 use Site\Song\Review\DB\SongReviewEntry;
@@ -217,6 +218,7 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable
 
         $submit = $Form->validateField($Request, self::PARAM_SUBMIT);
 
+        RequestEntry::createFromRequest($Request, $Account);
 
         switch($submit) {
             case 'add-review-tag':

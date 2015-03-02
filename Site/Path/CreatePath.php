@@ -33,6 +33,7 @@ use CPath\UnitTest\IUnitTestRequest;
 use Site\Account\DB\AccountEntry;
 use Site\Path\DB\PathEntry;
 use Site\Path\DB\PathTable;
+use Site\Request\DB\RequestEntry;
 use Site\SiteMap;
 
 class CreatePath implements IExecutable, IBuildable, IRoutable, ITestable
@@ -60,7 +61,7 @@ class CreatePath implements IExecutable, IBuildable, IRoutable, ITestable
 		if (!$SessionRequest instanceof ISessionRequest)
 			throw new \Exception("Session required");
 
-        AccountEntry::loadFromSession($SessionRequest);
+        $Account = AccountEntry::loadFromSession($SessionRequest);
 
 		$Form = new HTMLForm(self::FORM_METHOD, $Request->getPath(), self::FORM_NAME,
 			new HTMLMetaTag(HTMLMetaTag::META_TITLE, self::TITLE),
@@ -127,7 +128,9 @@ class CreatePath implements IExecutable, IBuildable, IRoutable, ITestable
         if($MatchingPath)
             throw new \InvalidArgumentException("A published path already has this name. What gives!?");
 
-		PathEntry::create($Request, $path, $title, $content, $status);
+        RequestEntry::createFromRequest($Request, $Account);
+
+        PathEntry::create($Request, $path, $title, $content, $status);
 
         return new RedirectResponse(ManagePath::getRequestURL($path), "Path created successfully. How empathic is that...", 5);
 	}

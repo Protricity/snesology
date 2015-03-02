@@ -26,5 +26,11 @@ class HTMLRequestHistory extends HTMLPDOQueryTable
         if($path)
             $Query->where(RequestTable::COLUMN_PATH, $path);
         parent::__construct($Query);
+
+        $this->addColumn('path');
+        $this->addSearchColumn(RequestTable::COLUMN_PATH, 'path');
+        $this->addColumn('account');
+        $this->addColumn('created');
+        $this->addSortColumn(RequestTable::COLUMN_CREATED, 'created');
     }
 }

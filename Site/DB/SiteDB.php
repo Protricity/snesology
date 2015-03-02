@@ -13,6 +13,7 @@ use CPath\Data\Schema\IWritableSchema;
 use CPath\Data\Schema\PDO\AbstractPDOTable;
 use PDO;
 use Site\Account\DB\AccountTable;
+use Site\Request\DB\RequestTable;
 use Site\Song\Artist\DB\ArtistTable;
 use Site\Song\DB\SongTable;
 use Site\Song\Genre\DB\GenreTable;
@@ -65,6 +66,7 @@ class SiteDB extends \PDO implements IReadableSchema, IRepairableSchema
                 new SystemTable(),
                 new GenreTable(),
                 new ArtistTable(),
+                new RequestTable(),
 			) as $Table) {
 			/** @var AbstractPDOTable $Table */
 			$Table->writeSchema($DB);

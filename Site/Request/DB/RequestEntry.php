@@ -123,7 +123,7 @@ class RequestEntry implements IBuildable, IKeyMap
 	 */
 	function mapKeys(IKeyMapper $Map) {
         $Map->map('path', $this->getPath());
-        $Map->map('account', $this->getAccountFingerprint());
+        $Map->map('account', $this->getAccountFingerprint(), $this->getAccountName());
         $Map->map('log', $this->getLog());
         $Map->map('request', $this->getRequestData());
         $Map->map('created', $this->getCreatedTimestamp());

@@ -33,8 +33,10 @@ use CPath\Response\Common\RedirectResponse;
 use CPath\Response\IResponse;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
+use Site\Account\DB\AccountEntry;
 use Site\Config;
 use Site\Render\PopUpBox\HTMLPopUpBox;
+use Site\Request\DB\RequestEntry;
 use Site\SiteMap;
 use Site\Song\DB\SongEntry;
 use Site\Song\Review\HTML\HTMLSongReviewsTable;
@@ -75,6 +77,8 @@ class ManageSong implements IExecutable, IBuildable, IRoutable
 		$SessionRequest = $Request;
 		if (!$SessionRequest instanceof ISessionRequest)
 			throw new \Exception("Session required");
+
+        $Account = AccountEntry::loadFromSession($SessionRequest);
 
         $Song = SongEntry::get($this->id);
 
@@ -213,6 +217,8 @@ class ManageSong implements IExecutable, IBuildable, IRoutable
 			return $Form;
 
         $submit = $Form->validateField($Request, self::PARAM_SUBMIT);
+
+        RequestEntry::createFromRequest($Request, $Account);
 
         switch($submit) {
             case 'add-song-tag':

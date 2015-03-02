@@ -38,12 +38,13 @@ class SiteIndex implements IExecutable, IBuildable, IRoutable
 //			new HTMLHeaderScript(__DIR__ . '\assets\form-login.js'),
 //			new HTMLHeaderStyleSheet(__DIR__ . '\assets\form-login.css'),
 // http://snesology.tumblr.com/rss
-			new HTMLElement('fieldset',
-				new HTMLElement('legend', 'legend-submit', self::TITLE),
+			new HTMLElement('fieldset', 'legend-page inline',
+				new HTMLElement('legend', 'legend-page', self::TITLE),
 
                 "Beta Test Coming Soon"
 			),
 
+            "<br/>",
             new HTMLElement('fieldset', 'fieldset-contribution-history inline',
                 new HTMLElement('legend', 'legend-contribution-history', "Contribution History"),
 

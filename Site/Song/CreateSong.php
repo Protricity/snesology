@@ -293,7 +293,7 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
      */
     static function handleStaticUnitTest(IUnitTestRequest $Test) {
         $Session = &$Test->getSession();
-        $TestAccount = new AccountEntry('test-fp');
+        $TestAccount = new AccountEntry('ABCDABCDABCDABCDtest-fp');
         $Session[AccountEntry::SESSION_KEY] = serialize($TestAccount);
 
         SongEntry::table()->delete(SongTable::COLUMN_TITLE, 'test-song-title');
