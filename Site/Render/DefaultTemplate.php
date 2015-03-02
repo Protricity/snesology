@@ -10,9 +10,12 @@ namespace Site\Render;
 use CPath\Build\IBuildable;
 use CPath\Build\IBuildRequest;
 use CPath\Data\Date\DateUtil;
+use CPath\Render\Helpers\RenderIndents as RI;
 use CPath\Render\HTML\Element\HTMLElement;
 use CPath\Render\HTML\Header\HeaderConfig;
 use CPath\Render\HTML\Header\HTMLMetaTag;
+use CPath\Render\HTML\Header\IHeaderWriter;
+use CPath\Render\HTML\Header\IHTMLSupportHeaders;
 use CPath\Render\HTML\HTMLConfig;
 use CPath\Render\HTML\HTMLContainer;
 use CPath\Render\HTML\HTMLMimeType;
@@ -29,6 +32,9 @@ use CPath\Route\RouteBuilder;
 use CPath\Route\RouteIndex;
 use CPath\Route\RouteRenderer;
 use Site\Account\ViewAccount;
+use Site\Path\HTML\HTMLPathTip;
+use Site\Render\PopUpBox\HTMLPopUpBox;
+use Site\Song\Artist\ViewArtist;
 use Site\Config;
 use Site\Path\DB\PathEntry;
 use Site\Path\IProcessSubPaths;
@@ -153,6 +159,8 @@ class DefaultTemplate extends HTMLContainer implements IRoutable, IBuildable {
 		//new HTMLAjaxSupportHeaders(),
 			new PGPSupportHeaders()
 		);
+        foreach(HTMLConfig::getSupportHeaders() as $Headers)
+            $Template->addSupportHeaders($Headers);
 //
 //        foreach($SubPaths as $SubPath) {
 //            $processed = false;
@@ -177,11 +185,11 @@ class DefaultTemplate extends HTMLContainer implements IRoutable, IBuildable {
 	}
 }
 
-class CustomHTMLValueRenderer implements IHTMLValueRenderer {
-	private $domain;
+class CustomHTMLValueRenderer implements IHTMLValueRenderer, IHTMLSupportHeaders {
+    private $Request;
 
 	function __construct(IRequest $Request) {
-		$this->domain = $Request->getDomainPath();
+		$this->Request = $Request;
 	}
 
 
@@ -196,20 +204,38 @@ class CustomHTMLValueRenderer implements IHTMLValueRenderer {
             case 'song-created':
 			case 'created':
 				if($value)
-					echo DateUtil::ago($value) . ' ago';
+					echo DateUtil::elapsedTime($value);
 				return true;
 
             case 'inviter-fingerprint':
             case 'inviter':
             case 'fingerprint':
-                $href = $this->domain . ltrim(ViewAccount::getRequestURL($value), '/');
+                $domain = $this->Request->getDomainPath();
+                $href = $domain . ltrim(ViewAccount::getRequestURL($value), '/');
                 echo "<a href='{$href}'>", $arg1 ?: $value, "</a>";
                 return true;
 
             case 'song':
             case 'song-id':
-                $href = $this->domain . ltrim(ManageSong::getRequestURL($value), '/');
+            $domain = $this->Request->getDomainPath();
+                $href = $domain . ltrim(ManageSong::getRequestURL($value), '/');
                 echo "<a href='{$href}'>", $arg1 ?: $value, "</a>";
+                return true;
+
+            case 'description':
+            case 'song-description':
+                $PopUp = new HTMLPopUpBox($value, HTMLPopUpBox::CLASS_DESCRIPTION);
+                $PopUp->renderHTML($this->Request);
+                return true;
+
+            case 'artist':
+            case 'song-artist':
+                $domain = $this->Request->getDomainPath();
+                foreach(explode(', ', $value) as $i => $artist) {
+                    $href = $domain . ltrim(ViewArtist::getRequestURL($artist), '/');
+                    echo $i > 0 ? ', ' : '';
+                    echo "<a href='{$href}'>", $artist, "</a>";
+                }
                 return true;
 
             case 'url':
@@ -224,7 +250,8 @@ class CustomHTMLValueRenderer implements IHTMLValueRenderer {
                 return true;
 
             case 'path':
-                $href = $this->domain . ltrim(ManagePath::getRequestURL($value), '/');
+                $domain = $this->Request->getDomainPath();
+                $href = $domain . ltrim(ManagePath::getRequestURL($value), '/');
                 echo "<a href='{$href}'>", $arg1 ?: $value, "</a>";
                 return true;
 
@@ -239,4 +266,15 @@ class CustomHTMLValueRenderer implements IHTMLValueRenderer {
 	function renderValue($value) {
 		return false;
 	}
+
+    /**
+     * Write all support headers used by this renderer
+     * @param IRequest $Request
+     * @param IHeaderWriter $Head the writer inst to use
+     * @return void
+     */
+    function writeHeaders(IRequest $Request, IHeaderWriter $Head) {
+        $PopupBox = new HTMLPopUpBox(null);
+        $PopupBox->writeHeaders($Request, $Head);
+    }
 }

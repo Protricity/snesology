@@ -158,13 +158,33 @@ class SongEntry implements IBuildable, IKeyMap, ISerializable
 
     public function getTagList() {
         $tags = explode('||', $this->tags);
-        $tagList = array();
+        foreach($tags as &$tag)
+            $tag = explode('::', $tag);
+        return $tags;
+    }
+
+    public function hasTag($tagName, $tagValue=null) {
+        foreach($this->getTagList() as $tag) {
+            list($name, $value) = $tag;
+            if($name === $tagName) {
+                if($tagValue === null || $tagValue = $value) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public function getArtistList() {
+        $tags = explode('||', $this->tags);
+        $artistList = array();
         foreach($tags as &$tag) {
             list($key, $value) = explode('::', $tag);
-            if($key)
-                $tagList[$key] = $value;
+            if($key === SongTagEntry::TAG_ARTIST) {
+                $artistList[] = $value;
+            }
         }
-        return $tagList;
+        return $artistList;
     }
 
     public function update(IRequest $Request, $title=null, $description=null) {
@@ -197,8 +217,10 @@ class SongEntry implements IBuildable, IKeyMap, ISerializable
         $Map->map('song-description', $this->getDescription());
         $Map->map('song-genres', $this->genres);
         $Map->map('song-systems', $this->systems);
-        foreach($this->getTagList() as $name => $value)
-            $Map->map('tag-' . $name, $value);
+        foreach($this->getTagList() as $tag) {
+            list($key, $value) = $tag;
+            $Map->map('song-' . $key, $value);
+        }
 	}
 
     public function addTag($Request, $tagName, $tagValue) {
@@ -213,12 +235,10 @@ class SongEntry implements IBuildable, IKeyMap, ISerializable
         if($this->hasFlags(SongEntry::STATUS_PUBLISHED))
             throw new ValidationException($Form, "Song is already published");
 
-        $tags = $this->getTagList();
-
-        if(!$tags[SongTagEntry::TAG_URL])
+        if(!$this->hasTag(SongTagEntry::TAG_URL_ORIGIN))
             throw new ValidationException($Form, "At least one URL is required to publish");
 
-        if(!$tags[SongTagEntry::TAG_URL_TORRENT] && !$tags[SongTagEntry::TAG_URL_DOWNLOAD])
+        if(!$this->hasTag(SongTagEntry::TAG_URL_ORIGIN) && !$this->hasTag(SongTagEntry::TAG_URL_ORIGIN))
             throw new ValidationException($Form, "At least one download URL is required to publish (file or torrent yo)");
 
         $status = $this->status | self::STATUS_PUBLISHED;
@@ -276,6 +296,16 @@ class SongEntry implements IBuildable, IKeyMap, ISerializable
             ->groupBy(SongTable::TABLE_NAME . '.' . SongTable::COLUMN_ID)
 
             ->setFetchMode(SongTable::FETCH_MODE, SongTable::FETCH_CLASS);
+    }
+
+    /**
+     * @param $artist
+     * @return PDOSelectBuilder
+     */
+    static function queryByArtist($artist) {
+        return self::query()
+            ->where(SongTagTable::COLUMN_TAG, SongTagEntry::TAG_ARTIST)
+            ->where(SongTagTable::COLUMN_VALUE, $artist);
     }
 
     static function create(IRequest $Request, $title, $description) {

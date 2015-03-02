@@ -192,7 +192,7 @@ class SongReviewEntry implements IBuildable, IKeyMap
         $count ?: $count = 10;
         return self::query()
             ->where(SongReviewTable::TABLE_NAME . '.' . SongReviewTable::COLUMN_SONG_ID, $songID)
-            ->orderBy(SongReviewTable::COLUMN_CREATED, "DESC")
+        ->orderBy(SongReviewTable::COLUMN_CREATED, "DESC")
             ->limit($count);
     }
 

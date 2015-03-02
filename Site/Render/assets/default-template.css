@@ -1,11 +1,19 @@
 
-/** Tool Tip Icon **/
+/** Popup Icon **/
 
 
-body .path-tip {
-    background-image: url("img/tooltip.gif");
+body .popup.info {
+    background-image: url("img/popup_info.gif");
     width: 16px;
     height: 16px;
+}
+
+body .popup.description {
+    background-image: url("img/popup_description.gif");
+    width: 14px;
+    height: 14px;
+    float: right;
+    margin-left: 0.5em;
 }
 
 
@@ -154,34 +162,10 @@ section.centered form * {
 a { color: #66F; }
 a:visited { color: #99B; }
 
-
-/** Message Boxes **/
-
-.log    { color: #333; }
-.info   { color: #777; font-style: italic; }
-.error  { color: darkred; font-weight: bold; font-style: italic;  }
-
-div.info,
-div.error {
-    padding: 0 4pt 4pt 4pt;
-    margin: 2pt -2pt;
-    border-radius: 4pt;
-/*     opacity: 0.2; */
-}
-/* div.info { background-color: #dde; border-top: 3pt solid #cce; } */
-/* div.error { background-color: #edd; border-top: 3pt solid #ecc; } */
-
-
 /** Form **/
 
 form {
-    /* position: relative; */
     font-kerning: initial;
-    /* font-family: monospace; */
-    /* display: inline-block; */
-    /* clear: left; */
-    /* padding: 1em; */
-    /* width: 68%; */
 }
 
 form > legend,
@@ -201,7 +185,6 @@ fieldset {
     border: 5pt ridge #EFEFEF;
     margin: 1em 1em 1em 1em;
     vertical-align: top;
-    /* width: 1027px; */
 }
 
 fieldset.inline {

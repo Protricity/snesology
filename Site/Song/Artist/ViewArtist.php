@@ -1,79 +1,65 @@
 <?php
 /**
- * Created by PhpStorm.
+ * Viewd by PhpStorm.
  * User: ari
  * Date: 1/27/2015
  * Time: 1:56 PM
  */
-namespace Site\Song;
+namespace Site\Song\Artist;
 
 use CPath\Build\IBuildable;
 use CPath\Build\IBuildRequest;
-use CPath\Render\HTML\Attribute\Attributes;
-use CPath\Render\HTML\Attribute\StyleAttributes;
-use CPath\Render\HTML\Element\Form\HTMLButton;
 use CPath\Render\HTML\Element\Form\HTMLForm;
 use CPath\Render\HTML\Element\HTMLElement;
-use CPath\Render\HTML\Element\Table\HTMLPDOQueryTable;
 use CPath\Render\HTML\Header\HTMLMetaTag;
-use CPath\Render\HTML\Pagination\HTMLPagination;
+use CPath\Request\Executable\ExecutableRenderer;
 use CPath\Request\Executable\IExecutable;
 use CPath\Request\IRequest;
 use CPath\Response\IResponse;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
 use Site\SiteMap;
-use Site\Song\DB\SongEntry;
-use Site\Song\DB\SongTable;
 use Site\Song\Review\HTML\HTMLArtistSongsTable;
-use Site\Song\Review\HTML\HTMLSongsTable;
+use Site\Song\Review\HTML\HTMLSongReviewsTable;
 
-class SearchSongs implements IExecutable, IBuildable, IRoutable
+class ViewArtist implements IExecutable, IBuildable, IRoutable
 {
-	const TITLE = 'Search Songs';
+	const TITLE = 'View Artist Information';
 
-	const FORM_ACTION = '/songs';
-	const FORM_ACTION2 = '/search/songs';
-	const FORM_METHOD = 'GET';
-	const FORM_NAME = __CLASS__;
+    const FORM_ACTION = '/sa/:id';
+    const FORM_ACTION2 = '/song/artist/:id';
+	const FORM_METHOD = 'POST';
+	const FORM_NAME = 'view-artist';
 
-	const PARAM_PAGE = 'page';
+    const PARAM_ARTIST = 'id';
+    const PARAM_Artist_TITLE = 'title';
+    const PARAM_Artist_GENRES = 'genres';
+    const PARAM_Artist_SYSTEMS = 'systems';
 
-	/**
+    private $tag;
+
+    public function __construct($artistTag) {
+        $this->tag = $artistTag;
+    }
+
+    /**
 	 * Execute a command and return a response. Does not render
 	 * @param IRequest $Request
+	 * @throws \Exception
 	 * @return IResponse the execution response
 	 */
 	function execute(IRequest $Request) {
-		$page = 0;
-		$total = null;
-		$row_count = 5;
-		if(isset($Request[self::PARAM_PAGE]))
-			$page = $Request[self::PARAM_PAGE];
-		$offset = $page * $row_count;
 
-		$Pagination = new HTMLPagination($row_count, $page, $total);
-		$SearchTable = new HTMLSongsTable("{$row_count} OFFSET {$offset}");
+        $ArtistSongs = new HTMLArtistSongsTable($this->tag);
 
-        $SearchTable->validateRequest($Request);
-
-		$Form = new HTMLForm(self::FORM_METHOD, $Request->getPath(), self::FORM_NAME,
+        $Form = new HTMLForm(self::FORM_METHOD, $Request->getPath(), self::FORM_NAME,
 			new HTMLMetaTag(HTMLMetaTag::META_TITLE, self::TITLE),
-//			new HTMLHeaderScript(__DIR__ . '\assets\form-login.js'),
-//			new HTMLHeaderStyleSheet(__DIR__ . '\assets\form-login.css'),
 
-//			new HTMLElement('h3', null, self::TITLE),
+            new HTMLElement('fieldset',
+                new HTMLElement('legend', 'legend-artist-songs', self::TITLE),
 
-			new HTMLElement('fieldset',
-				new HTMLElement('legend', 'legend-submit', self::TITLE),
-//                new StyleAttributes('width', '80%'),
-				$SearchTable,
-				$Pagination,
-
-				"<br/><br/>",
-				new HTMLButton('submit', 'Submit', 'submit')
-			),
-			"<br/>"
+                $ArtistSongs
+            )
 		);
 
 		return $Form;
@@ -81,8 +67,8 @@ class SearchSongs implements IExecutable, IBuildable, IRoutable
 
 	// Static
 
-	public static function getRequestURL() {
-		return self::FORM_ACTION;
+	public static function getRequestURL($artist) {
+		return str_replace(':' . self::PARAM_ARTIST, urlencode($artist), self::FORM_ACTION);
 	}
 
 	/**
@@ -96,7 +82,7 @@ class SearchSongs implements IExecutable, IBuildable, IRoutable
 	 * If an object is returned, it is passed along to the next handler
 	 */
 	static function routeRequestStatic(IRequest $Request, Array &$Previous = array(), $_arg = null) {
-		return new static();
+		return new ExecutableRenderer(new static(urldecode($Request[self::PARAM_ARTIST])), true);
 	}
 
 	/**
@@ -109,6 +95,6 @@ class SearchSongs implements IExecutable, IBuildable, IRoutable
 	static function handleBuildStatic(IBuildRequest $Request) {
 		$RouteBuilder = new RouteBuilder($Request, new SiteMap());
 		$RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION, __CLASS__);
-		$RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION2, __CLASS__);
-	}
+        $RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION2, __CLASS__);
+    }
 }

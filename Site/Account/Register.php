@@ -74,10 +74,10 @@ Version: GnuPG v1
 ...
 -----END PGP PUBLIC KEY BLOCK-----";
 
-    const TIPS_GEN = "<div class='path-tip'></div><b>Generate PGP Key Pair</b><br/><br/>This fieldset generates a new PGP Key pair and stores it on your browser. Only the public key is sent to the server";
-    const TIPS_PGP = "<div class='path-tip'></div><b>PGP Public Key</b><br/><br/>This fieldset contains the PGP Public Key used to create your new account";
-    const TIPS_PGP_LOAD_STORAGE = "<div class='path-tip'></div><b>Load from Browser</b><br/><br/>This button will cycle through any PGP Key pairs stored on your browser and load the public key";
-    const TIPS_PGP_LOAD_FILE = "<div class='path-tip'></div><b>Load from File</b><br/><br/>This field allows you to load a PGP Public Key from a text file";
+    const TIPS_GEN = "<b>Generate PGP Key Pair</b><br/><br/>This fieldset generates a new PGP Key pair and stores it on your browser. Only the public key is sent to the server";
+    const TIPS_PGP = "<b>PGP Public Key</b><br/><br/>This fieldset contains the PGP Public Key used to create your new account";
+    const TIPS_PGP_LOAD_STORAGE = "<b>Load from Browser</b><br/><br/>This button will cycle through any PGP Key pairs stored on your browser and load the public key";
+    const TIPS_PGP_LOAD_FILE = "<b>Load from File</b><br/><br/>This field allows you to load a PGP Public Key from a text file";
 
     private $mNewAccountFingerprint = null;
 

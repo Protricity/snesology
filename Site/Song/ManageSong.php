@@ -86,7 +86,6 @@ class ManageSong implements IExecutable, IBuildable, IRoutable
 
         $oldGenres = $Song->getGenreList();
         $oldSystems = $Song->getSystemList();
-        $oldTags = $Song->getTagList();
 
         $ReviewTable = new HTMLSongReviewsTable($Request, $Song->getID());
 
@@ -163,7 +162,7 @@ class ManageSong implements IExecutable, IBuildable, IRoutable
                 ),
 
                 "<br/><br/>",
-                new HTMLButton(self::PARAM_SUBMIT, 'Add Tag', 'add-review-tag')
+                new HTMLButton(self::PARAM_SUBMIT, 'Add Tag', 'add-song-tag')
             ),
 
             new HTMLElement('fieldset', 'fieldset-manage-song-tags-remove inline',
@@ -177,7 +176,7 @@ class ManageSong implements IExecutable, IBuildable, IRoutable
                 ),
 
                 "<br/><br/>",
-                new HTMLButton(self::PARAM_SUBMIT, 'Remove Tag', 'remove-review-tag')
+                new HTMLButton(self::PARAM_SUBMIT, 'Remove Tag', 'remove-song-tag')
             ),
 
             new HTMLElement('fieldset', 'fieldset-song-info inline',
@@ -202,9 +201,10 @@ class ManageSong implements IExecutable, IBuildable, IRoutable
         foreach($oldGenres as $genre)
             $SelectGenre->addOption($genre, $genre, true);
 
-        foreach($oldTags as $name => $value) {
-            $title = array_search($name, SongTagEntry::$TagDefaults) ?: $name;
-            $SelectRemoveTag->addOption($name.':'.$value, "{$title} - {$value}");
+        foreach($Song->getTagList() as $tag) {
+            list($tagName, $tagValue) = $tag;
+            $title = array_search($tagName, SongTagEntry::$TagDefaults) ?: $tagName;
+            $SelectRemoveTag->addOption($tagName.':'.$tagValue, "{$title} - {$value}");
         }
 
 		if(!$Request instanceof IFormRequest)
@@ -213,13 +213,13 @@ class ManageSong implements IExecutable, IBuildable, IRoutable
         $submit = $Form->validateField($Request, self::PARAM_SUBMIT);
 
         switch($submit) {
-            case 'add-tag':
+            case 'add-song-tag':
                 $tagName = $Form->validateField($Request, self::PARAM_SONG_TAG_NAME);
                 $tagValue = $Form->validateField($Request, self::PARAM_SONG_TAG_VALUE);
                 $Song->addTag($Request, $tagName, $tagValue);
                 return new RedirectResponse(ManageSong::getRequestURL($Song->getID()), "Updated song successfully. Misdirecting...", 5);
 
-            case 'remove-tag':
+            case 'remove-song-tag':
                 list($tagName, $tagValue) = explode(':', $Form->validateField($Request, self::PARAM_SONG_REMOVE_TAG), 2);
                 $Song->removeTag($Request, $tagName, $tagValue);
                 return new RedirectResponse(ManageSong::getRequestURL($Song->getID()), "Removed tag successfully. Reexploding...", 5);

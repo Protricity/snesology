@@ -53,9 +53,9 @@ class Login implements IExecutable, IBuildable, IRoutable
 	const PARAM_CHALLENGE_ANSWER = 'challenge-answer';
 	const PARAM_PASSPHRASE = 'passphrase';
 
-    const TIP_SELECT = 'Select your user ID from the menu.
+    const TIP_SELECT = '<b>PGP User IDs</b><br /><br />Select your user ID from the menu.
 If your user ID does not appear, it may not be stored on your browser';
-    const TIP_CHALLENGE = 'This is your login <b>grant challenge</b>.
+    const TIP_CHALLENGE = '<b>Login Challenge</b><br /><br />This is your login <b>grant challenge</b>.
 In order to log in, the challenge must be decrypted using your <b>private key</b> in order to prove your identity.
 If your private key is stored on your browser, the challenge should be automatically solved.
 Once the <b>challenge answer</b> is entered, you may log in';

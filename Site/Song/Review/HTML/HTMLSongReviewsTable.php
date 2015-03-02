@@ -9,7 +9,11 @@ namespace Site\Song\Review\HTML;
 
 use CPath\Render\HTML\Element\Table\HTMLPDOQueryTable;
 use CPath\Request\IRequest;
+use Site\Song\DB\SongEntry;
+use Site\Song\DB\SongTable;
 use Site\Song\Review\DB\SongReviewEntry;
+use Site\Song\Tag\DB\SongTagEntry;
+use Site\Song\Tag\DB\SongTagTable;
 
 class HTMLSongReviewsTable extends HTMLPDOQueryTable
 {

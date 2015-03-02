@@ -55,7 +55,7 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
     const PARAM_SONG_GENRES = 'song-genres';
     const PARAM_SONG_SYSTEMS = 'song-systems';
     const PARAM_SONG_DESCRIPTION = 'song-description';
-    const TIPS_CREATE_SONG = "<div class='path-tip'></div><b>Create a new song entry</b><br/><br/>This fieldset enters a new song into the database";
+    const TIPS_CREATE_SONG = "<b>Create a new song entry</b><br/><br/>This fieldset enters a new song into the database";
 
     private $newSongID;
 

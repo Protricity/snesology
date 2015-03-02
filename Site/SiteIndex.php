@@ -40,7 +40,7 @@ class SiteIndex implements IExecutable, IBuildable, IRoutable
 			new HTMLElement('fieldset',
 				new HTMLElement('legend', 'legend-submit', self::TITLE),
 
-				new HTMLButton('submit', 'Submit', 'submit')
+                "Coming Soon"
 			)
 		);
 
