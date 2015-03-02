@@ -118,7 +118,7 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
                     new HTMLElement('label', null, "Description:<br/>",
                         new HTMLTextAreaField(self::PARAM_SONG_DESCRIPTION,
                             new Attributes('placeholder', 'Enter a song description'),
-                            new Attributes('rows', 6, 'cols', 32),
+                            new Attributes('rows', 6, 'cols', 30),
                             new RequiredValidation()
                         )
                     ),
