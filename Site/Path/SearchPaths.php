@@ -20,9 +20,9 @@ use CPath\Request\IRequest;
 use CPath\Response\IResponse;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
-use Site\SiteMap;
 use Site\Path\DB\PathEntry;
 use Site\Path\DB\PathTable;
+use Site\SiteMap;
 
 class SearchPaths implements IExecutable, IBuildable, IRoutable
 {

@@ -42,9 +42,6 @@ class SiteMap implements IRouteMap, IBuildable
 			// @group Site\Account\Login
 			$Map->route('ANY /login/:fingerprint', 'Site\\Account\\Login', 288, 'Login') ||
 
-			// @group Site\Account\Logout
-			$Map->route('ANY /logout/', 'Site\\Account\\Logout', 272, 'Logout') ||
-
 			// @group Site\Account\Register
 			$Map->route('ANY /register/', 'Site\\Account\\Register', 288, 'Register') ||
 
@@ -59,7 +56,7 @@ class SiteMap implements IRouteMap, IBuildable
 
 			// @group Site\Path\CreatePath
 			$Map->route('ANY /create/path/', 'Site\\Path\\CreatePath') ||
-			$Map->route('ANY /paths/', 'Site\\Path\\CreatePath', 272, 'Paths') ||
+			$Map->route('ANY /paths/', 'Site\\Path\\CreatePath') ||
 
 			// @group Site\Path\ManagePath
 			$Map->route('ANY /manage/path/:path', 'Site\\Path\\ManagePath') ||
@@ -95,6 +92,10 @@ class SiteMap implements IRouteMap, IBuildable
 			// @group Site\Song\Genre\ManageGenre
 			$Map->route('ANY /manage/genre/:name', 'Site\\Song\\Genre\\ManageGenre') ||
 
+			// @group Site\Song\Genre\SearchGenres
+			$Map->route('ANY /genres/', 'Site\\Song\\Genre\\SearchGenres') ||
+			$Map->route('ANY /search/genres/', 'Site\\Song\\Genre\\SearchGenres') ||
+
 			// @group Site\Song\Genre\ViewGenre
 			$Map->route('ANY /sg/:name', 'Site\\Song\\Genre\\ViewGenre') ||
 			$Map->route('ANY /song/genre/:name', 'Site\\Song\\Genre\\ViewGenre') ||
@@ -119,6 +120,9 @@ class SiteMap implements IRouteMap, IBuildable
 			// @group Site\Song\ViewSong
 			$Map->route('ANY /s/:id', 'Site\\Song\\ViewSong') ||
 			$Map->route('ANY /view/song/:id', 'Site\\Song\\ViewSong') ||
+
+			// @group _1logout
+			$Map->route('ANY /logout/', 'Site\\Account\\Logout', 272, 'Logout') ||
 
 			// @group __default_template
 			$Map->route('ANY *', 'Site\\Render\\DefaultTemplate') ||

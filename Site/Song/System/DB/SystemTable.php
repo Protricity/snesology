@@ -1,7 +1,7 @@
 <?php
 namespace Site\Song\System\DB;
 
-use CPath\Data\Schema\PDO\AbstractPDOPrimaryKeyTable as AbstractBase;
+use CPath\Data\Schema\PDO\AbstractPDOTable as AbstractBase;
 use Site\DB\SiteDB as DB;
 use Site\Song\System\DB\SystemEntry as Entry;
 use CPath\Data\Schema\TableSchema;
@@ -9,8 +9,6 @@ use CPath\Data\Schema\TableSchema;
 /**
  * Class SystemTable
  * @table system
- * @method Entry insertOrUpdate($id, Array $insertData) insert or update a SystemEntry instance
- * @method Entry insertAndFetch(Array $insertData) insert and fetch a SystemEntry instance
  * @method Entry fetch($whereColumn, $whereValue=null, $compare='=?', $selectColumns=null) fetch a SystemEntry instance
  * @method Entry fetchOne($whereColumn, $whereValue=null, $compare='=?', $selectColumns=null) fetch a single SystemEntry
  * @method Entry[] fetchAll($whereColumn, $whereValue=null, $compare='=?', $selectColumns=null) fetch an array of SystemEntry[]
@@ -18,17 +16,9 @@ use CPath\Data\Schema\TableSchema;
 class SystemTable extends AbstractBase {
 	const TABLE_NAME = 'system';
 	const FETCH_CLASS = 'Site\\Song\\System\\DB\\SystemEntry';
-	const SELECT_COLUMNS = 'id, name, description, status, created';
+	const SELECT_COLUMNS = 'name, description, status, created';
 	const INSERT_COLUMNS = 'name, description, status, created';
-	const SEARCH_COLUMNS = 'id, name';
-	const PRIMARY_COLUMN = 'id';
-	/**
-
-	 * @column VARCHAR(64) PRIMARY KEY
-	 * @select
-	 * @search
-	 */
-	const COLUMN_ID = 'id';
+	const SEARCH_COLUMNS = 'name';
 	/**
 
 	 * @column VARCHAR(64) NOT NULL

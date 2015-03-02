@@ -24,7 +24,6 @@ use CPath\Route\RouteBuilder;
 use Site\SiteMap;
 use Site\Song\Artist\DB\ArtistEntry;
 use Site\Song\Review\HTML\HTMLArtistSongsTable;
-use Site\Song\Review\HTML\HTMLSongReviewsTable;
 
 class ViewArtist implements IExecutable, IBuildable, IRoutable
 {

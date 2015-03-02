@@ -25,7 +25,7 @@ use CPath\Request\Executable\IExecutable;
 use CPath\Request\Form\IFormRequest;
 use CPath\Request\IRequest;
 use CPath\Request\Session\ISessionRequest;
-use CPath\Request\Validation\Exceptions\ValidationException;
+use CPath\Request\Validation\Exceptions\ValidationExcepton;
 use CPath\Request\Validation\RequiredValidation;
 use CPath\Request\Validation\UserNameOrEmailValidation;
 use CPath\Request\Validation\ValidationCallback;
@@ -37,14 +37,13 @@ use CPath\UnitTest\IUnitTestRequest;
 use Site\Account\DB\AccountEntry;
 use Site\Account\DB\AccountTable;
 use Site\Config;
+use Site\Path\HTML\HTMLPathTip;
 use Site\PGP\Commands\PGPDeletePublicKeyCommand;
 use Site\PGP\Commands\PGPImportPublicKeyCommand;
 use Site\PGP\Commands\PGPSearchCommand;
 use Site\PGP\Exceptions\PGPKeyAlreadyImported;
 use Site\PGP\PublicKey;
-use Site\Relay\PathLog;
 use Site\SiteMap;
-use Site\Path\HTML\HTMLPathTip;
 
 class Register implements IExecutable, IBuildable, IRoutable, ITestable
 {

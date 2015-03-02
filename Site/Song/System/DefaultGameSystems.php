@@ -14,18 +14,24 @@ class DefaultGameSystems
     public function getDefaults() {
         return array(
 //            "VES",
+//            "Tracker",
             "Atari 2600",
             "Commodore 64",
-            
+
+//            "8-bit",
             "Nintendo",
+
+//            "FM Synthesis",
             "Sega Master System",
             "Atari XEGS",
             "Atari 7800",
-            
+
+//            "16-bit",
+            "Super Nintendo",
+
             "Turbo Grafx",
             "Sega Genesis",
             "NEO GEO",
-            "Super Nintendo",
             
             "Atari Jaguar",
             "3D0",

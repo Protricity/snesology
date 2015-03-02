@@ -34,6 +34,7 @@ use CPath\Response\IResponse;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
 use Site\Config;
+use Site\Render\PopUpBox\HTMLPopUpBox;
 use Site\SiteMap;
 use Site\Song\DB\SongEntry;
 use Site\Song\Review\HTML\HTMLSongReviewsTable;
@@ -110,8 +111,9 @@ class ManageSong implements IExecutable, IBuildable, IRoutable
                     )
                 ),
 
-                "<br/>Allowed Tags:<br/>",
-                "<div class='info'>&#60;" . implode('&#62;, &#60;', Config::$AllowedTags) . '&#62;</div>',
+                "<br/>",
+                new HTMLPopUpBox('&#60;' . implode('&#62;, &#60;', Config::$AllowedTags) . '&#62;', HTMLPopUpBox::CLASS_INFO, 'Allowed Tags'),
+
 
 //                "<br/><br/>",
 //                new HTMLElement('label', null, "Game Systems:<br/>",
@@ -139,7 +141,7 @@ class ManageSong implements IExecutable, IBuildable, IRoutable
                     new HTMLElement('legend', 'legend-song-publish', "Publish!"),
 
                     "Tags in place? <br/> All ready to go? <br/><br/>",
-                    new HTMLButton(self::PARAM_SUBMIT, 'Publish song', 'publish')
+                    new HTMLButton(self::PARAM_SUBMIT, 'Publish "' . $Song->getTitle() . '"', 'publish')
                 )
             ),
 

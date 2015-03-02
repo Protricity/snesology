@@ -33,8 +33,6 @@ use Site\Account\DB\AccountEntry;
 use Site\Relay\DB\RelayLogEntry;
 use Site\Relay\DB\RelayLogTable;
 use Site\SiteMap;
-use Site\Path\DB\PathEntry;
-use Site\Path\DB\PathTable;
 
 class CreateLogEntry implements IExecutable, IBuildable, IRoutable, ITestable
 {

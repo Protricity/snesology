@@ -36,6 +36,7 @@ use CPath\Route\RouteBuilder;
 use Site\Account\DB\AccountEntry;
 use Site\Config;
 use Site\Path\HTML\HTMLPathTip;
+use Site\Render\PopUpBox\HTMLPopUpBox;
 use Site\SiteMap;
 use Site\Song\DB\SongEntry;
 use Site\Song\Review\DB\SongReviewEntry;
@@ -112,8 +113,8 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable
                     )
                 ),
 
-                "<br/>Allowed Tags:<br/>",
-                "<div class='info'>&#60;" . implode('&#62;, &#60;', Config::$AllowedTags) . '&#62;</div>',
+                "<br/>",
+                new HTMLPopUpBox('&#60;' . implode('&#62;, &#60;', Config::$AllowedTags) . '&#62;', HTMLPopUpBox::CLASS_INFO, 'Allowed Tags'),
 
                 "<br/><br/>",
                 new HTMLElement('label', null, "Status:<br/>",
