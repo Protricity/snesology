@@ -22,7 +22,7 @@ use CPath\Route\RouteBuilder;
 use Site\SiteMap;
 use Site\Song\Genre\HTML\HTMLGenresTable;
 
-class SearchGenres implements IExecutable, IBuildable, IRoutable
+class SearchGenres implements IExecutable, IRoutable
 {
 	const TITLE = 'Search Genres';
 
@@ -93,16 +93,16 @@ class SearchGenres implements IExecutable, IBuildable, IRoutable
 		return new static();
 	}
 
-	/**
-	 * Handle this request and render any content
-	 * @param IBuildRequest $Request the build request inst for this build session
-	 * @return void
-	 * @build --disable 0
-	 * Note: Use doctag 'build' with '--disable 1' to have this IBuildable class skipped during a build
-	 */
-	static function handleBuildStatic(IBuildRequest $Request) {
-		$RouteBuilder = new RouteBuilder($Request, new SiteMap());
-        $RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION, __CLASS__, IRequest::NAVIGATION_ROUTE, "Genres");
-        $RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION2, __CLASS__);
-    }
+//	/**
+//	 * Handle this request and render any content
+//	 * @param IBuildRequest $Request the build request inst for this build session
+//	 * @return void
+//	 * @build --disable q
+//	 * Note: Use doctag 'build' with '--disable 1' to have this IBuildable class skipped during a build
+//	 */
+//	static function handleBuildStatic(IBuildRequest $Request) {
+//		$RouteBuilder = new RouteBuilder($Request, new SiteMap());
+//        $RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION, __CLASS__, IRequest::NAVIGATION_ROUTE, "Genres");
+//        $RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION2, __CLASS__);
+//    }
 }

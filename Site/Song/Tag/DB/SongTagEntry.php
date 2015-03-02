@@ -25,11 +25,11 @@ use Site\DB\SiteDB;
  */
 class SongTagEntry implements IBuildable, IKeyMap, IRenderHTML
 {
-    const TAG_TYPE_DEFAULT = 's';
-    const TAG_TYPE_STRING = 's';
-    const TAG_TYPE_BOOLEAN = 'b';
-    const TAG_TYPE_NUMERIC = 'n';
-    const TAG_TYPE_URL = 'url';
+    const TYPE_DEFAULT = 's';
+    const TYPE_STRING = 's';
+    const TYPE_BOOLEAN = 'b';
+    const TYPE_NUMERIC = 'n';
+    const TYPE_URL = 'url';
 
     const TAG_URL_ORIGIN = 'url:origin';
     const TAG_URL_TORRENT = 'url:torrent';
@@ -40,11 +40,14 @@ class SongTagEntry implements IBuildable, IKeyMap, IRenderHTML
 
     const TAG_ENTRY_ACCOUNT = 'entry-account';
 
+    const TAG_ARTIST = 'artist';
     const TAG_GENRE = 'genre';
-
     const TAG_SYSTEM = 'system';
 
-    const TAG_ARTIST = 'artist';
+    const TAG_ORIGINAL = 'original';
+
+    const TAG_CHIP_STYLE = 'chip-style';
+
     const TAG_LYRICIST = 'lyricist';
     const TAG_COMPOSER = 'composer';
     const TAG_CONDUCTOR = 'conductor';
@@ -55,13 +58,13 @@ class SongTagEntry implements IBuildable, IKeyMap, IRenderHTML
 
     const TAG_RELEASE_YEAR = 'release-year';
 
-    const TAG_ORIGINAL_SONG = 'original-song';
 
     const TAG_DURATION = 'duration';
     const TAG_LANGUAGE = 'language';
     const TAG_PUBLISHER = 'publisher';
 
     const TAG_TRACK_NUMBER = 'track-number';
+    const TAG_SIMILAR = 'similar';
 
     static $TagDefaults = array(
         "Origin URL" => self::TAG_URL_ORIGIN,
@@ -71,12 +74,16 @@ class SongTagEntry implements IBuildable, IKeyMap, IRenderHTML
         "Album Cover URL (Front)" => self::TAG_URL_COVER_FRONT,
         "Album Cover URL (Back)" => self::TAG_URL_COVER_BACK,
 
-        "Entered By" => self::TAG_ENTRY_ACCOUNT,
-
+        "Artist" => self::TAG_ARTIST,
         "Genre" => self::TAG_GENRE,
         "System" => self::TAG_SYSTEM,
 
-        "Artist" => self::TAG_ARTIST,
+        "Original Song" => self::TAG_ORIGINAL,
+        "Similar Song" => self::TAG_SIMILAR,
+
+        "Entered By" => self::TAG_ENTRY_ACCOUNT,
+        "Chip Style" => self::TAG_CHIP_STYLE,
+
         "Lyricist" => self::TAG_LYRICIST,
         "Composer" => self::TAG_COMPOSER,
         "Conductor" => self::TAG_CONDUCTOR,
@@ -86,7 +93,6 @@ class SongTagEntry implements IBuildable, IKeyMap, IRenderHTML
         "Bitrate" => self::TAG_BITRATE,
 
         "Release Year" => self::TAG_RELEASE_YEAR,
-        "Original Song" => self::TAG_ORIGINAL_SONG,
 
         "Duration" => self::TAG_DURATION,
         "Language" => self::TAG_LANGUAGE,
@@ -173,7 +179,7 @@ class SongTagEntry implements IBuildable, IKeyMap, IRenderHTML
 
         if(!$inserted)
             throw new \InvalidArgumentException("Could not insert " . __CLASS__);
-        $Request->log("Tag added to song: " . $tag, $Request::VERBOSE);
+        $Request->log("Tag added to song: " . $tag . '=' . $tagValue, $Request::VERBOSE);
     }
 
     static function table() {

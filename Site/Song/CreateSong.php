@@ -36,6 +36,7 @@ use Site\Path\HTML\HTMLPathTip;
 use Site\SiteMap;
 use Site\Song\DB\SongEntry;
 use Site\Song\DB\SongTable;
+use Site\Song\Defaults\DefaultChipStyles;
 use Site\Song\Genre\DB\GenreEntry;
 use Site\Song\System\DB\SystemEntry;
 use Site\Song\Tag\DB\SongTagEntry;
@@ -50,10 +51,14 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
 	const FORM_NAME = 'create-song';
 
     const PARAM_SONG_TITLE = 'song-title';
+    const PARAM_SONG_ARTIST = 'song-artist';
     const PARAM_SONG_GENRE = 'song-genre';
     const PARAM_SONG_SYSTEM = 'song-system';
     const PARAM_SONG_DESCRIPTION = 'song-description';
     const TIPS_CREATE_SONG = "<b>Create a new song entry</b><br/><br/>This fieldset enters a new song into the database";
+    const PARAM_SONG_ORIGINAL = 'song-original';
+    const PARAM_SONG_SIMILAR = 'song-similar';
+    const PARAM_SONG_CHIP_STYLE = 'song-chip-style';
 
     private $newSongID;
 
@@ -87,6 +92,16 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
 
                 new HTMLPathTip($Request, '#gen-tips', self::TIPS_CREATE_SONG),
 
+                new HTMLElement('label', null, "Chip Style:<br/>",
+                    new HTMLSelectField(self::PARAM_SONG_CHIP_STYLE . '[]', DefaultChipStyles::getDefaults() + array(
+                            "Not a chip tune" => null,
+                        ),
+                        new Attributes('multiple', 'multiple'),
+                        new RequiredValidation()
+                    )
+                ),
+
+                "<br/><br/>",
                 new HTMLElement('label', null, "Song Title:<br/>",
                     new HTMLInputField(self::PARAM_SONG_TITLE,
                         new Attributes('placeholder', 'My Song Title'),
@@ -94,15 +109,22 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
                     )
                 ),
 
-
                 "<br/><br/>",
-                new HTMLElement('label', null, "Description:<br/>",
-                    new HTMLTextAreaField(self::PARAM_SONG_DESCRIPTION,
-                        new Attributes('placeholder', 'Enter a song description'),
-                        new Attributes('rows', 10, 'cols', 40),
+                new HTMLElement('label', null, "Song Artist(s) [comma delimited]:<br/>",
+                    new HTMLInputField(self::PARAM_SONG_ARTIST,
+                        new Attributes('placeholder', 'i.e. "Artist1, Artist2"'),
                         new RequiredValidation()
                     )
                 ),
+
+//                "<br/><br/>",
+//                new HTMLElement('label', null, "Description:<br/>",
+//                    new HTMLTextAreaField(self::PARAM_SONG_DESCRIPTION,
+//                        new Attributes('placeholder', 'Enter a song description'),
+//                        new Attributes('rows', 6, 'cols', 40),
+//                        new RequiredValidation()
+//                    )
+//                ),
 
                 "<br/><br/>",
                 new HTMLElement('label', null, "Game Systems:<br/>",
@@ -120,6 +142,24 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
                     )
                 ),
 
+                "<br/><br/>",
+                new HTMLElement('label', null, "Remix/Rearrangement/Cover of Original [comma delimited]:<br/>",
+                    new HTMLInputField(self::PARAM_SONG_ORIGINAL,
+                        new Attributes('placeholder', 'i.e. "SMB Castle Complete, SMB Hurry Castle"'),
+                        new Attributes('size', 32),
+                        new RequiredValidation()
+                    )
+                ),
+
+                "<br/><br/>",
+                new HTMLElement('label', null, "Similar Songs [comma delimited]:<br/>",
+                    new HTMLInputField(self::PARAM_SONG_SIMILAR,
+                        new Attributes('placeholder', 'i.e. "Thought You Could Castle, You Got Castled"'),
+                        new Attributes('size', 32),
+                        new RequiredValidation()
+                    )
+                ),
+
 				"<br/><br/>",
 				new HTMLButton('submit', 'Create', 'submit')
 			),
@@ -131,10 +171,16 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
 
         $Form->setFormValues($Request);
 
-        $genres = $Form->validateField($Request, self::PARAM_SONG_GENRE);
-        $systems = $Form->validateField($Request, self::PARAM_SONG_SYSTEM);
         $title = $Form->validateField($Request, self::PARAM_SONG_TITLE);
-        $description = $Form->validateField($Request, self::PARAM_SONG_DESCRIPTION);
+        $description = ''; // $Form->validateField($Request, self::PARAM_SONG_DESCRIPTION);
+
+        $tags[self::PARAM_SONG_ARTIST] = array(SongTagEntry::TAG_ARTIST, $Form->validateField($Request, self::PARAM_SONG_ARTIST));
+        $tags[self::PARAM_SONG_SYSTEM] = array(SongTagEntry::TAG_SYSTEM, $Form->validateField($Request, self::PARAM_SONG_SYSTEM));
+        $tags[self::PARAM_SONG_GENRE] = array(SongTagEntry::TAG_GENRE, $Form->validateField($Request, self::PARAM_SONG_GENRE));
+
+        $tags[self::PARAM_SONG_ORIGINAL] = array(SongTagEntry::TAG_ORIGINAL, $Form->validateField($Request, self::PARAM_SONG_ORIGINAL));
+        $tags[self::PARAM_SONG_SIMILAR] = array(SongTagEntry::TAG_SIMILAR, $Form->validateField($Request, self::PARAM_SONG_SIMILAR));
+        $tags[self::PARAM_SONG_CHIP_STYLE] = array(SongTagEntry::TAG_CHIP_STYLE, $Form->validateField($Request, self::PARAM_SONG_CHIP_STYLE));
 
         $MatchingSong = SongEntry::table()
             ->select()
@@ -146,12 +192,15 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
             throw new \InvalidArgumentException("A published song already has this name. What gives!?");
 
 		$Song = SongEntry::create($Request, $title, $description);
-        foreach($genres as $genre) {
-            $Song->addTag($Request, SongTagEntry::TAG_GENRE, $genre);
-        }
-
-        foreach($systems as $system) {
-            $Song->addTag($Request, SongTagEntry::TAG_SYSTEM, $system);
+        foreach($tags as $param => $info) {
+            list($tagName, $values) = $info;
+            if(!is_array($values))
+                $values = explode(',', $values);
+            foreach($values as $value) {
+                if($value) {
+                    $Song->addTag($Request, $tagName, $value);
+                }
+            }
         }
 
         $Song->addTag($Request, SongTagEntry::TAG_ENTRY_ACCOUNT, $Account->getFingerprint());
@@ -212,7 +261,11 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
 
         $Test->clearRequestParameters();
         $Test->setRequestParameter(self::PARAM_SONG_TITLE, 'test-song-title');
-        $Test->setRequestParameter(self::PARAM_SONG_DESCRIPTION, 'test-song-description');
+        $Test->setRequestParameter(self::PARAM_SONG_ARTIST, 'test-song-artist');
+        $Test->setRequestParameter(self::PARAM_SONG_SIMILAR, 'test-song-similar');
+        $Test->setRequestParameter(self::PARAM_SONG_ORIGINAL, 'test-song-original');
+        $Test->setRequestParameter(self::PARAM_SONG_CHIP_STYLE, '8-bit');
+//        $Test->setRequestParameter(self::PARAM_SONG_DESCRIPTION, 'test-song-description');
         $Test->setRequestParameter(self::PARAM_SONG_GENRE, array('test-song-genre'));
         $Test->setRequestParameter(self::PARAM_SONG_SYSTEM, array('test-song-system'));
         $CreateSong->execute($Test);

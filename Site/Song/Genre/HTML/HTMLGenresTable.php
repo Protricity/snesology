@@ -23,11 +23,11 @@ class HTMLGenresTable extends HTMLPDOQueryTable
         parent::__construct($Query);
         $this->addColumn('genre', 'genre');
         $this->addColumn('description', 'description');
-        $this->addColumn('status', 'status');
-        $this->addColumn('created', 'created');
+//        $this->addColumn('status', 'status');
+//        $this->addColumn('created', 'created');
 
         $this->addSearchColumn(GenreTable::COLUMN_NAME, 'genre');
-        $this->addSearchColumn(GenreTable::COLUMN_STATUS, 'status');
-        $this->addSearchColumn(GenreTable::COLUMN_CREATED, 'created');
+//        $this->addSearchColumn(GenreTable::COLUMN_STATUS, 'status');
+//        $this->addSearchColumn(GenreTable::COLUMN_CREATED, 'created');
     }
 }

@@ -19,10 +19,6 @@ use CPath\Render\HTML\Element\Form\HTMLForm;
 use CPath\Request\IRequest;
 use CPath\Request\Validation\Exceptions\ValidationException;
 use Site\DB\SiteDB;
-use Site\Song\Genre\DB\GenreTable;
-use Site\Song\Genre\DB\SongGenreTable;
-use Site\Song\System\DB\SongSystemTable;
-use Site\Song\System\DB\SystemTable;
 use Site\Song\Tag\DB\SongTagEntry;
 use Site\Song\Tag\DB\SongTagTable;
 
@@ -34,37 +30,26 @@ class SongEntry implements IBuildable, IKeyMap, ISerializable
 {
 	const ID_PREFIX = 'S';
 
-    const JOIN_COLUMN_SYSTEMS = 'systems';
-    const JOIN_COLUMN_GENRES = 'genres';
     const JOIN_COLUMN_TAGS = 'tags';
 
 //    const STATUS_NONE =                 0x000000;
     const STATUS_PUBLISHED =            0x000001;
+    const STATUS_CHIPTUNE =             0x000010;
 
-    const STATUS_ORIGINAL =             0x000010;
-    const STATUS_REMIX =                0x000020;
-    const STATUS_COVER =                0x000040;
+//    const STATUS_ORIGINAL =             0x000010;
+//    const STATUS_REMIX =                0x000020;
+//    const STATUS_COVER =                0x000040;
 
-    const STATUS_CHIPTUNE =             0x000100;
 
-    const STATUS_LYRICS =               0x001000;
-    const STATUS_INSTRUMENTAL =         0x002000;
-    const STATUS_SHEET_MUSIC =          0x004000;
+//    const STATUS_LYRICS =               0x001000;
+//    const STATUS_INSTRUMENTAL =         0x002000;
+//    const STATUS_SHEET_MUSIC =          0x004000;
 
     static $StatusOptions = array(
 //        "Unpublished" =>            self::STATUS_NONE,
         "Published" =>              self::STATUS_PUBLISHED,
 
-        "Chiptune" =>               self::STATUS_CHIPTUNE,
-
-        "Lyrics" =>                 self::STATUS_LYRICS,
-        "Instrumental" =>           self::STATUS_INSTRUMENTAL,
-        "Sheet Music" =>            self::STATUS_SHEET_MUSIC,
-
-
-        "Original" =>               self::STATUS_ORIGINAL,
-        "Remix" =>                  self::STATUS_REMIX,
-        "Cover" =>                  self::STATUS_COVER,
+        "Chip Tune" =>              self::STATUS_CHIPTUNE,
     );
 
     
