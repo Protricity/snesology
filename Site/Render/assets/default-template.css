@@ -75,7 +75,7 @@ section, div.section {
 }
 
 .navbar a {
-    background: url("img/button.jpg") left;
+    background: url("img/button-old.jpg") left;
     background-size: cover;
 
     color: #FFFFFF;
@@ -105,10 +105,10 @@ section, div.section {
 }
 
 .navbar a:hover {
-    background-image: url("img/buttonpress.jpg");
+    background-image: url("img/buttonpress-old.jpg");
     font-style: italic;
 
-    box-shadow: inset 1px 1px 1px #666;
+    /* box-shadow: inset 1px 1px 1px #666; */
 }
 
 .navbar a + a {
