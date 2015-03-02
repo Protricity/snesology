@@ -119,7 +119,7 @@ class GenreEntry implements IBuildable, IKeyMap
      * @return void
      */
     function mapKeys(IKeyMapper $Map) {
-        $Map->map('name', $this->getName());
+        $Map->map('genre', $this->getName());
         $Map->map('description', $this->getDescription());
         $Map->map('created', $this->created);
         $Map->map('status', implode(', ', $this->getStatusList()));

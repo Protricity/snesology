@@ -34,3 +34,4 @@ class HTMLSongsTable extends HTMLPDOQueryTable
         $this->addSearchColumn(SongTable::COLUMN_CREATED, 'created');
     }
 }
+

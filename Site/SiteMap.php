@@ -95,6 +95,10 @@ class SiteMap implements IRouteMap, IBuildable
 			// @group Site\Song\Genre\ManageGenre
 			$Map->route('ANY /manage/genre/:name', 'Site\\Song\\Genre\\ManageGenre') ||
 
+			// @group Site\Song\Genre\SearchGenres
+			$Map->route('ANY /genres/', 'Site\\Song\\Genre\\SearchGenres', 256, 'Genres') ||
+			$Map->route('ANY /search/genres/', 'Site\\Song\\Genre\\SearchGenres') ||
+
 			// @group Site\Song\Genre\ViewGenre
 			$Map->route('ANY /sg/:name', 'Site\\Song\\Genre\\ViewGenre') ||
 			$Map->route('ANY /song/genre/:name', 'Site\\Song\\Genre\\ViewGenre') ||
