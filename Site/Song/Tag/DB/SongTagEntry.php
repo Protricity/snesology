@@ -81,8 +81,9 @@ class SongTagEntry implements IBuildable, IKeyMap, IRenderHTML
         "Original Song" => self::TAG_ORIGINAL,
         "Similar Song" => self::TAG_SIMILAR,
 
-        "Entered By" => self::TAG_ENTRY_ACCOUNT,
         "Chip Style" => self::TAG_CHIP_STYLE,
+
+        "Entered By" => self::TAG_ENTRY_ACCOUNT,
 
         "Lyricist" => self::TAG_LYRICIST,
         "Composer" => self::TAG_COMPOSER,

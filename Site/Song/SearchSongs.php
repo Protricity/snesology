@@ -9,12 +9,9 @@ namespace Site\Song;
 
 use CPath\Build\IBuildable;
 use CPath\Build\IBuildRequest;
-use CPath\Render\HTML\Attribute\Attributes;
-use CPath\Render\HTML\Attribute\StyleAttributes;
 use CPath\Render\HTML\Element\Form\HTMLButton;
 use CPath\Render\HTML\Element\Form\HTMLForm;
 use CPath\Render\HTML\Element\HTMLElement;
-use CPath\Render\HTML\Element\Table\HTMLPDOQueryTable;
 use CPath\Render\HTML\Header\HTMLMetaTag;
 use CPath\Render\HTML\Pagination\HTMLPagination;
 use CPath\Request\Executable\IExecutable;
@@ -23,9 +20,6 @@ use CPath\Response\IResponse;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
 use Site\SiteMap;
-use Site\Song\DB\SongEntry;
-use Site\Song\DB\SongTable;
-use Site\Song\Review\HTML\HTMLArtistSongsTable;
 use Site\Song\Review\HTML\HTMLSongsTable;
 
 class SearchSongs implements IExecutable, IBuildable, IRoutable

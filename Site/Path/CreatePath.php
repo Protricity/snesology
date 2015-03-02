@@ -16,8 +16,6 @@ use CPath\Render\HTML\Element\Form\HTMLInputField;
 use CPath\Render\HTML\Element\Form\HTMLSelectField;
 use CPath\Render\HTML\Element\Form\HTMLTextAreaField;
 use CPath\Render\HTML\Element\HTMLElement;
-use CPath\Render\HTML\Header\HTMLHeaderScript;
-use CPath\Render\HTML\Header\HTMLHeaderStyleSheet;
 use CPath\Render\HTML\Header\HTMLMetaTag;
 use CPath\Request\Executable\ExecutableRenderer;
 use CPath\Request\Executable\IExecutable;
@@ -33,11 +31,9 @@ use CPath\Route\RouteBuilder;
 use CPath\UnitTest\ITestable;
 use CPath\UnitTest\IUnitTestRequest;
 use Site\Account\DB\AccountEntry;
-use Site\Relay\DB\RelayLogEntry;
-use Site\Relay\DB\RelayLogTable;
-use Site\SiteMap;
 use Site\Path\DB\PathEntry;
 use Site\Path\DB\PathTable;
+use Site\SiteMap;
 
 class CreatePath implements IExecutable, IBuildable, IRoutable, ITestable
 {
@@ -168,10 +164,7 @@ class CreatePath implements IExecutable, IBuildable, IRoutable, ITestable
 	static function handleBuildStatic(IBuildRequest $Request) {
 		$RouteBuilder = new RouteBuilder($Request, new SiteMap());
 		$RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION, __CLASS__);
-		$RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION2, __CLASS__,
-			IRequest::NAVIGATION_ROUTE |
-			IRequest::MATCH_SESSION_ONLY,
-			"Paths");
+		$RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION2, __CLASS__);
 	}
 
     /**

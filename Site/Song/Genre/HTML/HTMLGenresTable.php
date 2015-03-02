@@ -8,8 +8,6 @@
 namespace Site\Song\Genre\HTML;
 
 use CPath\Render\HTML\Element\Table\HTMLPDOQueryTable;
-use Site\Song\DB\SongEntry;
-use Site\Song\DB\SongTable;
 use Site\Song\Genre\DB\GenreEntry;
 use Site\Song\Genre\DB\GenreTable;
 

@@ -32,7 +32,9 @@ use CPath\Route\RouteBuilder;
 use CPath\UnitTest\ITestable;
 use CPath\UnitTest\IUnitTestRequest;
 use Site\Account\DB\AccountEntry;
+use Site\Config;
 use Site\Path\HTML\HTMLPathTip;
+use Site\Render\PopUpBox\HTMLPopUpBox;
 use Site\SiteMap;
 use Site\Song\DB\SongEntry;
 use Site\Song\DB\SongTable;
@@ -43,7 +45,7 @@ use Site\Song\Tag\DB\SongTagEntry;
 
 class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
 {
-	const TITLE = 'Create a new Song';
+	const TITLE = 'Create a new Song Entry';
 
 	const FORM_ACTION = '/create/song/';
 	const FORM_ACTION2 = '/songs/';
@@ -59,6 +61,8 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
     const PARAM_SONG_ORIGINAL = 'song-original';
     const PARAM_SONG_SIMILAR = 'song-similar';
     const PARAM_SONG_CHIP_STYLE = 'song-chip-style';
+    const PARAM_SONG_SOURCE_URL = 'song-source-url';
+    const PARAM_SONG_DOWNLOAD_URL = 'song-download-url';
 
     private $newSongID;
 
@@ -117,15 +121,35 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
                             new Attributes('rows', 6, 'cols', 40),
                             new RequiredValidation()
                         )
-                    )
+                    ),
+
+                    "<br/>",
+                    new HTMLPopUpBox('&#60;' . implode('&#62;, &#60;', Config::$AllowedTags) . '&#62;', HTMLPopUpBox::CLASS_INFO, 'Allowed Tags')
                 ),
 
                 new HTMLElement('fieldset', 'fieldset-song-association inline',
                     new HTMLElement('legend', 'legend-song-association', "Sources:"),
+
+                    new HTMLElement('label', null, "Source URLs [comma delimited]:<br/>",
+                        new HTMLInputField(self::PARAM_SONG_SOURCE_URL,
+                            new Attributes('placeholder', 'i.e. "http://coundsoud.cod/smbhurrycastle"'),
+                            new Attributes('size', 42)
+                        )
+                    ),
+
+                    "<br/><br/>",
+                    new HTMLElement('label', null, "File Download URLs [comma delimited]:<br/>",
+                        new HTMLInputField(self::PARAM_SONG_DOWNLOAD_URL,
+                            new Attributes('placeholder', 'i.e. "http://fileserver.com/mirror/smbhurrycastle.mp3, http://fileserver2.com/mirror2/smbhurrycastle.mp3"'),
+                            new Attributes('size', 42)
+                        )
+                    ),
+
+                    "<br/><br/>",
                     new HTMLElement('label', null, "Remix/Rearrangement/Cover of Original [comma delimited]:<br/>",
                         new HTMLInputField(self::PARAM_SONG_ORIGINAL,
                             new Attributes('placeholder', 'i.e. "SMB Castle Complete, SMB Hurry Castle"'),
-                            new Attributes('size', 32),
+                            new Attributes('size', 42),
                             new RequiredValidation()
                         )
                     ),
@@ -134,12 +158,14 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
                     new HTMLElement('label', null, "Similar Songs [comma delimited]:<br/>",
                         new HTMLInputField(self::PARAM_SONG_SIMILAR,
                             new Attributes('placeholder', 'i.e. "Thought You Could Castle, You Got Castled"'),
-                            new Attributes('size', 32),
+                            new Attributes('size', 42),
                             new RequiredValidation()
                         )
                     )
                 ),
 
+
+                "<br/>Free file hosting for chip-tune originals!<br/>",
 
                 new HTMLElement('fieldset', 'fieldset-song-chip-style inline',
                     new HTMLElement('legend', 'legend-song-chip-style', "Chip Style:"),
@@ -281,9 +307,10 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
         $Test->setRequestParameter(self::PARAM_SONG_SYSTEM, array('test-song-system'));
         $CreateSong->execute($Test);
 
-        $id = $CreateSong->getNewSongID();
+//        $id = $CreateSong->getNewSongID();
 
-        SongEntry::delete($Test, $id);
+        SongEntry::table()->delete(SongTable::COLUMN_TITLE, 'test-song-title');
+//        SongEntry::delete($Test, $id);
 
     }
 }

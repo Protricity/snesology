@@ -10,7 +10,6 @@ namespace Site\Render;
 use CPath\Build\IBuildable;
 use CPath\Build\IBuildRequest;
 use CPath\Data\Date\DateUtil;
-use CPath\Render\Helpers\RenderIndents as RI;
 use CPath\Render\HTML\Element\HTMLElement;
 use CPath\Render\HTML\Header\HeaderConfig;
 use CPath\Render\HTML\Header\HTMLMetaTag;
@@ -31,12 +30,12 @@ use CPath\Route\RouteBuilder;
 use CPath\Route\RouteIndex;
 use CPath\Route\RouteRenderer;
 use Site\Account\ViewAccount;
-use Site\Render\PopUpBox\HTMLPopUpBox;
-use Site\Song\Artist\ViewArtist;
 use Site\Config;
 use Site\Path\ManagePath;
 use Site\PGP\PGPSupportHeaders;
+use Site\Render\PopUpBox\HTMLPopUpBox;
 use Site\SiteMap;
+use Site\Song\Artist\ViewArtist;
 use Site\Song\Genre\ViewGenre;
 use Site\Song\ManageSong;
 use Site\Song\System\ViewSystem;
@@ -222,8 +221,10 @@ class CustomHTMLValueRenderer implements IHTMLValueRenderer, IHTMLSupportHeaders
 
             case 'description':
             case 'song-description':
-                $PopUp = new HTMLPopUpBox($value, HTMLPopUpBox::CLASS_DESCRIPTION);
-                $PopUp->renderHTML($this->Request);
+                if($value) {
+                    $PopUp = new HTMLPopUpBox($value, HTMLPopUpBox::CLASS_DESCRIPTION);
+                    $PopUp->renderHTML($this->Request);
+                }
                 return true;
 
             case 'artist':

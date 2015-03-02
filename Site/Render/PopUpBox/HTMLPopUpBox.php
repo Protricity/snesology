@@ -19,14 +19,13 @@ class HTMLPopUpBox implements IRenderHTML, IHTMLSupportHeaders
     const CLASS_INFO = 'info';
     const CLASS_DESCRIPTION = 'description';
     private $content;
-    /**
-     * @var string
-     */
     private $class;
+    private $caption;
 
-    public function __construct($content, $class=self::CLASS_INFO) {
+    public function __construct($content, $class=self::CLASS_INFO, $caption=null) {
         $this->content = $content;
         $this->class = $class;
+        $this->caption = $caption;
     }
 
     function renderContent(IRequest $Request, IRenderHTML $Parent = null) {
@@ -43,6 +42,8 @@ class HTMLPopUpBox implements IRenderHTML, IHTMLSupportHeaders
     function renderHTML(IRequest $Request, IAttributes $Attr = null, IRenderHTML $Parent = null) {
         $class = $this->class ? ' ' . $this->class : '';
         echo RI::ni(), "<div class='popup{$class}'>";
+        if ($this->caption)
+            echo RI::ni(1), "<span>", $this->caption, "</span>";
         echo RI::ni(1), "<div class='content'>";
 
         if($this->class)

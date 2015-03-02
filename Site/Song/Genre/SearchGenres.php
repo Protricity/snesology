@@ -7,8 +7,6 @@
  */
 namespace Site\Song\Genre;
 
-use CPath\Build\IBuildable;
-use CPath\Build\IBuildRequest;
 use CPath\Render\HTML\Element\Form\HTMLButton;
 use CPath\Render\HTML\Element\Form\HTMLForm;
 use CPath\Render\HTML\Element\HTMLElement;
@@ -18,8 +16,6 @@ use CPath\Request\Executable\IExecutable;
 use CPath\Request\IRequest;
 use CPath\Response\IResponse;
 use CPath\Route\IRoutable;
-use CPath\Route\RouteBuilder;
-use Site\SiteMap;
 use Site\Song\Genre\HTML\HTMLGenresTable;
 
 class SearchGenres implements IExecutable, IRoutable
@@ -102,7 +98,7 @@ class SearchGenres implements IExecutable, IRoutable
 //	 */
 //	static function handleBuildStatic(IBuildRequest $Request) {
 //		$RouteBuilder = new RouteBuilder($Request, new SiteMap());
-//        $RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION, __CLASS__, IRequest::NAVIGATION_ROUTE, "Genres");
+//        $RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION, __CLASS__);
 //        $RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION2, __CLASS__);
 //    }
 }

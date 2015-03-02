@@ -14,7 +14,6 @@ use CPath\Request\Session\ISessionRequest;
 use CPath\Request\Session\SessionRequest;
 use CPath\Request\Session\SessionRequestException;
 use Wrench\Connection;
-use Wrench\Exception\Exception;
 
 class SocketRequest extends Request implements IFormRequest, ISessionRequest
 {

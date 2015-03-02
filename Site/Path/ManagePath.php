@@ -16,8 +16,6 @@ use CPath\Render\HTML\Element\Form\HTMLInputField;
 use CPath\Render\HTML\Element\Form\HTMLSelectField;
 use CPath\Render\HTML\Element\Form\HTMLTextAreaField;
 use CPath\Render\HTML\Element\HTMLElement;
-use CPath\Render\HTML\Header\HTMLHeaderScript;
-use CPath\Render\HTML\Header\HTMLHeaderStyleSheet;
 use CPath\Render\HTML\Header\HTMLMetaTag;
 use CPath\Render\Map\MapRenderer;
 use CPath\Request\Executable\ExecutableRenderer;
@@ -30,8 +28,8 @@ use CPath\Response\Common\RedirectResponse;
 use CPath\Response\IResponse;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
-use Site\SiteMap;
 use Site\Path\DB\PathEntry;
+use Site\SiteMap;
 
 class ManagePath implements IExecutable, IBuildable, IRoutable
 {

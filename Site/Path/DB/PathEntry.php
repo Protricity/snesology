@@ -14,9 +14,6 @@ use CPath\Data\Schema\PDO\PDOSelectBuilder;
 use CPath\Data\Schema\PDO\PDOTableClassWriter;
 use CPath\Data\Schema\PDO\PDOTableWriter;
 use CPath\Data\Schema\TableSchema;
-use CPath\Render\Helpers\RenderIndents as RI;
-use CPath\Render\HTML\Attribute\IAttributes;
-use CPath\Render\HTML\IRenderHTML;
 use CPath\Request\IRequest;
 use Site\DB\SiteDB;
 

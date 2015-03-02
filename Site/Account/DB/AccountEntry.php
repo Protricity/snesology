@@ -165,11 +165,16 @@ class AccountEntry implements IBuildable, IKeyMap, ISerializable, IRenderHTML
 		$Map->map('created', $this->getCreatedTimestamp());
 	}
 
-	public function loadChallenge() {
-		return $this->table()
+	public function loadChallenge(IRequest $Request) {
+		$challenge = $this->table()
 			->select(AccountTable::COLUMN_CHALLENGE)
 			->where(AccountTable::COLUMN_FINGERPRINT, $this->fingerprint)
 			->fetchColumn(0);
+
+        if(!$challenge)
+            $challenge = $this->generateChallenge($Request);
+
+        return $challenge;
 	}
 
 	public function loadPublicKey() {

@@ -9,7 +9,6 @@ namespace Site;
 
 use CPath\Build\IBuildable;
 use CPath\Build\IBuildRequest;
-use CPath\Render\HTML\Element\Form\HTMLButton;
 use CPath\Render\HTML\Element\Form\HTMLForm;
 use CPath\Render\HTML\Element\HTMLElement;
 use CPath\Render\HTML\Header\HTMLMetaTag;

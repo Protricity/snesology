@@ -15,7 +15,6 @@ use Site\Config;
 use Site\Relay\Socket\SocketRequest;
 use Site\SiteMap;
 use Wrench\Application\Application;
-use Wrench\Client;
 use Wrench\Connection;
 use Wrench\Payload\Payload;
 use Wrench\Server;

@@ -106,7 +106,7 @@ class Logout implements IExecutable, IBuildable, IRoutable
 	 * Note: Use doctag 'build' with '--disable 1' to have this IBuildable class skipped during a build
 	 */
 	static function handleBuildStatic(IBuildRequest $Request) {
-		$RouteBuilder = new RouteBuilder($Request, new SiteMap());
+		$RouteBuilder = new RouteBuilder($Request, new SiteMap(), '_1logout');
 		$RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION, __CLASS__,
 			IRequest::NAVIGATION_ROUTE
 			| IRequest::MATCH_SESSION_ONLY
