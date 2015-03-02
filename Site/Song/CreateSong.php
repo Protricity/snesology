@@ -118,7 +118,7 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
                     new HTMLElement('label', null, "Description:<br/>",
                         new HTMLTextAreaField(self::PARAM_SONG_DESCRIPTION,
                             new Attributes('placeholder', 'Enter a song description'),
-                            new Attributes('rows', 6, 'cols', 40),
+                            new Attributes('rows', 6, 'cols', 32),
                             new RequiredValidation()
                         )
                     ),
@@ -146,7 +146,7 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
                     ),
 
                     "<br/><br/>",
-                    new HTMLElement('label', null, "Remix/Rearrangement/Cover of Original [comma delimited]:<br/>",
+                    new HTMLElement('label', null, "Remix/Cover of Original [comma delimited]:<br/>",
                         new HTMLInputField(self::PARAM_SONG_ORIGINAL,
                             new Attributes('placeholder', 'i.e. "SMB Castle Complete, SMB Hurry Castle"'),
                             new Attributes('size', 42),

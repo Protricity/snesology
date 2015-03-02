@@ -204,6 +204,7 @@ class CustomHTMLValueRenderer implements IHTMLValueRenderer, IHTMLSupportHeaders
 					echo DateUtil::elapsedTime($value);
 				return true;
 
+            case 'song-entry-account':
             case 'inviter-fingerprint':
             case 'inviter':
             case 'fingerprint':
