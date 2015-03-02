@@ -37,8 +37,6 @@ use Site\SiteMap;
 use Site\Song\DB\SongEntry;
 use Site\Song\DB\SongTable;
 use Site\Song\Genre\DB\GenreEntry;
-use Site\Song\Genre\DB\SongGenreEntry;
-use Site\Song\System\DB\SongSystemEntry;
 use Site\Song\System\DB\SystemEntry;
 use Site\Song\Tag\DB\SongTagEntry;
 
@@ -52,8 +50,8 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
 	const FORM_NAME = 'create-song';
 
     const PARAM_SONG_TITLE = 'song-title';
-    const PARAM_SONG_GENRES = 'song-genres';
-    const PARAM_SONG_SYSTEMS = 'song-systems';
+    const PARAM_SONG_GENRE = 'song-genre';
+    const PARAM_SONG_SYSTEM = 'song-system';
     const PARAM_SONG_DESCRIPTION = 'song-description';
     const TIPS_CREATE_SONG = "<b>Create a new song entry</b><br/><br/>This fieldset enters a new song into the database";
 
@@ -108,7 +106,7 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
 
                 "<br/><br/>",
                 new HTMLElement('label', null, "Game Systems:<br/>",
-                    new HTMLSelectField(self::PARAM_SONG_SYSTEMS . '[]', $systemList,
+                    new HTMLSelectField(self::PARAM_SONG_SYSTEM . '[]', $systemList,
                         new Attributes('multiple', 'multiple'),
                         new RequiredValidation()
                     )
@@ -116,7 +114,7 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
 
                 "<br/><br/>",
                 new HTMLElement('label', null, "Genres:<br/>",
-                    new HTMLSelectField(self::PARAM_SONG_GENRES . '[]', $genreList,
+                    new HTMLSelectField(self::PARAM_SONG_GENRE . '[]', $genreList,
                         new Attributes('multiple', 'multiple'),
                         new RequiredValidation()
                     )
@@ -133,8 +131,8 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
 
         $Form->setFormValues($Request);
 
-        $genres = $Form->validateField($Request, self::PARAM_SONG_GENRES);
-        $systems = $Form->validateField($Request, self::PARAM_SONG_SYSTEMS);
+        $genres = $Form->validateField($Request, self::PARAM_SONG_GENRE);
+        $systems = $Form->validateField($Request, self::PARAM_SONG_SYSTEM);
         $title = $Form->validateField($Request, self::PARAM_SONG_TITLE);
         $description = $Form->validateField($Request, self::PARAM_SONG_DESCRIPTION);
 
@@ -149,11 +147,11 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
 
 		$Song = SongEntry::create($Request, $title, $description);
         foreach($genres as $genre) {
-            SongGenreEntry::addToSong($Request, $Song->getID(), $genre);
+            $Song->addTag($Request, SongTagEntry::TAG_GENRE, $genre);
         }
 
         foreach($systems as $system) {
-            SongSystemEntry::addToSong($Request, $Song->getID(), $system);
+            $Song->addTag($Request, SongTagEntry::TAG_SYSTEM, $system);
         }
 
         $Song->addTag($Request, SongTagEntry::TAG_ENTRY_ACCOUNT, $Account->getFingerprint());
@@ -215,8 +213,8 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
         $Test->clearRequestParameters();
         $Test->setRequestParameter(self::PARAM_SONG_TITLE, 'test-song-title');
         $Test->setRequestParameter(self::PARAM_SONG_DESCRIPTION, 'test-song-description');
-        $Test->setRequestParameter(self::PARAM_SONG_GENRES, array('test-song-genre'));
-        $Test->setRequestParameter(self::PARAM_SONG_SYSTEMS, array('test-song-system'));
+        $Test->setRequestParameter(self::PARAM_SONG_GENRE, array('test-song-genre'));
+        $Test->setRequestParameter(self::PARAM_SONG_SYSTEM, array('test-song-system'));
         $CreateSong->execute($Test);
 
         $id = $CreateSong->getNewSongID();

@@ -18,8 +18,8 @@ use CPath\Data\Schema\TableSchema;
 class SystemTable extends AbstractBase {
 	const TABLE_NAME = 'system';
 	const FETCH_CLASS = 'Site\\Song\\System\\DB\\SystemEntry';
-	const SELECT_COLUMNS = 'id, name, status, created';
-	const INSERT_COLUMNS = 'name, status, created';
+	const SELECT_COLUMNS = 'id, name, description, status, created';
+	const INSERT_COLUMNS = 'name, description, status, created';
 	const SEARCH_COLUMNS = 'id, name';
 	const PRIMARY_COLUMN = 'id';
 	/**
@@ -38,6 +38,13 @@ class SystemTable extends AbstractBase {
 	 * @search
 	 */
 	const COLUMN_NAME = 'name';
+	/**
+
+	 * @column TEXT
+	 * @select
+	 * @insert
+	 */
+	const COLUMN_DESCRIPTION = 'description';
 	/**
 
 	 * @column INT
@@ -59,7 +66,7 @@ class SystemTable extends AbstractBase {
 	 */
 	const SYSTEM_NAME_UNIQUE = 'system_name_unique';
 
-	function insertRow($name = null, $status = null, $created = null) { 
+	function insertRow($name = null, $description = null, $status = null, $created = null) { 
 		return $this->insert(get_defined_vars());
 	}
 

@@ -1,59 +1,219 @@
 <!DOCTYPE html>
-<!-- saved from url=(0031)home -->
-<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <script src="CPath/Render/HTML/Header/assets/jquery.min.js"></script>
-    <script src="Site/Render/assets/default-template.js"></script>
-    <link rel="stylesheet" href="Site/Render/assets/default-template.css">
-    
-    <meta name="path" content="/home">
-    <meta name="domain-path" content="/snesology/">
-    <script src="Site/PGP/assets/libs/openpgpjs-dist/openpgp.js"></script>
-    <meta name="title" content="Account Home">
-    <script src="Site/Account/assets/account.js"></script>
-    <link rel="stylesheet" href="Site/Account/assets/account.css">
-    <meta name="title" content="Account Home">
-  </head>
-  <body class=" hasGoogleVoiceExt">
-    <section class="header">
-      <h1 class="header-title">DEMO MODE - GET /home</h1>
-    </section>
-    <section class="navbar">
-      <a href="#">My Account</a>
-      <a href="#">Logout</a>
-      <a href="#">Register</a>
-      <a href="#">Songs</a></section>
-    <section class="content">
-      <form action="./test_files/test.html" method="POST" name="Site\Account\AccountHome">
-        <input name="account-fingerprint" value="9E12A673F58D93B5C0E41A52ABF896DD330B67B9" type="hidden" class="input">
-        <fieldset class="fieldset-info inline">
-          <legend class="legend-info">Account Home</legend>
-          <dl>
-            <dt>fingerprint</dt>
-            <dd><a href="a/9E12A673F58D93B5C0E41A52ABF896DD330B67B9">9E12A673F58D93B5C0E41A52ABF896DD330B67B9</a></dd>
-            <dt>inviter</dt>
-            <dd><a href="a/1FF080FF">1FF080FF</a></dd>
-            <dt>name</dt>
-            <dd>omfgomfg</dd>
-            <dt>email</dt>
-            <dd>omg@ohok.com</dd>
-            <dt>created</dt>
-            <dd>4 years ago</dd>
-          </dl>
-        </fieldset><br>
-        <fieldset class="fieldset-manage inline">
-          <legend class="legend-manage">Manage Account</legend><br><br>
-          <button name="submit" class="input" value="update">Update</button>
-        </fieldset>
-        <fieldset class="fieldset-invite inline">
-          <legend class="legend-invite">Create an Invite</legend>Invitee's Email Address:<br>
-          <input name="invite-email" class="input"><br><br>Add an invite message:<br>
-          <textarea name="invite-message" class="input"></textarea><br><br>Generated invite:<br>
-          <textarea name="invite-content" class="input"></textarea><br><br>
-          <button name="generate-invite" class="input" value="generate-invite">Generate</button>
-          <a class="send-email input" href="#" style="display: none;">Send Email</a>
-        </fieldset>
-      </form></section>
-    <section class="footer">
-      <div class="logos"></div></section>
-  
-</body></html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <script src='CPath/Render/HTML/Header/assets/jquery.min.js'></script>
+    <script src='Site/Render/assets/default-template.js'></script>
+    <link rel='stylesheet' href='Site/Render/assets/default-template.css' />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="path" content="/songs/">
+    <meta name="domain-path" content="">
+    <script src='Site/PGP/assets/libs/openpgpjs-dist/openpgp.js'></script>
+    <link rel='stylesheet' href='Site/Render/PopUpBox/assets/popup.css' />
+    <meta name="title" content="Search Songs">
+    <meta name="title" content="Create a new Song">
+    <script src='Site/Song/assets/song.js'></script>
+    <link rel='stylesheet' href='Site/Song/assets/song.css' />
+    <meta name="title" content="Search Songs">
+    <meta name="title" content="Create a new Song">
+</head>
+<body>
+<section class="header">
+    <h1 class="header-title">BETA - GET /songs/</h1></section>
+<section class="content">
+    <div class="navbar">
+        <a href="http://localhosthome/">My Account</a>
+        <a href="http://localhostlogout/">Logout</a>
+        <a href="http://localhostpaths/">Paths</a>
+        <a href="http://localhostchat/">Chat</a>
+        <a href="http://localhostsongs/">Songs</a></div>
+    <form action="songs/" method="GET" name="Site\Song\SearchSongs">
+        <fieldset>
+            <legend class="legend-submit">Search Songs</legend>
+            <table>
+                <thead>
+                <tr>
+                    <th><a href='?sort-song-id=DESC'>Song Id</a>
+                    </th>
+                    <th><a href='?sort-title=DESC'>Title</a>
+                    </th>
+                    <th>Description
+                    </th>
+                    <th>Artist
+                    </th>
+                    <th>System
+                    </th>
+                    <th>Genre
+                    </th>
+                    <th><a href='?sort-status=DESC'>Status</a>
+                    </th>
+                    <th><a href='?sort-created=DESC'>Created</a>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td><a href='http://localhostmanage/song/S54F412A1CF1A4'>S54F412A1CF1A4</a></td>
+                    <td>test song 4</td>
+                    <td>
+                        <div class='popup description'>
+                            <div class='content'>
+                                <div class='popup description'></div>
+                                TEST OSNG FORRRTEST OSNG FORRRTEST OSNG FORRRTEST OSNG FORRRTEST OSNG FORRR
+                            </div>
+                        </div></td>
+                    <td></td>
+                    <td><a href='http://localhostss/gdfgdfgfd'>gdfgdfgfd</a></td>
+                    <td><a href='http://localhostsg/Blues'>Blues</a>, <a href='http://localhostsg/Club'>Club</a>, <a href='http://localhostsg/Atari+XEGS'>Atari XEGS</a>, <a href='http://localhostsg/Turbo+Grafx'>Turbo Grafx</a></td>
+                    <td>Unpublished</td>
+                    <td>14 minutes ago</td>
+                </tr>
+                <tr>
+                    <td><a href='http://localhostmanage/song/S54EB31C8CD87B'>S54EB31C8CD87B</a></td>
+                    <td>test-song-3</td>
+                    <td>
+                        <div class='popup description'>
+                            <div class='content'>
+                                <div class='popup description'></div>
+                                daflksjd;flakdsfj;adsfasdf
+                            </div>
+                        </div></td>
+                    <td><a href='http://localhostsa/artist1'>artist1</a></td>
+                    <td></td>
+                    <td><a href='http://localhostsg/Rock'>Rock</a></td>
+                    <td>Unpublished</td>
+                    <td>7 days ago</td>
+                </tr>
+                <tr>
+                    <td><a href='http://localhostmanage/song/S54EA88465ECAB'>S54EA88465ECAB</a></td>
+                    <td>test-song-1</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>Unpublished</td>
+                    <td>last week</td>
+                </tr>
+                <tr>
+                    <td><a href='http://localhostmanage/song/S54EA687B0AEB3'>S54EA687B0AEB3</a></td>
+                    <td>test-song-2</td>
+                    <td>
+                        <div class='popup description'>
+                            <div class='content'>
+                                <div class='popup description'></div>
+                                gfagadfg
+                            </div>
+                        </div></td>
+                    <td><a href='http://localhostsa/artist1'>artist1</a>, <a href='http://localhostsa/ARTIST2'>ARTIST2</a></td>
+                    <td></td>
+                    <td></td>
+                    <td>ed</td>
+                    <td>last week</td>
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr>
+                    <td>
+                        <input placeholder="Search id" style="width: 100%;" class="input search transparent" name="search-song-id" class="input"/></td>
+                    <td>
+                        <input placeholder="Search title" style="width: 100%;" class="input search transparent" name="search-title" class="input"/></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <input placeholder="Search status" style="width: 100%;" class="input search transparent" name="search-status" class="input"/></td>
+                    <td>
+                        <input placeholder="Search created" style="width: 100%;" class="input search transparent" name="search-created" class="input"/></td>
+                </tr>
+                </tfoot>
+            </table>
+          <span class='pages'>
+            <span class='page-first'><a href='http://localhostsongs/?page=0'>first</a></span>
+            <span class='page-current'><a href='http://localhostsongs/?page=0'>(0)</a></span>
+            <span class='page-next'><a href='http://localhostsongs/?page=1'>next</a></span>
+          </span><br/><br/>
+            <button name="submit" class="input" value="submit">Submit</button>
+        </fieldset><br/>
+    </form>
+    <form action="songs/" method="POST" name="create-song">
+        <fieldset class="fieldset-create-song">
+            <legend class="legend-song">Create a new Song</legend>
+            <div class='popup info'>
+                <div class='content'>
+                    <div class='popup info'></div>
+                    <b>Create a new song entry</b><br/><br/>This fieldset enters a new song into the database
+                    <br/><a class='add' href='http://localhostcreate/path/?path=%2Fsongs%2F%23gen-tips'>Expand content</a>
+                </div>
+            </div>
+            <label>Song Title:<br/>
+                <input placeholder="My Song Title" required="required" name="song-title" class="input"/>
+            </label><br/><br/>
+            <label>Description:<br/>
+                <textarea placeholder="Enter a song description" placeholder="Enter a song description" rows="10" cols="40" required="required" name="song-description" class="input"></textarea>
+            </label><br/><br/>
+            <label>Game Systems:<br/>
+                <select multiple="multiple" required="required" name="song-system[]" class="input">
+                    <option value="Atari 2600">Atari 2600</option>
+                    <option value="Commodore 64">Commodore 64</option>
+                    <option value="Nintendo">Nintendo</option>
+                    <option value="Sega Master System">Sega Master System</option>
+                    <option value="Atari XEGS">Atari XEGS</option>
+                    <option value="Atari 7800">Atari 7800</option>
+                    <option value="Turbo Grafx">Turbo Grafx</option>
+                    <option value="Sega Genesis">Sega Genesis</option>
+                    <option value="NEO GEO">NEO GEO</option>
+                    <option value="Super Nintendo">Super Nintendo</option>
+                    <option value="Atari Jaguar">Atari Jaguar</option>
+                    <option value="3D0">3D0</option>
+                    <option value="Sega 32X">Sega 32X</option>
+                    <option value="Sega Saturn">Sega Saturn</option>
+                    <option value="PlayStation">PlayStation</option>
+                    <option value="Nintendo 64">Nintendo 64</option>
+                    <option value="Dreamcast">Dreamcast</option>
+                    <option value="PlayStation 2">PlayStation 2</option>
+                    <option value="Game Cube">Game Cube</option>
+                    <option value="XBOX">XBOX</option>
+                    <option value="XBOX 360">XBOX 360</option>
+                    <option value="PlayStation 3">PlayStation 3</option>
+                    <option value="Wii">Wii</option>
+                    <option value="Wii U">Wii U</option>
+                    <option value="PlayStation 4">PlayStation 4</option>
+                    <option value="XBOX One">XBOX One</option>
+                    <option value="test-song-system">test-song-system</option></select>
+            </label><br/><br/>
+            <label>Genres:<br/>
+                <select multiple="multiple" required="required" name="song-genre[]" class="input">
+                    <option value="Alternative">Alternative</option>
+                    <option value="Blues">Blues</option>
+                    <option value="BreakBeat">BreakBeat</option>
+                    <option value="Club">Club</option>
+                    <option value="Comedy">Comedy</option>
+                    <option value="Country">Country</option>
+                    <option value="Dance">Dance</option>
+                    <option value="DubStep">DubStep</option>
+                    <option value="Electro">Electro</option>
+                    <option value="Garage">Garage</option>
+                    <option value="Hardcore">Hardcore</option>
+                    <option value="HipHop">HipHop</option>
+                    <option value="House">House</option>
+                    <option value="Industrial">Industrial</option>
+                    <option value="Jazz">Jazz</option>
+                    <option value="Jungle">Jungle</option>
+                    <option value="KPop">KPop</option>
+                    <option value="Latin">Latin</option>
+                    <option value="Pop">Pop</option>
+                    <option value="RNB">RNB</option>
+                    <option value="Rock">Rock</option>
+                    <option value="Techno">Techno</option>
+                    <option value="Trance">Trance</option>
+                    <option value="World">World</option>
+                    <option value="test-song-genre">test-song-genre</option></select>
+            </label><br/><br/>
+            <button name="submit" class="input" value="submit">Create</button>
+        </fieldset><br/>
+    </form>
+</section>
+<section class="footer">
+    <div class="logos"></div></section>
+</body>
+</html>

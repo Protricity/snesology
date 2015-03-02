@@ -5,7 +5,7 @@
  * Date: 1/27/2015
  * Time: 1:56 PM
  */
-namespace Site\Song\Artist;
+namespace Site\Song\Genre;
 
 use CPath\Build\IBuildable;
 use CPath\Build\IBuildRequest;
@@ -22,28 +22,27 @@ use CPath\Response\IResponse;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
 use Site\SiteMap;
-use Site\Song\Artist\DB\ArtistEntry;
-use Site\Song\Review\HTML\HTMLArtistSongsTable;
-use Site\Song\Review\HTML\HTMLSongReviewsTable;
+use Site\Song\Genre\DB\GenreEntry;
+use Site\Song\Review\HTML\HTMLGenreSongsTable;
 
-class ViewArtist implements IExecutable, IBuildable, IRoutable
+class ViewGenre implements IExecutable, IBuildable, IRoutable
 {
-	const TITLE = 'View Artist Information';
+	const TITLE = 'View Genre Information';
 
-    const FORM_ACTION = '/sa/:id';
-    const FORM_ACTION2 = '/song/artist/:id';
+    const FORM_ACTION = '/sg/:name';
+    const FORM_ACTION2 = '/song/genre/:name';
 	const FORM_METHOD = 'POST';
-	const FORM_NAME = 'view-artist';
+	const FORM_NAME = 'view-genre';
 
-    const PARAM_ARTIST = 'id';
-    const PARAM_Artist_TITLE = 'title';
-    const PARAM_Artist_GENRES = 'genres';
-    const PARAM_Artist_SYSTEMS = 'systems';
+    const PARAM_GENRE = 'name';
+    const PARAM_Genre_TITLE = 'title';
+    const PARAM_Genre_GENRES = 'genres';
+    const PARAM_Genre_SYSTEMS = 'systems';
 
     private $tag;
 
-    public function __construct($artistTag) {
-        $this->tag = $artistTag;
+    public function __construct($genreTag) {
+        $this->tag = $genreTag;
     }
 
     /**
@@ -53,26 +52,26 @@ class ViewArtist implements IExecutable, IBuildable, IRoutable
 	 * @return IResponse the execution response
 	 */
 	function execute(IRequest $Request) {
-        $ArtistEntry = ArtistEntry::query($this->tag)->fetch() ?: new ArtistEntry($this->tag);
-        $ArtistSongs = new HTMLArtistSongsTable($this->tag);
+        $GenreEntry = GenreEntry::query($this->tag)->fetch() ?: new GenreEntry($this->tag);
+        $GenreSongs = new HTMLGenreSongsTable($this->tag);
 
         $Form = new HTMLForm(self::FORM_METHOD, $Request->getPath(), self::FORM_NAME,
 			new HTMLMetaTag(HTMLMetaTag::META_TITLE, self::TITLE),
 
-            new HTMLElement('fieldset', 'fieldset-artist-info inline',
-                new HTMLElement('legend', 'legend-artist-info', 'Artist Info'),
+            new HTMLElement('fieldset', 'fieldset-genre-info inline',
+                new HTMLElement('legend', 'legend-genre-info', 'Genre Info'),
 
-                new MapRenderer($ArtistEntry),
+                new MapRenderer($GenreEntry),
                 "<br/>",
-                new HTMLAnchor(ManageArtist::getRequestURL($this->tag), "Edit",
+                new HTMLAnchor(ManageGenre::getRequestURL($this->tag), "Edit",
                     new StyleAttributes('float', 'right')
                 )
             ),
 
             new HTMLElement('fieldset',
-                new HTMLElement('legend', 'legend-artist-songs', 'Related Songs'),
+                new HTMLElement('legend', 'legend-genre-songs', 'Related Songs'),
 
-                $ArtistSongs
+                $GenreSongs
             )
 		);
 
@@ -81,8 +80,8 @@ class ViewArtist implements IExecutable, IBuildable, IRoutable
 
 	// Static
 
-	public static function getRequestURL($artist) {
-		return str_replace(':' . self::PARAM_ARTIST, urlencode($artist), self::FORM_ACTION);
+	public static function getRequestURL($genre) {
+		return str_replace(':' . self::PARAM_GENRE, urlencode($genre), self::FORM_ACTION);
 	}
 
 	/**
@@ -96,7 +95,7 @@ class ViewArtist implements IExecutable, IBuildable, IRoutable
 	 * If an object is returned, it is passed along to the next handler
 	 */
 	static function routeRequestStatic(IRequest $Request, Array &$Previous = array(), $_arg = null) {
-		return new ExecutableRenderer(new static(urldecode($Request[self::PARAM_ARTIST])), true);
+		return new ExecutableRenderer(new static(urldecode($Request[self::PARAM_GENRE])), true);
 	}
 
 	/**

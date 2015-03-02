@@ -215,8 +215,6 @@ class SongEntry implements IBuildable, IKeyMap, ISerializable
         $Map->map('song-created', $this->getCreatedTimestamp());
         $Map->map('song-status', implode(', ', $this->getStatusList()));
         $Map->map('song-description', $this->getDescription());
-        $Map->map('song-genres', $this->genres);
-        $Map->map('song-systems', $this->systems);
         foreach($this->getTagList() as $tag) {
             list($key, $value) = $tag;
             $Map->map('song-' . $key, $value);
@@ -282,14 +280,6 @@ class SongEntry implements IBuildable, IKeyMap, ISerializable
             ->select(SongTable::TABLE_NAME . '.' . SongTable::COLUMN_CREATED)
             ->select(SongTable::TABLE_NAME . '.' . SongTable::COLUMN_STATUS)
 
-            ->select(GenreTable::TABLE_NAME . '.' . GenreTable::COLUMN_NAME, self::JOIN_COLUMN_GENRES, 'GROUP_CONCAT(DISTINCT %s SEPARATOR ", ")')
-            ->leftJoin(SongGenreTable::TABLE_NAME, SongGenreTable::TABLE_NAME . '.' . SongGenreTable::COLUMN_SONG_ID, SongTable::TABLE_NAME . '.' . SongTable::COLUMN_ID)
-            ->leftJoin(GenreTable::TABLE_NAME, GenreTable::TABLE_NAME . '.' . GenreTable::COLUMN_ID, SongGenreTable::COLUMN_GENRE_ID)
-
-            ->select(SystemTable::TABLE_NAME . '.' . SystemTable::COLUMN_NAME, self::JOIN_COLUMN_SYSTEMS, 'GROUP_CONCAT(DISTINCT %s SEPARATOR ", ")')
-            ->leftJoin(SongSystemTable::TABLE_NAME, SongSystemTable::TABLE_NAME . '.' . SongSystemTable::COLUMN_SONG_ID, SongTable::TABLE_NAME . '.' . SongTable::COLUMN_ID)
-            ->leftJoin(SystemTable::TABLE_NAME, SystemTable::TABLE_NAME . '.' . SystemTable::COLUMN_ID, SongSystemTable::TABLE_NAME . '.' . SongSystemTable::COLUMN_SYSTEM_ID)
-
             ->select('GROUP_CONCAT(DISTINCT CONCAT(' . SongTagTable::TABLE_NAME . '.' . SongTagTable::COLUMN_TAG . ', "::", ' . SongTagTable::TABLE_NAME . '.' . SongTagTable::COLUMN_VALUE . ') SEPARATOR "||")', self::JOIN_COLUMN_TAGS)
             ->leftJoin(SongTagTable::TABLE_NAME, SongTagTable::TABLE_NAME . '.' . SongTagTable::COLUMN_SONG_ID, SongTable::TABLE_NAME . '.' . SongTable::COLUMN_ID)
 
@@ -306,6 +296,26 @@ class SongEntry implements IBuildable, IKeyMap, ISerializable
         return self::query()
             ->where(SongTagTable::COLUMN_TAG, SongTagEntry::TAG_ARTIST)
             ->where(SongTagTable::COLUMN_VALUE, $artist);
+    }
+
+    /**
+     * @param $genre
+     * @return PDOSelectBuilder
+     */
+    static function queryByGenre($genre) {
+        return self::query()
+            ->where(SongTagTable::COLUMN_TAG, SongTagEntry::TAG_GENRE)
+            ->where(SongTagTable::COLUMN_VALUE, $genre);
+    }
+
+    /**
+     * @param $system
+     * @return PDOSelectBuilder
+     */
+    static function queryBySystem($system) {
+        return self::query()
+            ->where(SongTagTable::COLUMN_TAG, SongTagEntry::TAG_SYSTEM)
+            ->where(SongTagTable::COLUMN_VALUE, $system);
     }
 
     static function create(IRequest $Request, $title, $description) {

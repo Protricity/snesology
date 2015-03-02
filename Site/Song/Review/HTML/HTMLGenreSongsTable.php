@@ -11,10 +11,10 @@ use CPath\Render\HTML\Element\Table\HTMLPDOQueryTable;
 use Site\Song\DB\SongEntry;
 use Site\Song\DB\SongTable;
 
-class HTMLArtistSongsTable extends HTMLPDOQueryTable
+class HTMLGenreSongsTable extends HTMLPDOQueryTable
 {
-    public function __construct($artist, $count = null) {
-        $Query = SongEntry::queryByArtist($artist)
+    public function __construct($genre, $count = null) {
+        $Query = SongEntry::queryByGenre($genre)
             ->orderBy(SongTable::COLUMN_CREATED, "DESC")
             ->limit($count ?: 25);
 

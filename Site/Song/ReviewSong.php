@@ -35,6 +35,7 @@ use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
 use Site\Account\DB\AccountEntry;
 use Site\Config;
+use Site\Path\HTML\HTMLPathTip;
 use Site\SiteMap;
 use Site\Song\DB\SongEntry;
 use Site\Song\Review\DB\SongReviewEntry;
@@ -59,6 +60,7 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable
     const PARAM_REVIEW_TAG_NAME = 'review-tag-name';
     const PARAM_REVIEW_TAG_VALUE = 'review-tag-value';
 
+    const TIP_REVIEW = '<b>Review a song</b><br /><br />Create a song review';
     private $id;
 
     public function __construct($songID) {
@@ -91,6 +93,8 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable
 
             new HTMLElement('fieldset', 'fieldset-review-song inline',
                 new HTMLElement('legend', 'legend-song', "Review '" . $Song->getTitle() . "'"),
+
+                new HTMLPathTip($Request, '#tip-select', self::TIP_REVIEW),
 
                 new HTMLElement('label', null, "Song Title:<br/>",
                     new HTMLInputField(self::PARAM_SONG_REVIEW_TITLE, $ReviewEntry ? $ReviewEntry->getReviewTitle() : null,

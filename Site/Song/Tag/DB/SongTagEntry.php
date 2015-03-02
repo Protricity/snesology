@@ -40,6 +40,10 @@ class SongTagEntry implements IBuildable, IKeyMap, IRenderHTML
 
     const TAG_ENTRY_ACCOUNT = 'entry-account';
 
+    const TAG_GENRE = 'genre';
+
+    const TAG_SYSTEM = 'system';
+
     const TAG_ARTIST = 'artist';
     const TAG_LYRICIST = 'lyricist';
     const TAG_COMPOSER = 'composer';
@@ -68,6 +72,9 @@ class SongTagEntry implements IBuildable, IKeyMap, IRenderHTML
         "Album Cover URL (Back)" => self::TAG_URL_COVER_BACK,
 
         "Entered By" => self::TAG_ENTRY_ACCOUNT,
+
+        "Genre" => self::TAG_GENRE,
+        "System" => self::TAG_SYSTEM,
 
         "Artist" => self::TAG_ARTIST,
         "Lyricist" => self::TAG_LYRICIST,

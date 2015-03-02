@@ -8,6 +8,9 @@
 namespace Site\Song\System\DB;
 use CPath\Build\IBuildable;
 use CPath\Build\IBuildRequest;
+use CPath\Data\Map\IKeyMap;
+use CPath\Data\Map\IKeyMapper;
+use CPath\Data\Schema\PDO\PDOSelectBuilder;
 use CPath\Data\Schema\PDO\PDOTableClassWriter;
 use CPath\Data\Schema\PDO\PDOTableWriter;
 use CPath\Data\Schema\TableSchema;
@@ -19,7 +22,7 @@ use Site\Song\System\DefaultGameSystems;
  * Class SystemEntry
  * @table system
  */
-class SystemEntry implements IBuildable
+class SystemEntry implements IBuildable, IKeyMap
 {
     const ID_PREFIX = 'SS';
 
@@ -31,14 +34,12 @@ class SystemEntry implements IBuildable
         "Approved"          => self::STATUS_APPROVED,
     );
 
-    /**
-	 * @column VARCHAR(64) PRIMARY KEY
-	 * @select
-	 * @search
-	 */
-	protected $id;
+    public function __construct($name=null) {
+        $name === null ?: $this->name = $name;
+    }
 
-	/**
+
+    /**
 	 * @column VARCHAR(64) NOT NULL
 	 * @select
 	 * @insert
@@ -46,6 +47,13 @@ class SystemEntry implements IBuildable
 	 * @search
 	 */
 	protected $name;
+
+    /**
+     * @column TEXT
+     * @select
+     * @insert
+     */
+    protected $description;
 
     /**
      * @column INT
@@ -65,6 +73,14 @@ class SystemEntry implements IBuildable
 	public function getID() {
 		return $this->id;
 	}
+
+    public function getDescription() {
+        return $this->description;
+    }
+
+    public function getCreatedTimeStamp() {
+        return (int) $this->created;
+    }
 
     public static function getAll() {
         $Query = self::table()
@@ -104,7 +120,54 @@ class SystemEntry implements IBuildable
         return $statusList;
     }
 
+
+    public function update(IRequest $Request, $description) {
+        $Update = self::table()
+            ->update();
+
+        $description === null ?: $Update->update(SystemTable::COLUMN_DESCRIPTION, $description);
+        $Update->where(SystemTable::COLUMN_NAME, $this->name);
+
+        if(!$Update->execute($Request))
+            throw new \InvalidArgumentException("Could not update " . __CLASS__);
+    }
+
+    /**
+     * Map data to the key map
+     * @param IKeyMapper $Map the map inst to add data to
+     * @internal param \CPath\Request\IRequest $Request
+     * @internal param \CPath\Request\IRequest $Request
+     * @return void
+     */
+    function mapKeys(IKeyMapper $Map) {
+        $Map->map('name', $this->getName());
+        $Map->map('description', $this->getDescription());
+        $Map->map('created', $this->getCreatedTimeStamp());
+        $Map->map('status', implode(', ', $this->getStatusList()));
+    }
+
 	// Static
+
+    /**
+     * @param null $artist
+     * @return PDOSelectBuilder
+     */
+    static function query($artist=null) {
+        $Query = self::table()
+            ->select(SystemTable::TABLE_NAME . '.' . SystemTable::COLUMN_NAME)
+            ->select(SystemTable::TABLE_NAME . '.' . SystemTable::COLUMN_DESCRIPTION)
+            ->select(SystemTable::TABLE_NAME . '.' . SystemTable::COLUMN_CREATED)
+            ->select(SystemTable::TABLE_NAME . '.' . SystemTable::COLUMN_STATUS)
+
+            ->groupBy(SystemTable::TABLE_NAME . '.' . SystemTable::COLUMN_NAME)
+
+            ->setFetchMode(SystemTable::FETCH_MODE, SystemTable::FETCH_CLASS);
+
+        $artist === null ?: $Query->where(SystemTable::COLUMN_NAME, $artist);
+
+        return $Query;
+    }
+
     /**
      * @param IRequest $Request
      * @param $systemName

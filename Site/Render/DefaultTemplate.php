@@ -20,7 +20,6 @@ use CPath\Render\HTML\HTMLConfig;
 use CPath\Render\HTML\HTMLContainer;
 use CPath\Render\HTML\HTMLMimeType;
 use CPath\Render\HTML\HTMLResponseBody;
-use CPath\Render\HTML\IHTMLContainer;
 use CPath\Render\HTML\IHTMLValueRenderer;
 use CPath\Request\IRequest;
 use CPath\Response\IResponse;
@@ -32,16 +31,15 @@ use CPath\Route\RouteBuilder;
 use CPath\Route\RouteIndex;
 use CPath\Route\RouteRenderer;
 use Site\Account\ViewAccount;
-use Site\Path\HTML\HTMLPathTip;
 use Site\Render\PopUpBox\HTMLPopUpBox;
 use Site\Song\Artist\ViewArtist;
 use Site\Config;
-use Site\Path\DB\PathEntry;
-use Site\Path\IProcessSubPaths;
 use Site\Path\ManagePath;
 use Site\PGP\PGPSupportHeaders;
 use Site\SiteMap;
+use Site\Song\Genre\ViewGenre;
 use Site\Song\ManageSong;
+use Site\Song\System\ViewSystem;
 
 class DefaultTemplate extends HTMLContainer implements IRoutable, IBuildable {
 
@@ -230,11 +228,34 @@ class CustomHTMLValueRenderer implements IHTMLValueRenderer, IHTMLSupportHeaders
 
             case 'artist':
             case 'song-artist':
+            case 'artist-name':
                 $domain = $this->Request->getDomainPath();
                 foreach(explode(', ', $value) as $i => $artist) {
                     $href = $domain . ltrim(ViewArtist::getRequestURL($artist), '/');
                     echo $i > 0 ? ', ' : '';
                     echo "<a href='{$href}'>", $artist, "</a>";
+                }
+                return true;
+
+            case 'genre':
+            case 'song-genre':
+            case 'genre-name':
+                $domain = $this->Request->getDomainPath();
+                foreach(explode(', ', $value) as $i => $genre) {
+                    $href = $domain . ltrim(ViewGenre::getRequestURL($genre), '/');
+                    echo $i > 0 ? ', ' : '';
+                    echo "<a href='{$href}'>", $genre, "</a>";
+                }
+                return true;
+
+            case 'system':
+            case 'song-system':
+            case 'system-name':
+                $domain = $this->Request->getDomainPath();
+                foreach(explode(', ', $value) as $i => $system) {
+                    $href = $domain . ltrim(ViewSystem::getRequestURL($system), '/');
+                    echo $i > 0 ? ', ' : '';
+                    echo "<a href='{$href}'>", $system, "</a>";
                 }
                 return true;
 

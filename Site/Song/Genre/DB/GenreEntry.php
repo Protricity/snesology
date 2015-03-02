@@ -8,6 +8,9 @@
 namespace Site\Song\Genre\DB;
 use CPath\Build\IBuildable;
 use CPath\Build\IBuildRequest;
+use CPath\Data\Map\IKeyMap;
+use CPath\Data\Map\IKeyMapper;
+use CPath\Data\Schema\PDO\PDOSelectBuilder;
 use CPath\Data\Schema\PDO\PDOTableClassWriter;
 use CPath\Data\Schema\PDO\PDOTableWriter;
 use CPath\Data\Schema\TableSchema;
@@ -19,7 +22,7 @@ use Site\Song\Genre\DefaultGenres;
  * Class GenreEntry
  * @table genre
  */
-class GenreEntry implements IBuildable
+class GenreEntry implements IBuildable, IKeyMap
 {
     const ID_PREFIX = 'SG';
 
@@ -31,12 +34,9 @@ class GenreEntry implements IBuildable
         "Approved"          => self::STATUS_APPROVED,
     );
 
-    /**
-	 * @column VARCHAR(64) PRIMARY KEY
-	 * @select
-	 * @search
-	 */
-	protected $id;
+    public function __construct($name=null) {
+        $name === null ?: $this->name = $name;
+    }
 
 	/**
 	 * @column VARCHAR(64) NOT NULL
@@ -46,6 +46,13 @@ class GenreEntry implements IBuildable
 	 * @search
 	 */
 	protected $name;
+
+    /**
+     * @column TEXT
+     * @select
+     * @insert
+     */
+    protected $description;
 
     /**
      * @column INT
@@ -61,17 +68,20 @@ class GenreEntry implements IBuildable
      */
     protected $created;
 
+    public function getName() {
+        return $this->name;
+    }
 
-	public function getID() {
-		return $this->id;
-	}
-
-	public function getName() {
-		return $this->name;
-	}
+    public function getDescription() {
+        return $this->description;
+    }
 
     public function getStatusFlags() {
         return (int) $this->status;
+    }
+
+    public function getCreatedTimeStamp() {
+        return (int) $this->created;
     }
 
     public function hasFlags($flags) {
@@ -89,8 +99,55 @@ class GenreEntry implements IBuildable
         return $statusList;
     }
 
+    public function update(IRequest $Request, $description) {
+        $Update = self::table()
+            ->update();
+
+        $description === null ?: $Update->update(GenreTable::COLUMN_DESCRIPTION, $description);
+        $Update->where(GenreTable::COLUMN_NAME, $this->name);
+
+        if(!$Update->execute($Request))
+            throw new \InvalidArgumentException("Could not update " . __CLASS__);
+    }
+
+
+    /**
+     * Map data to the key map
+     * @param IKeyMapper $Map the map inst to add data to
+     * @internal param \CPath\Request\IRequest $Request
+     * @internal param \CPath\Request\IRequest $Request
+     * @return void
+     */
+    function mapKeys(IKeyMapper $Map) {
+        $Map->map('name', $this->getName());
+        $Map->map('description', $this->getDescription());
+        $Map->map('created', $this->created);
+        $Map->map('status', implode(', ', $this->getStatusList()));
+    }
+
 	// Static
 
+    /**
+     * @param null $artist
+     * @return PDOSelectBuilder
+     */
+    static function query($artist=null) {
+        $Query = self::table()
+            ->select(GenreTable::TABLE_NAME . '.' . GenreTable::COLUMN_NAME)
+            ->select(GenreTable::TABLE_NAME . '.' . GenreTable::COLUMN_DESCRIPTION)
+            ->select(GenreTable::TABLE_NAME . '.' . GenreTable::COLUMN_CREATED)
+            ->select(GenreTable::TABLE_NAME . '.' . GenreTable::COLUMN_STATUS)
+
+            ->groupBy(GenreTable::TABLE_NAME . '.' . GenreTable::COLUMN_NAME)
+
+            ->setFetchMode(GenreTable::FETCH_MODE, GenreTable::FETCH_CLASS);
+
+        $artist === null ?: $Query->where(GenreTable::COLUMN_NAME, $artist);
+
+        return $Query;
+    }
+
+    
     public static function getAll() {
         $Query = self::table()
             ->select(GenreTable::COLUMN_NAME);
@@ -107,43 +164,43 @@ class GenreEntry implements IBuildable
         return array_values($genreList);
     }
 
-    static function removeFromSong($Request, $id) {
-		$delete = self::table()->delete(GenreTable::COLUMN_ID, $id)
-			->execute($Request);
-		if(!$delete)
-			throw new \InvalidArgumentException("Could not delete " . __CLASS__);
-	}
-
-    /**
-     * @param IRequest $Request
-     * @param $genre
-     * @return GenreEntry
-     */
-	static function getOrCreate(IRequest $Request, $genre) {
-
-        /** @var GenreEntry $Genre */
-        $Genre = self::table()
-            ->select()
-            ->where(GenreTable::COLUMN_NAME, $genre)
-            ->fetch();
-
-        if($Genre)
-            return $Genre->getID();
-
-        $id = strtoupper(uniqid(self::ID_PREFIX));
-        $inserted = self::table()->insert(array(
-            GenreTable::COLUMN_ID=> $id,
-            GenreTable::COLUMN_NAME => $genre,
-            GenreTable::COLUMN_STATUS => self::STATUS_NONE,
-        ))
-            ->execute($Request);
-
-        if(!$inserted)
-            throw new \InvalidArgumentException("Could not insert " . __CLASS__);
-        $Request->log("New Genre Entry Inserted: " . $genre, $Request::VERBOSE);
-
-        return $id;
-	}
+//    static function removeFromSong($Request, $id) {
+//		$delete = self::table()->delete(GenreTable::COLUMN_ID, $id)
+//			->execute($Request);
+//		if(!$delete)
+//			throw new \InvalidArgumentException("Could not delete " . __CLASS__);
+//	}
+//
+//    /**
+//     * @param IRequest $Request
+//     * @param $genre
+//     * @return GenreEntry
+//     */
+//	static function getOrCreate(IRequest $Request, $genre) {
+//
+//        /** @var GenreEntry $Genre */
+//        $Genre = self::table()
+//            ->select()
+//            ->where(GenreTable::COLUMN_NAME, $genre)
+//            ->fetch();
+//
+//        if($Genre)
+//            return $Genre->getID();
+//
+//        $id = strtoupper(uniqid(self::ID_PREFIX));
+//        $inserted = self::table()->insert(array(
+//            GenreTable::COLUMN_ID=> $id,
+//            GenreTable::COLUMN_NAME => $genre,
+//            GenreTable::COLUMN_STATUS => self::STATUS_NONE,
+//        ))
+//            ->execute($Request);
+//
+//        if(!$inserted)
+//            throw new \InvalidArgumentException("Could not insert " . __CLASS__);
+//        $Request->log("New Genre Entry Inserted: " . $genre, $Request::VERBOSE);
+//
+//        return $id;
+//	}
 
 	static function table() {
 		return new GenreTable();

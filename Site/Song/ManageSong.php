@@ -33,13 +33,10 @@ use CPath\Response\Common\RedirectResponse;
 use CPath\Response\IResponse;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
+use Site\Config;
 use Site\SiteMap;
 use Site\Song\DB\SongEntry;
-use Site\Song\Genre\DB\GenreEntry;
-use Site\Song\Genre\DB\SongGenreEntry;
 use Site\Song\Review\HTML\HTMLSongReviewsTable;
-use Site\Song\System\DB\SongSystemEntry;
-use Site\Song\System\DB\SystemEntry;
 use Site\Song\Tag\DB\SongTagEntry;
 
 
@@ -54,8 +51,8 @@ class ManageSong implements IExecutable, IBuildable, IRoutable
     const PARAM_SONG_ID = 'id';
     const PARAM_SONG_TITLE = 'title';
     const PARAM_SONG_DESCRIPTION = 'description';
-    const PARAM_SONG_GENRES = 'genres';
-    const PARAM_SONG_SYSTEMS = 'systems';
+//    const PARAM_SONG_GENRES = 'genres';
+//    const PARAM_SONG_SYSTEMS = 'systems';
     const PARAM_SONG_TAG_NAME = 'tag-name';
     const PARAM_SONG_TAG_VALUE = 'tag-value';
     const PARAM_SUBMIT = 'submit';
@@ -80,12 +77,12 @@ class ManageSong implements IExecutable, IBuildable, IRoutable
 
         $Song = SongEntry::get($this->id);
 
-        $systemList = SystemEntry::getAll();
-        $genreList = GenreEntry::getAll();
+//        $systemList = SystemEntry::getAll();
+//        $genreList = GenreEntry::getAll();
         $tagList = SongTagEntry::$TagDefaults;
 
-        $oldGenres = $Song->getGenreList();
-        $oldSystems = $Song->getSystemList();
+//        $oldGenres = $Song->getGenreList();
+//        $oldSystems = $Song->getSystemList();
 
         $ReviewTable = new HTMLSongReviewsTable($Request, $Song->getID());
 
@@ -113,21 +110,24 @@ class ManageSong implements IExecutable, IBuildable, IRoutable
                     )
                 ),
 
-                "<br/><br/>",
-                new HTMLElement('label', null, "Game Systems:<br/>",
-                    $SelectSystem = new HTMLSelectField(self::PARAM_SONG_SYSTEMS . '[]', $systemList,
-                        new Attributes('multiple', 'multiple'),
-                        new RequiredValidation()
-                    )
-                ),
+                "<br/>Allowed Tags:<br/>",
+                "<div class='info'>&#60;" . implode('&#62;, &#60;', Config::$AllowedTags) . '&#62;</div>',
 
-                "<br/><br/>",
-                new HTMLElement('label', null, "Genres:<br/>",
-                    $SelectGenre = new HTMLSelectField(self::PARAM_SONG_GENRES . '[]', $genreList,
-                        new Attributes('multiple', 'multiple'),
-                        new RequiredValidation()
-                    )
-                ),
+//                "<br/><br/>",
+//                new HTMLElement('label', null, "Game Systems:<br/>",
+//                    $SelectSystem = new HTMLSelectField(self::PARAM_SONG_SYSTEMS . '[]', $systemList,
+//                        new Attributes('multiple', 'multiple'),
+//                        new RequiredValidation()
+//                    )
+//                ),
+//
+//                "<br/><br/>",
+//                new HTMLElement('label', null, "Genres:<br/>",
+//                    $SelectGenre = new HTMLSelectField(self::PARAM_SONG_GENRES . '[]', $genreList,
+//                        new Attributes('multiple', 'multiple'),
+//                        new RequiredValidation()
+//                    )
+//                ),
 
                 "<br/><br/>",
                 new HTMLButton(self::PARAM_SUBMIT, 'Update', 'update')
@@ -195,16 +195,16 @@ class ManageSong implements IExecutable, IBuildable, IRoutable
 		);
 
 
-        foreach($oldSystems as $system)
-            $SelectSystem->addOption($system, $system, true);
+//        foreach($oldSystems as $system)
+//            $SelectSystem->addOption($system, $system, true);
 
-        foreach($oldGenres as $genre)
-            $SelectGenre->addOption($genre, $genre, true);
+//        foreach($oldGenres as $genre)
+//            $SelectGenre->addOption($genre, $genre, true);
 
         foreach($Song->getTagList() as $tag) {
             list($tagName, $tagValue) = $tag;
             $title = array_search($tagName, SongTagEntry::$TagDefaults) ?: $tagName;
-            $SelectRemoveTag->addOption($tagName.':'.$tagValue, "{$title} - {$value}");
+            $SelectRemoveTag->addOption($tagName.':'.$tagValue, "{$title} - {$tagValue}");
         }
 
 		if(!$Request instanceof IFormRequest)
@@ -229,34 +229,34 @@ class ManageSong implements IExecutable, IBuildable, IRoutable
                 return new RedirectResponse(ManageSong::getRequestURL($Song->getID()), "Song published successfully. You rock", 5);
 
             case 'update':
-                $newGenres = $Form->validateField($Request, self::PARAM_SONG_GENRES);
-                $newSystems = $Form->validateField($Request, self::PARAM_SONG_SYSTEMS);
+//                $newGenres = $Form->validateField($Request, self::PARAM_SONG_GENRES);
+//                $newSystems = $Form->validateField($Request, self::PARAM_SONG_SYSTEMS);
                 $newTitle = $Form->validateField($Request, self::PARAM_SONG_TITLE);
                 $newDescription = $Form->validateField($Request, self::PARAM_SONG_DESCRIPTION);
 
-                foreach($newGenres as $genre) {
-                    if(in_array($genre, $oldGenres)) {
-                        $oldGenres = array_diff($oldGenres, array($genre));
-                    } else {
-                        SongGenreEntry::addToSong($Request, $Song->getID(), $genre);
-                    }
-                }
+//                foreach($newGenres as $genre) {
+//                    if(in_array($genre, $oldGenres)) {
+//                        $oldGenres = array_diff($oldGenres, array($genre));
+//                    } else {
+//                        SongGenreEntry::addToSong($Request, $Song->getID(), $genre);
+//                    }
+//                }
 
-                foreach($oldGenres as $genre) {
-                    SongGenreEntry::removeFromSong($Request, $Song->getID(), $genre);
-                }
+//                foreach($oldGenres as $genre) {
+//                    SongGenreEntry::removeFromSong($Request, $Song->getID(), $genre);
+//                }
 
-                foreach($newSystems as $system) {
-                    if(in_array($system, $oldSystems)) {
-                        $oldSystems = array_diff($oldSystems, array($system));
-                    } else {
-                        SongSystemEntry::addToSong($Request, $Song->getID(), $system);
-                    }
-                }
-
-                foreach($oldSystems as $system) {
-                    SongSystemEntry::removeFromSong($Request, $Song->getID(), $system);
-                }
+//                foreach($newSystems as $system) {
+//                    if(in_array($system, $oldSystems)) {
+//                        $oldSystems = array_diff($oldSystems, array($system));
+//                    } else {
+//                        SongSystemEntry::addToSong($Request, $Song->getID(), $system);
+//                    }
+//                }
+//
+//                foreach($oldSystems as $system) {
+//                    SongSystemEntry::removeFromSong($Request, $Song->getID(), $system);
+//                }
 
                 if($newTitle !== $Song->getTitle()
                  || $newDescription !== $Song->getDescription()) {

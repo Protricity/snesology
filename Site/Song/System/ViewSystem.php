@@ -5,7 +5,7 @@
  * Date: 1/27/2015
  * Time: 1:56 PM
  */
-namespace Site\Song\Artist;
+namespace Site\Song\System;
 
 use CPath\Build\IBuildable;
 use CPath\Build\IBuildRequest;
@@ -22,28 +22,24 @@ use CPath\Response\IResponse;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
 use Site\SiteMap;
-use Site\Song\Artist\DB\ArtistEntry;
-use Site\Song\Review\HTML\HTMLArtistSongsTable;
-use Site\Song\Review\HTML\HTMLSongReviewsTable;
+use Site\Song\Review\HTML\HTMLSystemSongsTable;
+use Site\Song\System\DB\SystemEntry;
 
-class ViewArtist implements IExecutable, IBuildable, IRoutable
+class ViewSystem implements IExecutable, IBuildable, IRoutable
 {
-	const TITLE = 'View Artist Information';
+	const TITLE = 'View System Information';
 
-    const FORM_ACTION = '/sa/:id';
-    const FORM_ACTION2 = '/song/artist/:id';
+    const FORM_ACTION = '/ss/:name';
+    const FORM_ACTION2 = '/song/system/:name';
 	const FORM_METHOD = 'POST';
-	const FORM_NAME = 'view-artist';
+	const FORM_NAME = 'view-system';
 
-    const PARAM_ARTIST = 'id';
-    const PARAM_Artist_TITLE = 'title';
-    const PARAM_Artist_GENRES = 'genres';
-    const PARAM_Artist_SYSTEMS = 'systems';
+    const PARAM_SYSTEM_NAME = 'name';
 
     private $tag;
 
-    public function __construct($artistTag) {
-        $this->tag = $artistTag;
+    public function __construct($systemTag) {
+        $this->tag = $systemTag;
     }
 
     /**
@@ -53,26 +49,26 @@ class ViewArtist implements IExecutable, IBuildable, IRoutable
 	 * @return IResponse the execution response
 	 */
 	function execute(IRequest $Request) {
-        $ArtistEntry = ArtistEntry::query($this->tag)->fetch() ?: new ArtistEntry($this->tag);
-        $ArtistSongs = new HTMLArtistSongsTable($this->tag);
+        $SystemEntry = SystemEntry::query($this->tag)->fetch() ?: new SystemEntry($this->tag);
+        $SystemSongs = new HTMLSystemSongsTable($this->tag);
 
         $Form = new HTMLForm(self::FORM_METHOD, $Request->getPath(), self::FORM_NAME,
 			new HTMLMetaTag(HTMLMetaTag::META_TITLE, self::TITLE),
 
-            new HTMLElement('fieldset', 'fieldset-artist-info inline',
-                new HTMLElement('legend', 'legend-artist-info', 'Artist Info'),
+            new HTMLElement('fieldset', 'fieldset-system-info inline',
+                new HTMLElement('legend', 'legend-system-info', 'System Info'),
 
-                new MapRenderer($ArtistEntry),
+                new MapRenderer($SystemEntry),
                 "<br/>",
-                new HTMLAnchor(ManageArtist::getRequestURL($this->tag), "Edit",
+                new HTMLAnchor(ManageSystem::getRequestURL($this->tag), "Edit",
                     new StyleAttributes('float', 'right')
                 )
             ),
 
             new HTMLElement('fieldset',
-                new HTMLElement('legend', 'legend-artist-songs', 'Related Songs'),
+                new HTMLElement('legend', 'legend-system-songs', 'Related Songs'),
 
-                $ArtistSongs
+                $SystemSongs
             )
 		);
 
@@ -81,8 +77,8 @@ class ViewArtist implements IExecutable, IBuildable, IRoutable
 
 	// Static
 
-	public static function getRequestURL($artist) {
-		return str_replace(':' . self::PARAM_ARTIST, urlencode($artist), self::FORM_ACTION);
+	public static function getRequestURL($system) {
+		return str_replace(':' . self::PARAM_SYSTEM_NAME, urlencode($system), self::FORM_ACTION);
 	}
 
 	/**
@@ -96,7 +92,7 @@ class ViewArtist implements IExecutable, IBuildable, IRoutable
 	 * If an object is returned, it is passed along to the next handler
 	 */
 	static function routeRequestStatic(IRequest $Request, Array &$Previous = array(), $_arg = null) {
-		return new ExecutableRenderer(new static(urldecode($Request[self::PARAM_ARTIST])), true);
+		return new ExecutableRenderer(new static(urldecode($Request[self::PARAM_SYSTEM_NAME])), true);
 	}
 
 	/**

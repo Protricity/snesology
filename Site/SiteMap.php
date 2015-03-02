@@ -81,6 +81,9 @@ class SiteMap implements IRouteMap, IBuildable
 			$Map->route('ANY /blog/', 'Site\\SitePages', 288, 'Blog') ||
 			$Map->route('ANY /chat/', 'Site\\SitePages', 272, 'Chat') ||
 
+			// @group Site\Song\Artist\ManageArtist
+			$Map->route('ANY /manage/artist/:name', 'Site\\Song\\Artist\\ManageArtist') ||
+
 			// @group Site\Song\Artist\ViewArtist
 			$Map->route('ANY /sa/:id', 'Site\\Song\\Artist\\ViewArtist') ||
 			$Map->route('ANY /song/artist/:id', 'Site\\Song\\Artist\\ViewArtist') ||
@@ -88,6 +91,13 @@ class SiteMap implements IRouteMap, IBuildable
 			// @group Site\Song\CreateSong
 			$Map->route('ANY /create/song/', 'Site\\Song\\CreateSong') ||
 			$Map->route('ANY /songs/', 'Site\\Song\\CreateSong', 272, 'Songs') ||
+
+			// @group Site\Song\Genre\ManageGenre
+			$Map->route('ANY /manage/genre/:name', 'Site\\Song\\Genre\\ManageGenre') ||
+
+			// @group Site\Song\Genre\ViewGenre
+			$Map->route('ANY /sg/:name', 'Site\\Song\\Genre\\ViewGenre') ||
+			$Map->route('ANY /song/genre/:name', 'Site\\Song\\Genre\\ViewGenre') ||
 
 			// @group Site\Song\ManageSong
 			$Map->route('ANY /manage/song/:id', 'Site\\Song\\ManageSong') ||
@@ -98,6 +108,13 @@ class SiteMap implements IRouteMap, IBuildable
 			// @group Site\Song\SearchSongs
 			$Map->route('ANY /songs/', 'Site\\Song\\SearchSongs', 256, 'Songs') ||
 			$Map->route('ANY /search/songs/', 'Site\\Song\\SearchSongs') ||
+
+			// @group Site\Song\System\ManageSystem
+			$Map->route('ANY /manage/system/:name', 'Site\\Song\\System\\ManageSystem') ||
+
+			// @group Site\Song\System\ViewSystem
+			$Map->route('ANY /ss/:name', 'Site\\Song\\System\\ViewSystem') ||
+			$Map->route('ANY /song/system/:name', 'Site\\Song\\System\\ViewSystem') ||
 
 			// @group Site\Song\ViewSong
 			$Map->route('ANY /s/:id', 'Site\\Song\\ViewSong') ||
