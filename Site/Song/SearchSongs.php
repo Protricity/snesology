@@ -32,8 +32,8 @@ class SearchSongs implements IExecutable, IBuildable, IRoutable
 {
 	const TITLE = 'Search Songs';
 
-	const FORM_ACTION = '/songs';
-	const FORM_ACTION2 = '/search/songs';
+	const FORM_ACTION = '/songs/';
+	const FORM_ACTION2 = '/search/songs/';
 	const FORM_METHOD = 'GET';
 	const FORM_NAME = __CLASS__;
 
@@ -108,7 +108,7 @@ class SearchSongs implements IExecutable, IBuildable, IRoutable
 	 */
 	static function handleBuildStatic(IBuildRequest $Request) {
 		$RouteBuilder = new RouteBuilder($Request, new SiteMap());
-		$RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION, __CLASS__);
-		$RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION2, __CLASS__);
-	}
+        $RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION, __CLASS__, IRequest::NAVIGATION_ROUTE, "Songs");
+        $RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION2, __CLASS__);
+    }
 }
