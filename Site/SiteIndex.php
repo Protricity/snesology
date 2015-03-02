@@ -17,6 +17,8 @@ use CPath\Request\IRequest;
 use CPath\Response\IResponse;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
+use Site\Request\HTML\HTMLRequestHistory;
+use Site\Song\Review\HTML\HTMLSongsTable;
 
 class SiteIndex implements IExecutable, IBuildable, IRoutable
 {
@@ -39,9 +41,22 @@ class SiteIndex implements IExecutable, IBuildable, IRoutable
 			new HTMLElement('fieldset',
 				new HTMLElement('legend', 'legend-submit', self::TITLE),
 
-                "Coming Soon"
-			)
-		);
+                "Beta Test Coming Soon"
+			),
+
+            new HTMLElement('fieldset', 'fieldset-contribution-history inline',
+                new HTMLElement('legend', 'legend-contribution-history', "Contribution History"),
+
+                new HTMLRequestHistory()
+            ),
+
+            new HTMLElement('fieldset', 'fieldset-songs inline',
+                new HTMLElement('legend', 'legend-songs', "Recent Songs"),
+
+                new HTMLSongsTable(20, true)
+            )
+
+        );
 
 		return $Form;
 	}

@@ -35,6 +35,7 @@ use Site\Account\DB\AccountEntry;
 use Site\Config;
 use Site\Path\HTML\HTMLPathTip;
 use Site\Render\PopUpBox\HTMLPopUpBox;
+use Site\Request\DB\RequestEntry;
 use Site\SiteMap;
 use Site\Song\DB\SongEntry;
 use Site\Song\DB\SongTable;
@@ -243,6 +244,8 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
 
         $this->newSongID = $Song->getID();
 
+        RequestEntry::createFromRequest($Request, $Account);
+
         return new RedirectResponse(ManageSong::getRequestURL($Song->getID()), "Song created successfully. Redeflecting...", 5);
 	}
 
@@ -292,6 +295,8 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
         $Session = &$Test->getSession();
         $TestAccount = new AccountEntry('test-fp');
         $Session[AccountEntry::SESSION_KEY] = serialize($TestAccount);
+
+        SongEntry::table()->delete(SongTable::COLUMN_TITLE, 'test-song-title');
 
         $CreateSong = new CreateSong();
 
