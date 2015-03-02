@@ -4,8 +4,12 @@
 
 body .popup.info {
     background-image: url("img/popup_info.gif");
+}
 
-
+body .popup.important {
+    background-image: url("img/popup_important.gif");
+    min-width: 16px;
+    min-height: 16px;
 }
 
 body .popup.description {
@@ -204,7 +208,7 @@ fieldset.inline {
 
 form button {
     cursor: pointer;
-    background: url("img/buttongreen.jpg") left;
+    /* background: url("img/buttongreen.jpg") left; */
 }
 
 .input {
@@ -215,7 +219,7 @@ form button {
     /* font-family: monospace; */
     /* font-size: medium; */
     font-weight: bold;
-    color: white;
+    /* color: white; */
 }
 
 .input.small {

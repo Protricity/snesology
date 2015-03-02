@@ -18,6 +18,8 @@ class HTMLPopUpBox implements IRenderHTML, IHTMLSupportHeaders
 {
     const CLASS_INFO = 'info';
     const CLASS_DESCRIPTION = 'description';
+    const CLASS_IMPORTANT = 'important';
+
     private $content;
     private $class;
     private $caption;
@@ -44,14 +46,16 @@ class HTMLPopUpBox implements IRenderHTML, IHTMLSupportHeaders
         echo RI::ni(), "<div class='popup{$class}'>";
         if ($this->caption)
             echo RI::ni(1), "<span>", $this->caption, "</span>";
-        echo RI::ni(1), "<div class='content'>";
+        if($this->content) {
+            echo RI::ni(1), "<div class='content'>";
 
-        if($this->class)
-            echo RI::ni(2), "<div class='popup{$class}'></div>";
+            if ($this->class)
+                echo RI::ni(2), "<div class='popup{$class}'></div>";
 
-        $this->renderContent($Request, $Parent);
+            $this->renderContent($Request, $Parent);
 
-        echo RI::ni(1), "</div>";
+            echo RI::ni(1), "</div>";
+        }
         echo RI::ni(), "</div>";
     }
 

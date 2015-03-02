@@ -164,8 +164,7 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
                     )
                 ),
 
-
-                "<br/>Free file hosting for chip-tune originals!<br/>",
+                new HTMLPopUpBox(null, HTMLPopUpBox::CLASS_IMPORTANT, 'Free file hosting for chip-tune originals!'),
 
                 new HTMLElement('fieldset', 'fieldset-song-chip-style inline',
                     new HTMLElement('legend', 'legend-song-chip-style', "Chip Style:"),

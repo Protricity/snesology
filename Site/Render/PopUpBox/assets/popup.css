@@ -2,14 +2,26 @@
 .popup span{
     text-decoration: underline;
     cursor: pointer;
-    padding-right: 20px;
+    padding: 0 20px;
+}
+
+.popup.info,
+.popup.description,
+.popup.important {
+    
+}
+
+.popup.important {
+    background: url("img/popup_info.gif") no-repeat left;
+    min-width: 16px;
+    min-height: 16px;
 }
 
 .popup.info {
     background: url("img/popup_info.gif") no-repeat right;
-    float:right;
     min-width: 16px;
     min-height: 16px;
+    float:right;
 }
 
 .popup .content {
