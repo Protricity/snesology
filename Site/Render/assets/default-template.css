@@ -74,23 +74,26 @@ section, div.section {
     background: url("img/button.jpg") left;
     background-size: cover;
 
-    color: #338;
-    /* box-shadow: inset 1px 1px 1px #ddd; */
+    color: #FFFFFF;
+    border-width: 3px;
+    border-color: rgb(176, 51, 28);
+    border-style: outset;
+    /* box-shadow: inset 1px 1px 1px #CB7130; */
 
-    font-family: sans-serif;
+    font-family: monospace;
     font-weight: bold;
     text-decoration: none;
 
     display: block;
 
-    font-size: small;
+    font-size: 19px;
     width: 136px;
     height: 30px;
 
     padding-top: 16px;
-    margin: 1em;
 
     text-align: center;
+    margin: 15px;
 }
 
 .navbar a:visited {
@@ -138,6 +141,8 @@ tr:hover {
 body {
 
   max-width: 1000px;
+  
+
   color: #FFF;
 
   margin: 0 auto;
@@ -159,7 +164,7 @@ section.centered form * {
 }
 
 
-a { color: #66F; }
+a { color: #3A80FF; }
 a:visited { color: #99B; }
 
 /** Form **/
@@ -199,12 +204,18 @@ fieldset.inline {
 
 form button {
     cursor: pointer;
+    background: url("img/buttongreen.jpg") left;
 }
 
 .input {
-    border: 1px solid #ccc;
+    border: 1px #708B20;
+    border-style: outset;
     padding: 5pt 5pt;
     border-radius: 4pt;
+    /* font-family: monospace; */
+    /* font-size: medium; */
+    font-weight: bold;
+    color: white;
 }
 
 .input.small {
