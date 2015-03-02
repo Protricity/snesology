@@ -92,70 +92,81 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
 
                 new HTMLPathTip($Request, '#gen-tips', self::TIPS_CREATE_SONG),
 
-                new HTMLElement('label', null, "Chip Style:<br/>",
+                new HTMLElement('fieldset', 'fieldset-song-data inline',
+                    new HTMLElement('legend', 'legend-song-data', "Song Information:"),
+
+                    new HTMLElement('label', null, "Song Title:<br/>",
+                        new HTMLInputField(self::PARAM_SONG_TITLE,
+                            new Attributes('placeholder', 'My Song Title'),
+                            new RequiredValidation()
+                        )
+                    ),
+
+                    "<br/><br/>",
+                    new HTMLElement('label', null, "Song Artist(s) [comma delimited]:<br/>",
+                        new HTMLInputField(self::PARAM_SONG_ARTIST,
+                            new Attributes('placeholder', 'i.e. "Artist1, Artist2"'),
+                            new RequiredValidation()
+                        )
+                    ),
+
+                    "<br/><br/>",
+                    new HTMLElement('label', null, "Description:<br/>",
+                        new HTMLTextAreaField(self::PARAM_SONG_DESCRIPTION,
+                            new Attributes('placeholder', 'Enter a song description'),
+                            new Attributes('rows', 6, 'cols', 40),
+                            new RequiredValidation()
+                        )
+                    )
+                ),
+
+                new HTMLElement('fieldset', 'fieldset-song-association inline',
+                    new HTMLElement('legend', 'legend-song-association', "Sources:"),
+                    new HTMLElement('label', null, "Remix/Rearrangement/Cover of Original [comma delimited]:<br/>",
+                        new HTMLInputField(self::PARAM_SONG_ORIGINAL,
+                            new Attributes('placeholder', 'i.e. "SMB Castle Complete, SMB Hurry Castle"'),
+                            new Attributes('size', 32),
+                            new RequiredValidation()
+                        )
+                    ),
+
+                    "<br/><br/>",
+                    new HTMLElement('label', null, "Similar Songs [comma delimited]:<br/>",
+                        new HTMLInputField(self::PARAM_SONG_SIMILAR,
+                            new Attributes('placeholder', 'i.e. "Thought You Could Castle, You Got Castled"'),
+                            new Attributes('size', 32),
+                            new RequiredValidation()
+                        )
+                    )
+                ),
+
+
+                new HTMLElement('fieldset', 'fieldset-song-chip-style inline',
+                    new HTMLElement('legend', 'legend-song-chip-style', "Chip Style:"),
                     new HTMLSelectField(self::PARAM_SONG_CHIP_STYLE . '[]', DefaultChipStyles::getDefaults() + array(
                             "Not a chip tune" => null,
                         ),
                         new Attributes('multiple', 'multiple'),
+                        new Attributes('size', 5),
                         new RequiredValidation()
                     )
                 ),
 
-                "<br/><br/>",
-                new HTMLElement('label', null, "Song Title:<br/>",
-                    new HTMLInputField(self::PARAM_SONG_TITLE,
-                        new Attributes('placeholder', 'My Song Title'),
-                        new RequiredValidation()
-                    )
-                ),
-
-                "<br/><br/>",
-                new HTMLElement('label', null, "Song Artist(s) [comma delimited]:<br/>",
-                    new HTMLInputField(self::PARAM_SONG_ARTIST,
-                        new Attributes('placeholder', 'i.e. "Artist1, Artist2"'),
-                        new RequiredValidation()
-                    )
-                ),
-
-//                "<br/><br/>",
-//                new HTMLElement('label', null, "Description:<br/>",
-//                    new HTMLTextAreaField(self::PARAM_SONG_DESCRIPTION,
-//                        new Attributes('placeholder', 'Enter a song description'),
-//                        new Attributes('rows', 6, 'cols', 40),
-//                        new RequiredValidation()
-//                    )
-//                ),
-
-                "<br/><br/>",
-                new HTMLElement('label', null, "Game Systems:<br/>",
+                new HTMLElement('fieldset', 'fieldset-song-systems inline',
+                    new HTMLElement('legend', 'legend-song-systems', "Game System:"),
                     new HTMLSelectField(self::PARAM_SONG_SYSTEM . '[]', $systemList,
                         new Attributes('multiple', 'multiple'),
+                        new Attributes('size', 7),
+
                         new RequiredValidation()
                     )
                 ),
 
-                "<br/><br/>",
-                new HTMLElement('label', null, "Genres:<br/>",
+                new HTMLElement('fieldset', 'fieldset-song-genre inline',
+                    new HTMLElement('legend', 'legend-song-genre', "Genre:"),
                     new HTMLSelectField(self::PARAM_SONG_GENRE . '[]', $genreList,
                         new Attributes('multiple', 'multiple'),
-                        new RequiredValidation()
-                    )
-                ),
-
-                "<br/><br/>",
-                new HTMLElement('label', null, "Remix/Rearrangement/Cover of Original [comma delimited]:<br/>",
-                    new HTMLInputField(self::PARAM_SONG_ORIGINAL,
-                        new Attributes('placeholder', 'i.e. "SMB Castle Complete, SMB Hurry Castle"'),
-                        new Attributes('size', 32),
-                        new RequiredValidation()
-                    )
-                ),
-
-                "<br/><br/>",
-                new HTMLElement('label', null, "Similar Songs [comma delimited]:<br/>",
-                    new HTMLInputField(self::PARAM_SONG_SIMILAR,
-                        new Attributes('placeholder', 'i.e. "Thought You Could Castle, You Got Castled"'),
-                        new Attributes('size', 32),
+                        new Attributes('size', 9),
                         new RequiredValidation()
                     )
                 ),
@@ -172,7 +183,7 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
         $Form->setFormValues($Request);
 
         $title = $Form->validateField($Request, self::PARAM_SONG_TITLE);
-        $description = ''; // $Form->validateField($Request, self::PARAM_SONG_DESCRIPTION);
+        $description = $Form->validateField($Request, self::PARAM_SONG_DESCRIPTION);
 
         $tags[self::PARAM_SONG_ARTIST] = array(SongTagEntry::TAG_ARTIST, $Form->validateField($Request, self::PARAM_SONG_ARTIST));
         $tags[self::PARAM_SONG_SYSTEM] = array(SongTagEntry::TAG_SYSTEM, $Form->validateField($Request, self::PARAM_SONG_SYSTEM));
@@ -265,7 +276,7 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
         $Test->setRequestParameter(self::PARAM_SONG_SIMILAR, 'test-song-similar');
         $Test->setRequestParameter(self::PARAM_SONG_ORIGINAL, 'test-song-original');
         $Test->setRequestParameter(self::PARAM_SONG_CHIP_STYLE, '8-bit');
-//        $Test->setRequestParameter(self::PARAM_SONG_DESCRIPTION, 'test-song-description');
+        $Test->setRequestParameter(self::PARAM_SONG_DESCRIPTION, 'test-song-description');
         $Test->setRequestParameter(self::PARAM_SONG_GENRE, array('test-song-genre'));
         $Test->setRequestParameter(self::PARAM_SONG_SYSTEM, array('test-song-system'));
         $CreateSong->execute($Test);

@@ -139,7 +139,7 @@ class ManageSong implements IExecutable, IBuildable, IRoutable
                     new HTMLElement('legend', 'legend-song-publish', "Publish!"),
 
                     "Tags in place? <br/> All ready to go? <br/><br/>",
-                    new HTMLButton(self::PARAM_SUBMIT, 'Publish song', 'publish')
+                    new HTMLButton(self::PARAM_SUBMIT, 'Publish "' . $Song->getTitle() . '"', 'publish')
                 )
             ),
 
