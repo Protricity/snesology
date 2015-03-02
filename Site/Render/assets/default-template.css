@@ -108,7 +108,7 @@ section, div.section {
     margin-top: 1em;
 }
 
-.content {
+section.content {
     /* display: inline-block; */  
     /* min-width: 978px; */
     min-height: 30em;
