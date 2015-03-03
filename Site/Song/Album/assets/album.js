@@ -10,7 +10,6 @@
     var PARAM_TAG_NAME = 'tag-name';
     var PARAM_TAG_VALUE = 'tag-value';
 
-    var PARAM_SONG_ARTIST = 'song-artist';
     var PARAM_ALBUM_ARTIST = 'album-artist';
 
     var META_DOMAIN_PATH  = 'domain-path';
@@ -40,11 +39,11 @@
         var searchSongTagsPath = 'search/songtags/';
 
         var doAutoList = function(input, tagName) {
-            if(typeof input.__initSongAutoTag !== 'undefined')
+            if(typeof input.__initAlbumAutoTag !== 'undefined')
                 return;    
 
             console.log("Found Song Auto Tag Input: ", input);
-            input.__initSongAutoTag = true;
+            input.__initAlbumAutoTag = true;
             
             var InputValue = jQuery(input); // FieldSet.find('*[name=' + PARAM_TAG_VALUE + ']');
 
@@ -97,10 +96,6 @@
                 InputName.on('change input', function() { InputValue.trigger('input'); });
             });
 
-        jQuery('*[name=' + PARAM_SONG_ARTIST + ']')
-            .each(function(i, input) {
-                doAutoList(input, 'artist');
-            });
 
         jQuery('*[name=' + PARAM_ALBUM_ARTIST + ']')
             .each(function(i, input) {

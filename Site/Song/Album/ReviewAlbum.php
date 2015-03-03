@@ -5,7 +5,7 @@
  * Date: 1/27/2015
  * Time: 1:56 PM
  */
-namespace Site\Song;
+namespace Site\Song\Album;
 
 use CPath\Build\IBuildable;
 use CPath\Build\IBuildRequest;
@@ -39,34 +39,35 @@ use Site\Path\HTML\HTMLPathTip;
 use Site\Render\PopUpBox\HTMLPopUpBox;
 use Site\Request\DB\RequestEntry;
 use Site\SiteMap;
-use Site\Song\DB\SongEntry;
+use Site\Song\Album\DB\AlbumEntry;
 use Site\Song\Review\DB\ReviewEntry;
 use Site\Song\Review\HTML\HTMLSourceReview;
 use Site\Song\Review\ReviewTag\DB\ReviewTagEntry;
 
 
-class ReviewSong implements IExecutable, IBuildable, IRoutable
+class ReviewAlbum implements IExecutable, IBuildable, IRoutable
 {
-	const TITLE = 'Review a Song';
+	const TITLE = 'Review na Album';
 
-	const FORM_ACTION = '/review/song/:id';
+	const FORM_ACTION = '/review/album/:id';
 	const FORM_METHOD = 'POST';
-	const FORM_NAME = 'review-song';
+	const FORM_NAME = 'review-album';
 
-    const PARAM_SONG_ID = 'id';
-    const PARAM_SONG_REVIEW_TITLE = 'title';
-    const PARAM_SONG_REVIEW = 'review';
+    const PARAM_ALBUM_ID = 'id';
+    const PARAM_ALBUM_REVIEW_TITLE = 'title';
+    const PARAM_ALBUM_REVIEW = 'review';
     const PARAM_SUBMIT = 'submit';
-    const PARAM_SONG_STATUS = 'status';
+    const PARAM_ALBUM_STATUS = 'status';
     const PARAM_REVIEW_REMOVE_TAG = 'review-remove-tag';
     const PARAM_REVIEW_TAG_NAME = 'review-tag-name';
     const PARAM_REVIEW_TAG_VALUE = 'review-tag-value';
 
-    const TIP_REVIEW = '<b>Review a song</b><br /><br />Create a song review';
+    const TIP_REVIEW = '<b>Review an album</b><br /><br />Create an album review';
+
     private $id;
 
-    public function __construct($songID) {
-        $this->id = $songID;
+    public function __construct($albumID) {
+        $this->id = $albumID;
     }
 
     /**
@@ -81,8 +82,8 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable
 			throw new \Exception("Session required");
 
         $Account = AccountEntry::loadFromSession($SessionRequest);
-        $Song = SongEntry::get($this->id);
-        $ReviewEntry = ReviewEntry::fetch($Song->getID(), $Account->getFingerprint());
+        $Album = AlbumEntry::get($this->id);
+        $ReviewEntry = ReviewEntry::fetch($Album->getID(), $Account->getFingerprint());
 
         $Preview = new HTMLSourceReview($ReviewEntry, $Account);
         $tagList = ReviewTagEntry::$TagDefaults;
@@ -93,13 +94,13 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable
 			new HTMLHeaderScript(__DIR__ . '/assets/review.js'),
 			new HTMLHeaderStyleSheet(__DIR__ . '/assets/review.css'),
 
-            new HTMLElement('fieldset', 'fieldset-review-song inline',
-                new HTMLElement('legend', 'legend-song', "Review '" . $Song->getTitle() . "'"),
+            new HTMLElement('fieldset', 'fieldset-review-album inline',
+                new HTMLElement('legend', 'legend-album', "Review '" . $Album->getTitle() . "'"),
 
                 new HTMLPathTip($Request, '#tip-select', self::TIP_REVIEW),
 
-                new HTMLElement('label', null, "Song Title:<br/>",
-                    new HTMLInputField(self::PARAM_SONG_REVIEW_TITLE, $ReviewEntry ? $ReviewEntry->getReviewTitle() : null,
+                new HTMLElement('label', null, "Album Title:<br/>",
+                    new HTMLInputField(self::PARAM_ALBUM_REVIEW_TITLE, $ReviewEntry ? $ReviewEntry->getReviewTitle() : null,
                         new Attributes('placeholder', 'Review Title'),
                         new Attributes('size', 78)
                     )
@@ -107,8 +108,8 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable
 
                 "<br/><br/>",
                 new HTMLElement('label', null, "Review:<br/>",
-                    new HTMLTextAreaField(self::PARAM_SONG_REVIEW, $ReviewEntry ? $ReviewEntry->getReview() : null,
-                        new Attributes('placeholder', 'Enter a song review'),
+                    new HTMLTextAreaField(self::PARAM_ALBUM_REVIEW, $ReviewEntry ? $ReviewEntry->getReview() : null,
+                        new Attributes('placeholder', 'Enter a album review'),
                         new Attributes('rows', 15, 'cols', 80),
                         new RequiredValidation()
                     )
@@ -119,7 +120,7 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable
 
                 "<br/><br/>",
                 new HTMLElement('label', null, "Status:<br/>",
-                    $SelectStatus = new HTMLSelectField(self::PARAM_SONG_STATUS . '[]', ReviewEntry::$StatusOptions,
+                    $SelectStatus = new HTMLSelectField(self::PARAM_ALBUM_STATUS . '[]', ReviewEntry::$StatusOptions,
                         new Attributes('multiple', 'multiple'),
                         new RequiredValidation()
                     )
@@ -131,16 +132,16 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable
                     : new HTMLButton(self::PARAM_SUBMIT, 'Create', 'create')
             ),
 
-            new HTMLElement('fieldset', 'fieldset-view-song-review-preview inline',
-                new HTMLElement('legend', 'legend-view-song-review-preview', "Review Preview or is it Preview Review"),
+            new HTMLElement('fieldset', 'fieldset-view-album-review-preview inline',
+                new HTMLElement('legend', 'legend-view-album-review-preview', "Review Preview or is it Preview Review"),
 
                 $Preview
             ),
 
             ($ReviewEntry->hasFlags(ReviewEntry::STATUS_PUBLISHED)
                 ? null
-                : new HTMLElement('fieldset', 'fieldset-manage-song-publish inline',
-                    new HTMLElement('legend', 'legend-song-publish', "Publish!"),
+                : new HTMLElement('fieldset', 'fieldset-manage-album-publish inline',
+                    new HTMLElement('legend', 'legend-album-publish', "Publish!"),
 
                     "Nailed it down? <br/> All set? <br/><br/>",
                     new HTMLButton(self::PARAM_SUBMIT, 'Publish Review', 'publish')
@@ -196,15 +197,15 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable
 
             "<br/><br/>",
 
-            new HTMLElement('fieldset', 'fieldset-view-song-info inline',
-                new HTMLElement('legend', 'legend-view-song-info', "Song Information"),
+            new HTMLElement('fieldset', 'fieldset-view-album-info inline',
+                new HTMLElement('legend', 'legend-view-album-info', "Album Information"),
 
-                new MapRenderer($Song)
+                new MapRenderer($Album)
             )
 		);
 
         if($ReviewEntry)
-            foreach(SongEntry::$StatusOptions as $desc => $flag)
+            foreach(AlbumEntry::$StatusOptions as $desc => $flag)
                 if($ReviewEntry->hasFlags($flag))
                     $SelectStatus->addOption($flag, $desc, true);
 
@@ -225,34 +226,34 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable
                 $tagName = $Form->validateField($Request, self::PARAM_REVIEW_TAG_NAME);
                 $tagValue = $Form->validateField($Request, self::PARAM_REVIEW_TAG_VALUE);
                 $ReviewEntry->addTag($Request, $tagName, $tagValue);
-                return new RedirectResponse(ReviewSong::getRequestURL($Song->getID()), "Added Review Tag successfully. There's no going. You just go...", 5);
+                return new RedirectResponse(ReviewAlbum::getRequestURL($Album->getID()), "Added Review Tag successfully. There's no going. You just go...", 5);
 
             case 'remove-review-tag':
                 list($tagName, $tagValue) = explode(';', $Form->validateField($Request, self::PARAM_REVIEW_REMOVE_TAG), 2);
                 $ReviewEntry->removeTag($Request, $tagName, $tagValue);
-                return new RedirectResponse(ReviewSong::getRequestURL($Song->getID()), "Removed tag successfully. Re(move)directing...", 5);
+                return new RedirectResponse(ReviewAlbum::getRequestURL($Album->getID()), "Removed tag successfully. Re(move)directing...", 5);
 
             case 'publish':
                 $status = $ReviewEntry->getStatusFlags();
                 $status |= ReviewEntry::STATUS_PUBLISHED;
                 $ReviewEntry->update($Request, null, null, $status);
-                return new RedirectResponse(ReviewSong::getRequestURL($Song->getID()), "Published Song Review. omg omg omg...", 5);
+                return new RedirectResponse(ReviewAlbum::getRequestURL($Album->getID()), "Published Album Review. omg omg omg...", 5);
 
             case 'update':
-                $status = $Form->validateField($Request, self::PARAM_SONG_STATUS);
+                $status = $Form->validateField($Request, self::PARAM_ALBUM_STATUS);
                 $status = array_sum($status);
-                $review = $Form->validateField($Request, self::PARAM_SONG_REVIEW);
-                $reviewTitle = $Form->validateField($Request, self::PARAM_SONG_REVIEW_TITLE);
+                $review = $Form->validateField($Request, self::PARAM_ALBUM_REVIEW);
+                $reviewTitle = $Form->validateField($Request, self::PARAM_ALBUM_REVIEW_TITLE);
                 $ReviewEntry->update($Request, $review, $reviewTitle, $status);
-                return new RedirectResponse(ReviewSong::getRequestURL($Song->getID()), "Updated Song Review. Re(view)directing...", 5);
+                return new RedirectResponse(ReviewAlbum::getRequestURL($Album->getID()), "Updated Album Review. Re(view)directing...", 5);
 
             case 'create':
-                $status = $Form->validateField($Request, self::PARAM_SONG_STATUS);
+                $status = $Form->validateField($Request, self::PARAM_ALBUM_STATUS);
                 $status = array_sum($status);
-                $review = $Form->validateField($Request, self::PARAM_SONG_REVIEW);
-                $reviewTitle = $Form->validateField($Request, self::PARAM_SONG_REVIEW_TITLE);
-                ReviewEntry::addToSource($Request, $Song->getID(), 'song', $Account->getFingerprint(), $review, $reviewTitle, $status);
-                return new RedirectResponse(ReviewSong::getRequestURL($Song->getID()), "Added Song Review. Re(view)creating...", 5);
+                $review = $Form->validateField($Request, self::PARAM_ALBUM_REVIEW);
+                $reviewTitle = $Form->validateField($Request, self::PARAM_ALBUM_REVIEW_TITLE);
+                ReviewEntry::addToSource($Request, $Album->getID(), 'album', $Account->getFingerprint(), $review, $reviewTitle, $status);
+                return new RedirectResponse(ReviewAlbum::getRequestURL($Album->getID()), "Added Album Review. Re(view)creating...", 5);
 
             default:
                 throw new \InvalidArgumentException("Invalid submit: " . $submit);
@@ -261,8 +262,8 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable
 
 	// Static
 
-	public static function getRequestURL($songID) {
-        return str_replace(':' . self::PARAM_SONG_ID, $songID, self::FORM_ACTION);
+	public static function getRequestURL($albumID) {
+        return str_replace(':' . self::PARAM_ALBUM_ID, $albumID, self::FORM_ACTION);
 	}
 
 	/**
@@ -276,7 +277,7 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable
 	 * If an object is returned, it is passed along to the next handler
 	 */
 	static function routeRequestStatic(IRequest $Request, Array &$Previous = array(), $_arg = null) {
-		return new ExecutableRenderer(new static($Request[self::PARAM_SONG_ID]), true);
+		return new ExecutableRenderer(new static($Request[self::PARAM_ALBUM_ID]), true);
 	}
 
 	/**

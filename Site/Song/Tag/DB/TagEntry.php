@@ -19,13 +19,14 @@ use CPath\Render\HTML\Attribute\IAttributes;
 use CPath\Render\HTML\IRenderHTML;
 use CPath\Request\IRequest;
 use Site\DB\SiteDB;
+use Site\Song\Album\DB\AlbumTable;
 use Site\Song\DB\SongTable;
 
 /**
- * Class SongTagEntry
- * @table song_tag
+ * Class TagEntry
+ * @table tag
  */
-class SongTagEntry implements IBuildable, IKeyMap, IRenderHTML
+class TagEntry implements IBuildable, IKeyMap, IRenderHTML
 {
     const TYPE_DEFAULT = 's';
     const TYPE_STRING = 's';
@@ -109,7 +110,13 @@ class SongTagEntry implements IBuildable, IKeyMap, IRenderHTML
 	 * @column VARCHAR(64) NOT NULL
      * @index --name index_song_tag
 	 */
-	protected $song_id;
+	protected $source_id;
+
+    /**
+     * @column ENUM('song', 'album') NOT NULL
+     * @index --name index_tag_source
+     */
+    protected $source_type;
 
     /**
      * @column VARCHAR(64) NOT NULL
@@ -125,9 +132,10 @@ class SongTagEntry implements IBuildable, IKeyMap, IRenderHTML
     protected $value;
 
     protected $songs;
+    protected $albums;
 
-    public function getSongID() {
-        return $this->song_id;
+    public function getSourceID() {
+        return $this->source_id;
     }
 
     public function getSongList() {
@@ -139,6 +147,17 @@ class SongTagEntry implements IBuildable, IKeyMap, IRenderHTML
         }
         return $songs;
     }
+
+    public function getAlbumList() {
+        $albums = array();
+        foreach(explode('||', $this->albums) as $album) {
+            list($songTitle, $albumTitle) = explode('::', $album);
+            if($songTitle)
+                $albums[$songTitle] = $albumTitle;
+        }
+        return $albums;
+    }
+
     public function getTagName() {
 		return $this->tag;
 	}
@@ -158,6 +177,8 @@ class SongTagEntry implements IBuildable, IKeyMap, IRenderHTML
         $Map->map('tag-value', $this->getTagValue());
         foreach($this->getSongList() as $songID => $songTitle)
             $Map->map('song', $songID, $songTitle);
+        foreach($this->getAlbumList() as $albumID => $albumTitle)
+            $Map->map('album', $albumID, $albumTitle);
     }
 
     /**
@@ -179,26 +200,64 @@ class SongTagEntry implements IBuildable, IKeyMap, IRenderHTML
      */
     static function query() {
         return self::table()
-            ->select(SongTagTable::TABLE_NAME . '.' . SongTagTable::COLUMN_TAG)
-            ->select(SongTagTable::TABLE_NAME . '.' . SongTagTable::COLUMN_VALUE)
-//            ->select(SongTagTable::TABLE_NAME . '.' . SongTagTable::COLUMN_SONG_ID, SongTagTable::COLUMN_SONG_ID, "GROUP_CONCAT(%s SEPARATOR ', ')")
+            ->select(TagTable::TABLE_NAME . '.' . TagTable::COLUMN_TAG)
+            ->select(TagTable::TABLE_NAME . '.' . TagTable::COLUMN_VALUE)
+//            ->select(TagTable::TABLE_NAME . '.' . TagTable::COLUMN_SONG_ID, TagTable::COLUMN_SONG_ID, "GROUP_CONCAT(%s SEPARATOR ', ')")
 
-            ->select(SongTable::TABLE_NAME . '.' . SongTable::COLUMN_TITLE, 'song_title', "GROUP_CONCAT(%s SEPARATOR ', ')")
-            ->select('GROUP_CONCAT(DISTINCT CONCAT(' . SongTagTable::TABLE_NAME . '.' . SongTagTable::COLUMN_SONG_ID . ', "::", ' . SongTable::TABLE_NAME . '.' . SongTable::COLUMN_TITLE. ') SEPARATOR "||")', self::JOIN_COLUMN_SONGS)
+//            ->select(SongTable::TABLE_NAME . '.' . SongTable::COLUMN_TITLE, 'song_title', "GROUP_CONCAT(%s SEPARATOR ', ')")
+            ->select('GROUP_CONCAT(DISTINCT CONCAT(' . TagTable::TABLE_NAME . '.' . TagTable::COLUMN_SOURCE_ID . ', "::", ' . SongTable::TABLE_NAME . '.' . SongTable::COLUMN_TITLE. ') SEPARATOR "||")', self::JOIN_COLUMN_SONGS)
 
-            ->leftJoin(SongTable::TABLE_NAME, SongTagTable::TABLE_NAME . '.' . SongTagTable::COLUMN_SONG_ID, SongTable::TABLE_NAME . '.' . SongTable::COLUMN_ID)
+            ->leftJoin(SongTable::TABLE_NAME,
+                TagTable::TABLE_NAME . '.' . TagTable::COLUMN_SOURCE_ID . ' = ' . SongTable::TABLE_NAME . '.' . SongTable::COLUMN_ID
+                . ' AND ' . TagTable::TABLE_NAME . '.' . TagTable::COLUMN_SOURCE_TYPE . ' = "song"'
+            )
 
-            ->groupBy(SongTagTable::TABLE_NAME . '.' . SongTagTable::COLUMN_TAG . ',' . SongTagTable::TABLE_NAME . '.' . SongTagTable::COLUMN_VALUE)
+            ->leftJoin(AlbumTable::TABLE_NAME,
+                TagTable::TABLE_NAME . '.' . TagTable::COLUMN_SOURCE_ID . ' = ' . AlbumTable::TABLE_NAME . '.' . AlbumTable::COLUMN_ID
+                . ' AND ' . TagTable::TABLE_NAME . '.' . TagTable::COLUMN_SOURCE_TYPE . ' = "album"'
+            )
 
-            ->setFetchMode(SongTagTable::FETCH_MODE, SongTagTable::FETCH_CLASS);
+            ->groupBy(TagTable::TABLE_NAME . '.' . TagTable::COLUMN_TAG . ',' . TagTable::TABLE_NAME . '.' . TagTable::COLUMN_VALUE)
+
+            ->setFetchMode(TagTable::FETCH_MODE, TagTable::FETCH_CLASS);
+    }
+
+    /**
+     * @return PDOSelectBuilder
+     */
+    static function queryTags() {
+        return self::query()
+            ->where(TagTable::COLUMN_SOURCE_TYPE, 'song');
+    }
+
+    /**
+     * @return PDOSelectBuilder
+     */
+    static function queryAlbumTags() {
+        return self::query()
+            ->where(TagTable::COLUMN_SOURCE_TYPE, 'album');
     }
 
     static function removeFromSong($Request, $songID, $tag, $tagValue) {
         $delete = self::table()
             ->delete()
-            ->where(SongTagTable::COLUMN_SONG_ID, $songID)
-            ->where(SongTagTable::COLUMN_TAG, $tag)
-            ->where(SongTagTable::COLUMN_VALUE, $tagValue)
+            ->where(TagTable::COLUMN_SOURCE_TYPE, 'song')
+            ->where(TagTable::COLUMN_SOURCE_ID, $songID)
+            ->where(TagTable::COLUMN_TAG, $tag)
+            ->where(TagTable::COLUMN_VALUE, $tagValue)
+            ->execute($Request);
+
+        if(!$delete)
+            throw new \InvalidArgumentException("Could not delete " . __CLASS__);
+    }
+
+    static function removeFromAlbum($Request, $albumID, $tag, $tagValue) {
+        $delete = self::table()
+            ->delete()
+            ->where(TagTable::COLUMN_SOURCE_TYPE, 'album')
+            ->where(TagTable::COLUMN_SOURCE_ID, $albumID)
+            ->where(TagTable::COLUMN_TAG, $tag)
+            ->where(TagTable::COLUMN_VALUE, $tagValue)
             ->execute($Request);
 
         if(!$delete)
@@ -207,9 +266,24 @@ class SongTagEntry implements IBuildable, IKeyMap, IRenderHTML
 
     static function addToSong(IRequest $Request, $songID, $tag, $tagValue) {
         $inserted = self::table()->insert(array(
-            SongTagTable::COLUMN_SONG_ID => $songID,
-            SongTagTable::COLUMN_TAG => $tag,
-            SongTagTable::COLUMN_VALUE => $tagValue,
+            TagTable::COLUMN_SOURCE_ID => $songID,
+            TagTable::COLUMN_SOURCE_TYPE => 'song',
+            TagTable::COLUMN_TAG => $tag,
+            TagTable::COLUMN_VALUE => $tagValue,
+        ))
+            ->execute($Request);
+
+        if(!$inserted)
+            throw new \InvalidArgumentException("Could not insert " . __CLASS__);
+        $Request->log("Tag added to song: " . $tag . '=' . $tagValue, $Request::VERBOSE);
+    }
+
+    static function addToAlbum(IRequest $Request, $albumID, $tag, $tagValue) {
+        $inserted = self::table()->insert(array(
+            TagTable::COLUMN_SOURCE_ID => $albumID,
+            TagTable::COLUMN_SOURCE_TYPE => 'album',
+            TagTable::COLUMN_TAG => $tag,
+            TagTable::COLUMN_VALUE => $tagValue,
         ))
             ->execute($Request);
 
@@ -219,7 +293,7 @@ class SongTagEntry implements IBuildable, IKeyMap, IRenderHTML
     }
 
     static function table() {
-        return new SongTagTable();
+        return new TagTable();
     }
 
 	/**
@@ -232,7 +306,7 @@ class SongTagEntry implements IBuildable, IKeyMap, IRenderHTML
 	static function handleBuildStatic(IBuildRequest $Request) {
 		$Schema = new TableSchema(__CLASS__);
 		$DB = new SiteDB();
-		$ClassWriter = new PDOTableClassWriter($DB, __NAMESPACE__ . '\SongTagTable', __CLASS__);
+		$ClassWriter = new PDOTableClassWriter($DB, __NAMESPACE__ . '\TagTable', __CLASS__);
 		$Schema->writeSchema($ClassWriter);
 		$DBWriter = new PDOTableWriter($DB);
 		$Schema->writeSchema($DBWriter);

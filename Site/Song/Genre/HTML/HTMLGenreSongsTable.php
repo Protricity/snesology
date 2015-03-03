@@ -5,16 +5,16 @@
  * Date: 3/1/2015
  * Time: 7:02 PM
  */
-namespace Site\Song\Review\HTML;
+namespace Site\Song\Genre\HTML;
 
 use CPath\Render\HTML\Element\Table\HTMLPDOQueryTable;
 use Site\Song\DB\SongEntry;
 use Site\Song\DB\SongTable;
 
-class HTMLSystemSongsTable extends HTMLPDOQueryTable
+class HTMLGenreSongsTable extends HTMLPDOQueryTable
 {
-    public function __construct($system, $count = null) {
-        $Query = SongEntry::queryBySystem($system)
+    public function __construct($genre, $count = null) {
+        $Query = SongEntry::queryByGenre($genre)
             ->orderBy(SongTable::COLUMN_CREATED, "DESC")
             ->limit($count ?: 25);
 

@@ -20,7 +20,7 @@ use CPath\Response\IResponse;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
 use Site\SiteMap;
-use Site\Song\Review\HTML\HTMLSongsTable;
+use Site\Song\HTML\HTMLSongsTable;
 
 class SearchSongs implements IExecutable, IBuildable, IRoutable
 {

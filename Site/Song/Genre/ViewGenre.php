@@ -23,7 +23,7 @@ use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
 use Site\SiteMap;
 use Site\Song\Genre\DB\GenreEntry;
-use Site\Song\Review\HTML\HTMLGenreSongsTable;
+use Site\Song\Genre\HTML\HTMLGenreSongsTable;
 
 class ViewGenre implements IExecutable, IBuildable, IRoutable
 {

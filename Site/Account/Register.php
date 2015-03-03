@@ -307,25 +307,8 @@ Version: GnuPG v1
 //		$TestUser->importPrivateKey($Test, $privateKey);
 //
 //	}
-    /**
-     * Perform a unit test
-     * @param IUnitTestRequest $Test the unit test request inst for this test session
-     * @return void
-     * @test --disable 0
-     * Note: Use doctag 'test' with '--disable 1' to have this ITestable class skipped during a build
-     */
-    static function handleStaticUnitTest(IUnitTestRequest $Test) {
-        $Register = new Register();
 
-        $OldTestAccount = AccountEntry::table()
-            ->fetch(AccountTable::COLUMN_EMAIL, 'test-user@email.com');
-
-        if($OldTestAccount)
-            AccountEntry::delete($Test, $OldTestAccount->getFingerprint());
-
-        $Test->setRequestParameter(self::PARAM_EMAIL, 'test-user@email.com');
-        $Test->setRequestParameter(self::PARAM_USER, 'test-user');
-        $Test->setRequestParameter(self::PARAM_PUBLIC_KEY, "-----BEGIN PGP PUBLIC KEY BLOCK-----
+const TEST_PUBLIC_KEY = "-----BEGIN PGP PUBLIC KEY BLOCK-----
 Version: OpenPGP.js v0.8.2
 Comment: http://openpgpjs.org
 
@@ -347,7 +330,27 @@ wC4LtwPVHIpRsVpM3/4Z7eakculsOi5+J/wz93xr
 =cbho
 -----END PGP PUBLIC KEY BLOCK-----
 
-;");
+;";
+
+    /**
+     * Perform a unit test
+     * @param IUnitTestRequest $Test the unit test request inst for this test session
+     * @return void
+     * @test --disable 0
+     * Note: Use doctag 'test' with '--disable 1' to have this ITestable class skipped during a build
+     */
+    static function handleStaticUnitTest(IUnitTestRequest $Test) {
+        $Register = new Register();
+
+        $OldTestAccount = AccountEntry::table()
+            ->fetch(AccountTable::COLUMN_EMAIL, 'test-user@email.com');
+
+        if($OldTestAccount)
+            AccountEntry::delete($Test, $OldTestAccount->getFingerprint());
+
+        $Test->setRequestParameter(self::PARAM_EMAIL, 'test-user@email.com');
+        $Test->setRequestParameter(self::PARAM_USER, 'test-user');
+        $Test->setRequestParameter(self::PARAM_PUBLIC_KEY, self::TEST_PUBLIC_KEY);
 
         try {
             $Response = $Register->execute($Test);

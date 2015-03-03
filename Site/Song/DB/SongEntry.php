@@ -19,8 +19,8 @@ use CPath\Render\HTML\Element\Form\HTMLForm;
 use CPath\Request\IRequest;
 use CPath\Request\Validation\Exceptions\ValidationException;
 use Site\DB\SiteDB;
-use Site\Song\Tag\DB\SongTagEntry;
-use Site\Song\Tag\DB\SongTagTable;
+use Site\Song\Tag\DB\TagEntry;
+use Site\Song\Tag\DB\TagTable;
 
 /**
  * Class SongEntry
@@ -90,8 +90,6 @@ class SongEntry implements IBuildable, IKeyMap, ISerializable
      */
     protected $created;
 
-    protected $systems;
-    protected $genres;
     protected $tags;
 
 	public function getID() {
@@ -129,18 +127,6 @@ class SongEntry implements IBuildable, IKeyMap, ISerializable
         return $statusList ?: array("Unpublished");
     }
 
-    public function getGenreList() {
-        if(!$this->genres)
-            return array();
-        return explode(', ', $this->genres);
-    }
-
-    public function getSystemList() {
-        if(!$this->systems)
-            return array();
-        return explode(', ', $this->systems);
-    }
-
     public function getTagList() {
         $tags = explode('||', $this->tags);
         foreach($tags as &$tag)
@@ -165,7 +151,7 @@ class SongEntry implements IBuildable, IKeyMap, ISerializable
         $artistList = array();
         foreach($tags as &$tag) {
             list($key, $value) = explode('::', $tag);
-            if($key === SongTagEntry::TAG_ARTIST) {
+            if($key === TagEntry::TAG_ARTIST) {
                 $artistList[] = $value;
             }
         }
@@ -207,21 +193,21 @@ class SongEntry implements IBuildable, IKeyMap, ISerializable
 	}
 
     public function addTag($Request, $tagName, $tagValue) {
-        SongTagEntry::addToSong($Request, $this->getID(), $tagName, $tagValue);
+        TagEntry::addToSong($Request, $this->getID(), $tagName, $tagValue);
     }
 
     public function removeTag($Request, $tagName, $tagValue) {
-        SongTagEntry::removeFromSong($Request, $this->getID(), $tagName, $tagValue);
+        TagEntry::removeFromSong($Request, $this->getID(), $tagName, $tagValue);
     }
 
     public function publish(IRequest $Request, HTMLForm $Form=null) {
         if($this->hasFlags(SongEntry::STATUS_PUBLISHED))
             throw new ValidationException($Form, "Song is already published");
 
-        if(!$this->hasTag(SongTagEntry::TAG_URL_ORIGIN))
+        if(!$this->hasTag(TagEntry::TAG_URL_ORIGIN))
             throw new ValidationException($Form, "At least one URL is required to publish");
 
-        if(!$this->hasTag(SongTagEntry::TAG_URL_ORIGIN) && !$this->hasTag(SongTagEntry::TAG_URL_ORIGIN))
+        if(!$this->hasTag(TagEntry::TAG_URL_ORIGIN) && !$this->hasTag(TagEntry::TAG_URL_ORIGIN))
             throw new ValidationException($Form, "At least one download URL is required to publish (file or torrent yo)");
 
         $status = $this->status | self::STATUS_PUBLISHED;
@@ -265,8 +251,8 @@ class SongEntry implements IBuildable, IKeyMap, ISerializable
             ->select(SongTable::TABLE_NAME . '.' . SongTable::COLUMN_CREATED)
             ->select(SongTable::TABLE_NAME . '.' . SongTable::COLUMN_STATUS)
 
-            ->select('GROUP_CONCAT(DISTINCT CONCAT(' . SongTagTable::TABLE_NAME . '.' . SongTagTable::COLUMN_TAG . ', "::", ' . SongTagTable::TABLE_NAME . '.' . SongTagTable::COLUMN_VALUE . ') SEPARATOR "||")', self::JOIN_COLUMN_TAGS)
-            ->leftJoin(SongTagTable::TABLE_NAME, SongTagTable::TABLE_NAME . '.' . SongTagTable::COLUMN_SONG_ID, SongTable::TABLE_NAME . '.' . SongTable::COLUMN_ID)
+            ->select('GROUP_CONCAT(DISTINCT CONCAT(' . TagTable::TABLE_NAME . '.' . TagTable::COLUMN_TAG . ', "::", ' . TagTable::TABLE_NAME . '.' . TagTable::COLUMN_VALUE . ') SEPARATOR "||")', self::JOIN_COLUMN_TAGS)
+            ->leftJoin(TagTable::TABLE_NAME, TagTable::TABLE_NAME . '.' . TagTable::COLUMN_SOURCE_ID, SongTable::TABLE_NAME . '.' . SongTable::COLUMN_ID)
 
             ->groupBy(SongTable::TABLE_NAME . '.' . SongTable::COLUMN_ID)
 
@@ -279,8 +265,8 @@ class SongEntry implements IBuildable, IKeyMap, ISerializable
      */
     static function queryByArtist($artist) {
         return self::query()
-            ->where(SongTagTable::COLUMN_TAG, SongTagEntry::TAG_ARTIST)
-            ->where(SongTagTable::COLUMN_VALUE, $artist);
+            ->where(TagTable::COLUMN_TAG, TagEntry::TAG_ARTIST)
+            ->where(TagTable::COLUMN_VALUE, $artist);
     }
 
     /**
@@ -289,8 +275,8 @@ class SongEntry implements IBuildable, IKeyMap, ISerializable
      */
     static function queryByGenre($genre) {
         return self::query()
-            ->where(SongTagTable::COLUMN_TAG, SongTagEntry::TAG_GENRE)
-            ->where(SongTagTable::COLUMN_VALUE, $genre);
+            ->where(TagTable::COLUMN_TAG, TagEntry::TAG_GENRE)
+            ->where(TagTable::COLUMN_VALUE, $genre);
     }
 
     /**
@@ -299,8 +285,8 @@ class SongEntry implements IBuildable, IKeyMap, ISerializable
      */
     static function queryBySystem($system) {
         return self::query()
-            ->where(SongTagTable::COLUMN_TAG, SongTagEntry::TAG_SYSTEM)
-            ->where(SongTagTable::COLUMN_VALUE, $system);
+            ->where(TagTable::COLUMN_TAG, TagEntry::TAG_SYSTEM)
+            ->where(TagTable::COLUMN_VALUE, $system);
     }
 
     static function create(IRequest $Request, $title, $description) {

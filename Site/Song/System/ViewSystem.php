@@ -22,7 +22,7 @@ use CPath\Response\IResponse;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
 use Site\SiteMap;
-use Site\Song\Review\HTML\HTMLSystemSongsTable;
+use Site\Song\System\HTML\HTMLSystemSongsTable;
 use Site\Song\System\DB\SystemEntry;
 
 class ViewSystem implements IExecutable, IBuildable, IRoutable

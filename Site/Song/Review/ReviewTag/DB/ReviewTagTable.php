@@ -21,7 +21,7 @@ class ReviewTagTable extends AbstractBase {
 	 * @column VARCHAR(64) NOT NULL
 	 * @index --name index_review_tag
 	 */
-	const COLUMN_SONG_ID = 'song_id';
+	const COLUMN_REVIEW_ID = 'review_id';
 	/**
 
 	 * @column VARCHAR(64) NOT NULL
@@ -43,7 +43,7 @@ class ReviewTagTable extends AbstractBase {
 	/**
 
 	 * @index 
-	 * @columns song_id, account_fingerprint
+	 * @columns review_id, account_fingerprint
 	 */
 	const INDEX_REVIEW_TAG = 'index_review_tag';
 	/**

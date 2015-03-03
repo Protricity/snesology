@@ -204,6 +204,7 @@ class CustomHTMLValueRenderer implements IHTMLValueRenderer, IHTMLSupportHeaders
 					echo DateUtil::elapsedTime($value);
 				return true;
 
+            case 'account':
             case 'song-entry-account':
             case 'inviter-fingerprint':
             case 'inviter':
@@ -220,7 +221,6 @@ class CustomHTMLValueRenderer implements IHTMLValueRenderer, IHTMLSupportHeaders
                 echo "<a href='{$href}'>", $arg1 ?: $value, "</a>";
                 return true;
 
-            case 'song':
             case 'song-title':
                 if($arg1) {
                     $domain = $this->Request->getDomainPath();

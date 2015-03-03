@@ -22,10 +22,10 @@ use Site\Song\Review\ReviewTag\DB\ReviewTagEntry;
 use Site\Song\Review\ReviewTag\DB\ReviewTagTable;
 
 /**
- * Class SongReviewEntry
+ * Class ReviewEntry
  * @table song_review
  */
-class SongReviewEntry implements IBuildable, IKeyMap
+class ReviewEntry implements IBuildable, IKeyMap
 {
     const STATUS_PUBLISHED =            0x000001;
 
@@ -41,11 +41,23 @@ class SongReviewEntry implements IBuildable, IKeyMap
     );
 
     /**
-	 * @column VARCHAR(64) NOT NULL
-     * @index --name index_song_review
-     * @unique --name unique_song_review
-	 */
-	protected $song_id;
+     * @column VARCHAR(64) PRIMARY KEY
+     * @select
+     * @search
+     */
+    protected $id;
+
+    /**
+     * @column VARCHAR(64) NOT NULL
+     * @index --name index_song_tag
+     */
+    protected $source_id;
+
+    /**
+     * @column ENUM('song', 'album') NOT NULL
+     * @index --name index_tag_source
+     */
+    protected $source_type;
 
     /**
      * @column VARCHAR(64) NOT NULL
@@ -76,20 +88,18 @@ class SongReviewEntry implements IBuildable, IKeyMap
 
     protected $tags;
 
-    public function getSongID() {
-		return $this->song_id;
+    public function getSourceID() {
+		return $this->source_id;
 	}
 
-    /**
-     * @return mixed
-     */
+    public function getSourceType() {
+        return $this->source_type;
+    }
+
     public function getAccountFingerprint() {
         return $this->account_fingerprint;
     }
 
-    /**
-     * @return mixed
-     */
     public function getReviewTitle() {
         return $this->review_title;
     }
@@ -136,27 +146,27 @@ class SongReviewEntry implements IBuildable, IKeyMap
     }
 
     public function addTag($Request, $tagName, $tagValue) {
-        ReviewTagEntry::addToSong($Request, $this->getSongID(), $this->getAccountFingerprint(), $tagName, $tagValue);
+        ReviewTagEntry::addToSong($Request, $this->getSourceID(), $this->getAccountFingerprint(), $tagName, $tagValue);
     }
 
     public function removeTag($Request, $tagName, $tagValue) {
-        ReviewTagEntry::removeFromSong($Request, $this->getSongID(), $this->getAccountFingerprint(), $tagName, $tagValue);
+        ReviewTagEntry::removeFromSong($Request, $this->getSourceID(), $this->getAccountFingerprint(), $tagName, $tagValue);
     }
 
     function update(IRequest $Request, $review=null, $reviewTitle=null, $status=null) {
         $Update = self::table()
             ->update();
 
-        $review === null ?: $Update->update(SongReviewTable::COLUMN_REVIEW, $review);
-        $reviewTitle === null ?: $Update->update(SongReviewTable::COLUMN_REVIEW_TITLE, $reviewTitle);
-        $status === null ?: $Update->update(SongReviewTable::COLUMN_STATUS, $status);
+        $review === null ?: $Update->update(ReviewTable::COLUMN_REVIEW, $review);
+        $reviewTitle === null ?: $Update->update(ReviewTable::COLUMN_REVIEW_TITLE, $reviewTitle);
+        $status === null ?: $Update->update(ReviewTable::COLUMN_STATUS, $status);
 
-        $Update->where(SongReviewTable::COLUMN_SONG_ID, $this->getSongID());
-        $Update->where(SongReviewTable::COLUMN_ACCOUNT_FINGERPRINT, $this->getAccountFingerprint());
+        $Update->where(ReviewTable::COLUMN_SONG_ID, $this->getSourceID());
+        $Update->where(ReviewTable::COLUMN_ACCOUNT_FINGERPRINT, $this->getAccountFingerprint());
 
         if(!$Update->execute($Request))
             throw new \InvalidArgumentException("Could not update " . __CLASS__);
-        $Request->log("Review updated for song: " . $this->getSongID(), $Request::VERBOSE);
+        $Request->log("Review updated for song: " . $this->getSourceID(), $Request::VERBOSE);
     }
 
     /**
@@ -165,7 +175,8 @@ class SongReviewEntry implements IBuildable, IKeyMap
      * @return void
      */
     function mapKeys(IKeyMapper $Map) {
-        $Map->map('song-id', $this->getSongID());
+        $Map->map('source-id', $this->getSourceID());
+        $Map->map('source-type', $this->getSourceType());
         $Map->map('review-account-fingerprint', $this->getAccountFingerprint());
         $Map->map('review', $this->getReview());
     }
@@ -184,27 +195,30 @@ class SongReviewEntry implements IBuildable, IKeyMap
 	// Static
 
     /**
-     * @param $songID
+     * @param $sourceID
      * @param int $count
+     * @param string $type
      * @return PDOSelectBuilder
      */
-    public static function getLast($songID, $count=null) {
+    public static function getLast($sourceID, $count=null, $type='song') {
         $count ?: $count = 10;
         return self::query()
-            ->where(SongReviewTable::TABLE_NAME . '.' . SongReviewTable::COLUMN_SONG_ID, $songID)
-        ->orderBy(SongReviewTable::COLUMN_CREATED, "DESC")
+            ->where(ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_SOURCE_ID, $sourceID)
+            ->where(ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_SOURCE_TYPE, $type)
+            ->orderBy(ReviewTable::COLUMN_CREATED, "DESC")
             ->limit($count);
     }
 
     /**
-     * @param $songID
+     * @param $sourceID
      * @param $accountFingerprint
-     * @return SongReviewEntry
+     * @return ReviewEntry
      */
-    public static function fetch($songID, $accountFingerprint) {
+    public static function fetch($sourceID, $accountFingerprint, $type='song') {
         return self::query()
-            ->where(SongReviewTable::TABLE_NAME . '.' . SongReviewTable::COLUMN_SONG_ID, $songID)
-            ->where(SongReviewTable::TABLE_NAME . '.' . SongReviewTable::COLUMN_ACCOUNT_FINGERPRINT, $accountFingerprint)
+            ->where(ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_SOURCE_ID, $sourceID)
+            ->where(ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_SOURCE_TYPE, $type)
+            ->where(ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_ACCOUNT_FINGERPRINT, $accountFingerprint)
             ->fetch();
     }
 
@@ -214,52 +228,54 @@ class SongReviewEntry implements IBuildable, IKeyMap
      */
     static function query() {
         return self::table()
-            ->select(SongReviewTable::TABLE_NAME . '.' . SongReviewTable::COLUMN_SONG_ID)
-            ->select(SongReviewTable::TABLE_NAME . '.' . SongReviewTable::COLUMN_ACCOUNT_FINGERPRINT)
-            ->select(SongReviewTable::TABLE_NAME . '.' . SongReviewTable::COLUMN_REVIEW_TITLE)
-            ->select(SongReviewTable::TABLE_NAME . '.' . SongReviewTable::COLUMN_REVIEW)
-            ->select(SongReviewTable::TABLE_NAME . '.' . SongReviewTable::COLUMN_CREATED)
-            ->select(SongReviewTable::TABLE_NAME . '.' . SongReviewTable::COLUMN_STATUS)
+            ->select(ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_SOURCE_ID)
+            ->select(ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_SOURCE_TYPE)
+            ->select(ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_ACCOUNT_FINGERPRINT)
+            ->select(ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_REVIEW_TITLE)
+            ->select(ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_REVIEW)
+            ->select(ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_CREATED)
+            ->select(ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_STATUS)
+//
+//            ->select('GROUP_CONCAT(DISTINCT CONCAT(' . ReviewTagTable::TABLE_NAME . '.' . ReviewTagTable::COLUMN_TAG . ', "::", ' . ReviewTagTable::TABLE_NAME . '.' . ReviewTagTable::COLUMN_VALUE . ') SEPARATOR "||")', self::JOIN_COLUMN_TAGS)
+//            ->leftJoin(ReviewTagTable::TABLE_NAME
+//                . ' ON ' . ReviewTagTable::TABLE_NAME . '.' . ReviewTagTable::COLUMN_SONG_ID . ' = ' . ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_SONG_ID
+//                . ' AND ' . ReviewTagTable::TABLE_NAME . '.' . ReviewTagTable::COLUMN_ACCOUNT_FINGERPRINT . ' = ' . ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_ACCOUNT_FINGERPRINT)
 
-            ->select('GROUP_CONCAT(DISTINCT CONCAT(' . ReviewTagTable::TABLE_NAME . '.' . ReviewTagTable::COLUMN_TAG . ', "::", ' . ReviewTagTable::TABLE_NAME . '.' . ReviewTagTable::COLUMN_VALUE . ') SEPARATOR "||")', self::JOIN_COLUMN_TAGS)
-            ->leftJoin(ReviewTagTable::TABLE_NAME
-                . ' ON ' . ReviewTagTable::TABLE_NAME . '.' . ReviewTagTable::COLUMN_SONG_ID . ' = ' . SongReviewTable::TABLE_NAME . '.' . SongReviewTable::COLUMN_SONG_ID
-                . ' AND ' . ReviewTagTable::TABLE_NAME . '.' . ReviewTagTable::COLUMN_ACCOUNT_FINGERPRINT . ' = ' . SongReviewTable::TABLE_NAME . '.' . SongReviewTable::COLUMN_ACCOUNT_FINGERPRINT)
+//            ->groupBy(ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_SONG_ID . ', ' . ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_ACCOUNT_FINGERPRINT)
 
-            ->groupBy(SongReviewTable::TABLE_NAME . '.' . SongReviewTable::COLUMN_SONG_ID . ', ' . SongReviewTable::TABLE_NAME . '.' . SongReviewTable::COLUMN_ACCOUNT_FINGERPRINT)
-
-            ->setFetchMode(SongReviewTable::FETCH_MODE, SongReviewTable::FETCH_CLASS);
+            ->setFetchMode(ReviewTable::FETCH_MODE, ReviewTable::FETCH_CLASS);
     }
 
 
-    static function removeFromSong($Request, $songID, $accountFingerprint) {
+    static function removeFromSource($Request, $sourceID, $accountFingerprint) {
         $delete = self::table()
             ->delete()
-            ->where(SongReviewTable::COLUMN_SONG_ID, $songID)
-            ->where(SongReviewTable::COLUMN_ACCOUNT_FINGERPRINT, $accountFingerprint)
+            ->where(ReviewTable::COLUMN_SOURCE_ID, $sourceID)
+            ->where(ReviewTable::COLUMN_ACCOUNT_FINGERPRINT, $accountFingerprint)
             ->execute($Request);
 
         if(!$delete)
             throw new \InvalidArgumentException("Could not delete " . __CLASS__);
     }
 
-    static function addToSong(IRequest $Request, $songID, $accountFingerprint, $review, $reviewTitle=null, $status=0) {
+    static function addToSource(IRequest $Request, $sourceID, $sourceType, $accountFingerprint, $review, $reviewTitle=null, $status=0) {
         $inserted = self::table()->insert(array(
-            SongReviewTable::COLUMN_SONG_ID => $songID,
-            SongReviewTable::COLUMN_ACCOUNT_FINGERPRINT => $accountFingerprint,
-            SongReviewTable::COLUMN_REVIEW_TITLE => $reviewTitle,
-            SongReviewTable::COLUMN_REVIEW => $review,
-            SongReviewTable::COLUMN_STATUS => $status,
+            ReviewTable::COLUMN_SOURCE_ID => $sourceID,
+            ReviewTable::COLUMN_SOURCE_TYPE => $sourceType,
+            ReviewTable::COLUMN_ACCOUNT_FINGERPRINT => $accountFingerprint,
+            ReviewTable::COLUMN_REVIEW_TITLE => $reviewTitle,
+            ReviewTable::COLUMN_REVIEW => $review,
+            ReviewTable::COLUMN_STATUS => $status,
         ))
             ->execute($Request);
 
         if(!$inserted)
             throw new \InvalidArgumentException("Could not insert " . __CLASS__);
-        $Request->log("Review added to song: " . $songID, $Request::VERBOSE);
+        $Request->log("Review added to song: " . $sourceID, $Request::VERBOSE);
     }
 
     static function table() {
-        return new SongReviewTable();
+        return new ReviewTable();
     }
 
 	/**
@@ -272,7 +288,7 @@ class SongReviewEntry implements IBuildable, IKeyMap
 	static function handleBuildStatic(IBuildRequest $Request) {
 		$Schema = new TableSchema(__CLASS__);
 		$DB = new SiteDB();
-		$ClassWriter = new PDOTableClassWriter($DB, __NAMESPACE__ . '\SongReviewTable', __CLASS__);
+		$ClassWriter = new PDOTableClassWriter($DB, __NAMESPACE__ . '\ReviewTable', __CLASS__);
 		$Schema->writeSchema($ClassWriter);
 		$DBWriter = new PDOTableWriter($DB);
 		$Schema->writeSchema($DBWriter);

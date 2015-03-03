@@ -5,7 +5,7 @@
  * Date: 3/1/2015
  * Time: 7:02 PM
  */
-namespace Site\Song\Review\HTML;
+namespace Site\Song\HTML;
 
 use CPath\Data\Map\ISequenceMap;
 use CPath\Data\Map\ISequenceMapper;

@@ -5,7 +5,7 @@
  * Date: 1/27/2015
  * Time: 1:56 PM
  */
-namespace Site\Song;
+namespace Site\Song\Album;
 
 use CPath\Build\IBuildable;
 use CPath\Build\IBuildRequest;
@@ -38,39 +38,39 @@ use Site\Path\HTML\HTMLPathTip;
 use Site\Render\PopUpBox\HTMLPopUpBox;
 use Site\Request\DB\RequestEntry;
 use Site\SiteMap;
-use Site\Song\DB\SongEntry;
-use Site\Song\DB\SongTable;
+use Site\Song\Album\DB\AlbumEntry;
+use Site\Song\Album\DB\AlbumTable;
 use Site\Song\Defaults\DefaultChipStyles;
 use Site\Song\Genre\DB\GenreEntry;
 use Site\Song\System\DB\SystemEntry;
 use Site\Song\Tag\DB\TagEntry;
 use Site\Song\Tag\DB\TagTable;
 
-class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
+class CreateAlbum implements IExecutable, IBuildable, IRoutable, ITestable
 {
-	const TITLE = 'Create a new Song Entry';
+	const TITLE = 'Create a new Album Entry';
 
-	const FORM_ACTION = '/create/song/';
-	const FORM_ACTION2 = '/songs/';
+	const FORM_ACTION = '/create/album/';
+	const FORM_ACTION2 = '/albums/';
 	const FORM_METHOD = 'POST';
-	const FORM_NAME = 'create-song';
+	const FORM_NAME = 'create-album';
 
-    const PARAM_SONG_TITLE = 'song-title';
-    const PARAM_SONG_ARTIST = 'song-artist';
-    const PARAM_SONG_GENRE = 'song-genre';
-    const PARAM_SONG_SYSTEM = 'song-system';
-    const PARAM_SONG_DESCRIPTION = 'song-description';
-    const TIPS_CREATE_SONG = "<b>Create a new song entry</b><br/><br/>This fieldset enters a new song into the database";
-    const PARAM_SONG_ORIGINAL = 'song-original';
-    const PARAM_SONG_SIMILAR = 'song-similar';
-    const PARAM_SONG_CHIP_STYLE = 'song-chip-style';
-    const PARAM_SONG_SOURCE_URL = 'song-source-url';
-    const PARAM_SONG_DOWNLOAD_URL = 'song-download-url';
+    const PARAM_ALBUM_TITLE = 'album-title';
+    const PARAM_ALBUM_ARTIST = 'album-artist';
+    const PARAM_ALBUM_GENRE = 'album-genre';
+    const PARAM_ALBUM_SYSTEM = 'album-system';
+    const PARAM_ALBUM_DESCRIPTION = 'album-description';
+    const TIPS_CREATE_ALBUM = "<b>Create a new album entry</b><br/><br/>This fieldset enters a new album into the database";
+    const PARAM_ALBUM_ORIGINAL = 'album-original';
+    const PARAM_ALBUM_SIMILAR = 'album-similar';
+    const PARAM_ALBUM_CHIP_STYLE = 'album-chip-style';
+    const PARAM_ALBUM_SOURCE_URL = 'album-source-url';
+    const PARAM_ALBUM_DOWNLOAD_URL = 'album-download-url';
 
-    private $newSongID;
+    private $newAlbumID;
 
-    public function getNewSongID() {
-        return $this->newSongID;
+    public function getNewAlbumID() {
+        return $this->newAlbumID;
     }
 
     /**
@@ -91,27 +91,27 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
 
 		$Form = new HTMLForm(self::FORM_METHOD, $Request->getPath(), self::FORM_NAME,
 			new HTMLMetaTag(HTMLMetaTag::META_TITLE, self::TITLE),
-			new HTMLHeaderScript(__DIR__ . '/assets/song.js'),
-			new HTMLHeaderStyleSheet(__DIR__ . '/assets/song.css'),
+			new HTMLHeaderScript(__DIR__ . '/assets/album.js'),
+			new HTMLHeaderStyleSheet(__DIR__ . '/assets/album.css'),
 
-			new HTMLElement('fieldset', 'fieldset-create-song',
-				new HTMLElement('legend', 'legend-song', self::TITLE),
+			new HTMLElement('fieldset', 'fieldset-create-album',
+				new HTMLElement('legend', 'legend-album', self::TITLE),
 
-                new HTMLPathTip($Request, '#gen-tips', self::TIPS_CREATE_SONG),
+                new HTMLPathTip($Request, '#gen-tips', self::TIPS_CREATE_ALBUM),
 
-                new HTMLElement('fieldset', 'fieldset-song-data inline',
-                    new HTMLElement('legend', 'legend-song-data', "Song Information:"),
+                new HTMLElement('fieldset', 'fieldset-album-data inline',
+                    new HTMLElement('legend', 'legend-album-data', "Album Information:"),
 
-                    new HTMLElement('label', null, "Song Title:<br/>",
-                        new HTMLInputField(self::PARAM_SONG_TITLE,
-                            new Attributes('placeholder', 'My Song Title'),
+                    new HTMLElement('label', null, "Album Title:<br/>",
+                        new HTMLInputField(self::PARAM_ALBUM_TITLE,
+                            new Attributes('placeholder', 'My Album Title'),
                             new RequiredValidation()
                         )
                     ),
 
                     "<br/><br/>",
-                    new HTMLElement('label', null, "Song Artist(s) [comma delimited]:<br/>",
-                        new HTMLInputField(self::PARAM_SONG_ARTIST,
+                    new HTMLElement('label', null, "Album Artist(s) [comma delimited]:<br/>",
+                        new HTMLInputField(self::PARAM_ALBUM_ARTIST,
                             new Attributes('placeholder', 'i.e. "Artist1, Artist2"'),
                             new RequiredValidation()
                         )
@@ -119,8 +119,8 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
 
                     "<br/><br/>",
                     new HTMLElement('label', null, "Description:<br/>",
-                        new HTMLTextAreaField(self::PARAM_SONG_DESCRIPTION,
-                            new Attributes('placeholder', 'Enter a song description'),
+                        new HTMLTextAreaField(self::PARAM_ALBUM_DESCRIPTION,
+                            new Attributes('placeholder', 'Enter an album description'),
                             new Attributes('rows', 6, 'cols', 30),
                             new RequiredValidation()
                         )
@@ -130,37 +130,37 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
                     new HTMLPopUpBox('&#60;' . implode('&#62;, &#60;', Config::$AllowedTags) . '&#62;', HTMLPopUpBox::CLASS_INFO, 'Allowed Tags')
                 ),
 
-                new HTMLElement('fieldset', 'fieldset-song-association inline',
-                    new HTMLElement('legend', 'legend-song-association', "Sources:"),
+                new HTMLElement('fieldset', 'fieldset-album-association inline',
+                    new HTMLElement('legend', 'legend-album-association', "Sources:"),
 
                     new HTMLElement('label', null, "Source URLs [comma delimited]:<br/>",
-                        new HTMLInputField(self::PARAM_SONG_SOURCE_URL,
-                            new Attributes('placeholder', 'i.e. "http://coundsoud.cod/songs/smbhurrycastle"'),
+                        new HTMLInputField(self::PARAM_ALBUM_SOURCE_URL,
+                            new Attributes('placeholder', 'i.e. "http://coundsoud.cod/albums/smbalbum"'),
                             new Attributes('size', 42)
                         )
                     ),
 
                     "<br/><br/>",
                     new HTMLElement('label', null, "File Download URLs [comma delimited]:<br/>",
-                        new HTMLInputField(self::PARAM_SONG_DOWNLOAD_URL,
-                            new Attributes('placeholder', 'i.e. "http://fileserver.com/mirror/smbhurrycastle.mp3, http://fileserver2.com/mirror2/smbhurrycastle.mp3"'),
+                        new HTMLInputField(self::PARAM_ALBUM_DOWNLOAD_URL,
+                            new Attributes('placeholder', 'i.e. "http://fileserver.com/mirror/smbalbum/"'),
                             new Attributes('size', 42)
                         )
                     ),
 
                     "<br/><br/>",
                     new HTMLElement('label', null, "Remix/Cover of Original [comma delimited]:<br/>",
-                        new HTMLInputField(self::PARAM_SONG_ORIGINAL,
-                            new Attributes('placeholder', 'i.e. "SMB Castle Complete, SMB Hurry Castle"'),
+                        new HTMLInputField(self::PARAM_ALBUM_ORIGINAL,
+                            new Attributes('placeholder', 'i.e. "Super Mario Brothers"'),
                             new Attributes('size', 42),
                             new RequiredValidation()
                         )
                     ),
 
                     "<br/><br/>",
-                    new HTMLElement('label', null, "Similar Songs [comma delimited]:<br/>",
-                        new HTMLInputField(self::PARAM_SONG_SIMILAR,
-                            new Attributes('placeholder', 'i.e. "Thought You Could Castle, You Got Castled"'),
+                    new HTMLElement('label', null, "Similar Albums [comma delimited]:<br/>",
+                        new HTMLInputField(self::PARAM_ALBUM_SIMILAR,
+                            new Attributes('placeholder', 'i.e. "Castle Hassle"'),
                             new Attributes('size', 42),
                             new RequiredValidation()
                         )
@@ -169,10 +169,10 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
 
                 new HTMLPopUpBox(null, HTMLPopUpBox::CLASS_IMPORTANT, 'Free file hosting for chip-tune originals!'),
 
-                new HTMLElement('fieldset', 'fieldset-song-chip-style inline',
-                    new HTMLElement('legend', 'legend-song-chip-style', "Chip Style:"),
-                    new HTMLSelectField(self::PARAM_SONG_CHIP_STYLE . '[]', DefaultChipStyles::getDefaults() + array(
-                            "Not a chip tune" => null,
+                new HTMLElement('fieldset', 'fieldset-album-chip-style inline',
+                    new HTMLElement('legend', 'legend-album-chip-style', "Chip Style:"),
+                    new HTMLSelectField(self::PARAM_ALBUM_CHIP_STYLE . '[]', DefaultChipStyles::getDefaults() + array(
+                            "Not a chip tune album" => null,
                         ),
                         new Attributes('multiple', 'multiple'),
                         new Attributes('size', 5),
@@ -180,9 +180,9 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
                     )
                 ),
 
-                new HTMLElement('fieldset', 'fieldset-song-systems inline',
-                    new HTMLElement('legend', 'legend-song-systems', "Game System:"),
-                    new HTMLSelectField(self::PARAM_SONG_SYSTEM . '[]', $systemList,
+                new HTMLElement('fieldset', 'fieldset-album-systems inline',
+                    new HTMLElement('legend', 'legend-album-systems', "Game System:"),
+                    new HTMLSelectField(self::PARAM_ALBUM_SYSTEM . '[]', $systemList,
                         new Attributes('multiple', 'multiple'),
                         new Attributes('size', 7),
 
@@ -190,9 +190,9 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
                     )
                 ),
 
-                new HTMLElement('fieldset', 'fieldset-song-genre inline',
-                    new HTMLElement('legend', 'legend-song-genre', "Genre:"),
-                    new HTMLSelectField(self::PARAM_SONG_GENRE . '[]', $genreList,
+                new HTMLElement('fieldset', 'fieldset-album-genre inline',
+                    new HTMLElement('legend', 'legend-album-genre', "Genre:"),
+                    new HTMLSelectField(self::PARAM_ALBUM_GENRE . '[]', $genreList,
                         new Attributes('multiple', 'multiple'),
                         new Attributes('size', 9),
                         new RequiredValidation()
@@ -200,7 +200,7 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
                 ),
 
 				"<br/>",
-				new HTMLButton('submit', 'Create Song Entry', 'submit')
+				new HTMLButton('submit', 'Create Album Entry', 'submit')
 			),
 			"<br/>"
 		);
@@ -210,45 +210,45 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
 
         $Form->setFormValues($Request);
 
-        $title = $Form->validateField($Request, self::PARAM_SONG_TITLE);
-        $description = $Form->validateField($Request, self::PARAM_SONG_DESCRIPTION);
+        $title = $Form->validateField($Request, self::PARAM_ALBUM_TITLE);
+        $description = $Form->validateField($Request, self::PARAM_ALBUM_DESCRIPTION);
 
-        $tags[self::PARAM_SONG_ARTIST] = array(TagEntry::TAG_ARTIST, $Form->validateField($Request, self::PARAM_SONG_ARTIST));
-        $tags[self::PARAM_SONG_SYSTEM] = array(TagEntry::TAG_SYSTEM, $Form->validateField($Request, self::PARAM_SONG_SYSTEM));
-        $tags[self::PARAM_SONG_GENRE] = array(TagEntry::TAG_GENRE, $Form->validateField($Request, self::PARAM_SONG_GENRE));
+        $tags[self::PARAM_ALBUM_ARTIST] = array(TagEntry::TAG_ARTIST, $Form->validateField($Request, self::PARAM_ALBUM_ARTIST));
+        $tags[self::PARAM_ALBUM_SYSTEM] = array(TagEntry::TAG_SYSTEM, $Form->validateField($Request, self::PARAM_ALBUM_SYSTEM));
+        $tags[self::PARAM_ALBUM_GENRE] = array(TagEntry::TAG_GENRE, $Form->validateField($Request, self::PARAM_ALBUM_GENRE));
 
-        $tags[self::PARAM_SONG_ORIGINAL] = array(TagEntry::TAG_ORIGINAL, $Form->validateField($Request, self::PARAM_SONG_ORIGINAL));
-        $tags[self::PARAM_SONG_SIMILAR] = array(TagEntry::TAG_SIMILAR, $Form->validateField($Request, self::PARAM_SONG_SIMILAR));
-        $tags[self::PARAM_SONG_CHIP_STYLE] = array(TagEntry::TAG_CHIP_STYLE, $Form->validateField($Request, self::PARAM_SONG_CHIP_STYLE));
+        $tags[self::PARAM_ALBUM_ORIGINAL] = array(TagEntry::TAG_ORIGINAL, $Form->validateField($Request, self::PARAM_ALBUM_ORIGINAL));
+        $tags[self::PARAM_ALBUM_SIMILAR] = array(TagEntry::TAG_SIMILAR, $Form->validateField($Request, self::PARAM_ALBUM_SIMILAR));
+        $tags[self::PARAM_ALBUM_CHIP_STYLE] = array(TagEntry::TAG_CHIP_STYLE, $Form->validateField($Request, self::PARAM_ALBUM_CHIP_STYLE));
 
-        $MatchingSong = SongEntry::table()
+        $MatchingAlbum = AlbumEntry::table()
             ->select()
-            ->where(SongTable::COLUMN_TITLE, $title)
-            ->where(SongTable::COLUMN_STATUS, SongEntry::STATUS_PUBLISHED, '&?')
+            ->where(AlbumTable::COLUMN_TITLE, $title)
+            ->where(AlbumTable::COLUMN_STATUS, AlbumEntry::STATUS_PUBLISHED, '&?')
             ->fetch();
 
-        if($MatchingSong)
-            throw new \InvalidArgumentException("A published song already has this name. What gives!?");
+        if($MatchingAlbum)
+            throw new \InvalidArgumentException("A published album already has this name. What gives!?");
 
-		$Song = SongEntry::create($Request, $title, $description);
+		$Album = AlbumEntry::create($Request, $Account, $title, $description);
         foreach($tags as $param => $info) {
             list($tagName, $values) = $info;
             if(!is_array($values))
                 $values = explode(',', $values);
             foreach($values as $value) {
                 if($value) {
-                    $Song->addTag($Request, $tagName, $value);
+                    $Album->addTag($Request, $tagName, $value);
                 }
             }
         }
 
-        $Song->addTag($Request, TagEntry::TAG_ENTRY_ACCOUNT, $Account->getFingerprint());
+        $Album->addTag($Request, TagEntry::TAG_ENTRY_ACCOUNT, $Account->getFingerprint());
 
-        $this->newSongID = $Song->getID();
+        $this->newAlbumID = $Album->getID();
 
         RequestEntry::createFromRequest($Request, $Account);
 
-        return new RedirectResponse(ManageSong::getRequestURL($Song->getID()), "Song created successfully. Redeflecting...", 5);
+        return new RedirectResponse(ManageAlbum::getRequestURL($Album->getID()), "Album created successfully. Backspacing...", 5);
 	}
 
 	// Static
@@ -283,7 +283,7 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
 	static function handleBuildStatic(IBuildRequest $Request) {
 		$RouteBuilder = new RouteBuilder($Request, new SiteMap());
 		$RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION, __CLASS__);
-		$RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION2, __CLASS__, IRequest::NAVIGATION_ROUTE | IRequest::MATCH_SESSION_ONLY, "Songs");
+		$RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION2, __CLASS__, IRequest::NAVIGATION_ROUTE | IRequest::MATCH_SESSION_ONLY, "Albums");
 	}
 
     /**
@@ -295,30 +295,29 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
      */
     static function handleStaticUnitTest(IUnitTestRequest $Test) {
         $Session = &$Test->getSession();
-
         $TestAccount = new AccountEntry('78E02897', Register::TEST_PUBLIC_KEY);
         $Session[AccountEntry::SESSION_KEY] = serialize($TestAccount);
 
-        SongEntry::table()->delete(SongTable::COLUMN_TITLE, 'test-song-title');
+        AlbumEntry::table()->delete(AlbumTable::COLUMN_TITLE, 'test-album-title');
 
-        $CreateSong = new CreateSong();
+        $CreateAlbum = new CreateAlbum();
 
         $Test->clearRequestParameters();
-        $Test->setRequestParameter(self::PARAM_SONG_TITLE, 'test-song-title');
-        $Test->setRequestParameter(self::PARAM_SONG_ARTIST, 'test-song-artist');
-        $Test->setRequestParameter(self::PARAM_SONG_SIMILAR, 'test-song-similar');
-        $Test->setRequestParameter(self::PARAM_SONG_ORIGINAL, 'test-song-original');
-        $Test->setRequestParameter(self::PARAM_SONG_CHIP_STYLE, '8-bit');
-        $Test->setRequestParameter(self::PARAM_SONG_DESCRIPTION, 'test-song-description');
-        $Test->setRequestParameter(self::PARAM_SONG_GENRE, array('test-song-genre'));
-        $Test->setRequestParameter(self::PARAM_SONG_SYSTEM, array('test-song-system'));
-        $CreateSong->execute($Test);
+        $Test->setRequestParameter(self::PARAM_ALBUM_TITLE, 'test-album-title');
+        $Test->setRequestParameter(self::PARAM_ALBUM_ARTIST, 'test-album-artist');
+        $Test->setRequestParameter(self::PARAM_ALBUM_SIMILAR, 'test-album-similar');
+        $Test->setRequestParameter(self::PARAM_ALBUM_ORIGINAL, 'test-album-original');
+        $Test->setRequestParameter(self::PARAM_ALBUM_CHIP_STYLE, '8-bit');
+        $Test->setRequestParameter(self::PARAM_ALBUM_DESCRIPTION, 'test-album-description');
+        $Test->setRequestParameter(self::PARAM_ALBUM_GENRE, array('test-album-genre'));
+        $Test->setRequestParameter(self::PARAM_ALBUM_SYSTEM, array('test-album-system'));
+        $CreateAlbum->execute($Test);
 
-        $id = $CreateSong->getNewSongID();
+        $id = $CreateAlbum->getNewAlbumID();
 
-        SongEntry::table()->delete(SongTable::COLUMN_ID, $id);
+        AlbumEntry::table()->delete(AlbumTable::COLUMN_ID, $id);
         TagEntry::table()->delete(TagTable::COLUMN_SOURCE_ID, $id);
-//        SongEntry::delete($Test, $id);
+//        AlbumEntry::delete($Test, $id);
 
     }
 }

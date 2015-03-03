@@ -156,7 +156,7 @@ Once the <b>challenge answer</b> is entered, you may log in';
 		$Form->validateRequest($Request);
 		$answer = $Form->validateField($Request, self::PARAM_CHALLENGE_ANSWER);
 		$Account->assertChallengeAnswer($answer, $Form);
-		$Account->generateChallenge($Request);
+		$Account->generateChallenge($Request, array($Account->getFingerprint()));
 
 		$Account->startSession($SessionRequest);
 

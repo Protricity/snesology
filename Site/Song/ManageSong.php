@@ -40,7 +40,7 @@ use Site\Request\DB\RequestEntry;
 use Site\SiteMap;
 use Site\Song\DB\SongEntry;
 use Site\Song\Review\HTML\HTMLSongReviewsTable;
-use Site\Song\Tag\DB\SongTagEntry;
+use Site\Song\Tag\DB\TagEntry;
 
 
 class ManageSong implements IExecutable, IBuildable, IRoutable
@@ -84,7 +84,7 @@ class ManageSong implements IExecutable, IBuildable, IRoutable
 
 //        $systemList = SystemEntry::getAll();
 //        $genreList = GenreEntry::getAll();
-        $tagList = SongTagEntry::$TagDefaults;
+        $tagList = TagEntry::$TagDefaults;
 
 //        $oldGenres = $Song->getGenreList();
 //        $oldSystems = $Song->getSystemList();
@@ -209,7 +209,7 @@ class ManageSong implements IExecutable, IBuildable, IRoutable
 
         foreach($Song->getTagList() as $tag) {
             list($tagName, $tagValue) = $tag;
-            $title = array_search($tagName, SongTagEntry::$TagDefaults) ?: $tagName;
+            $title = array_search($tagName, TagEntry::$TagDefaults) ?: $tagName;
             $SelectRemoveTag->addOption($tagName.':'.$tagValue, "{$title} - {$tagValue}");
         }
 

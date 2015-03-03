@@ -14,21 +14,21 @@ use CPath\Render\HTML\Header\IHTMLSupportHeaders;
 use CPath\Render\HTML\IRenderHTML;
 use CPath\Request\IRequest;
 use Site\Account\DB\AccountEntry;
-use Site\Song\Review\DB\SongReviewEntry;
+use Site\Song\Review\DB\ReviewEntry;
 
-class HTMLSongReview implements IRenderHTML, IHTMLSupportHeaders
+class HTMLSourceReview implements IRenderHTML, IHTMLSupportHeaders
 {
     /**
-     * @var SongReviewEntry
+     * @var ReviewEntry
      */
-    private $SongReview;
+    private $SourceReview;
     /**
      * @var AccountEntry
      */
     private $Reviewer;
 
-    public function __construct(SongReviewEntry $SongReview = null, AccountEntry $Reviewer=null) {
-        $this->SongReview = $SongReview;
+    public function __construct(ReviewEntry $SourceReview = null, AccountEntry $Reviewer=null) {
+        $this->SourceReview = $SourceReview;
         $this->Reviewer = $Reviewer;
     }
 
@@ -43,8 +43,8 @@ class HTMLSongReview implements IRenderHTML, IHTMLSupportHeaders
         echo RI::ni(), "<div class='review'>";
 
         echo RI::ni(1), "<span class='review-title'>";
-        if($this->SongReview)
-            echo $this->SongReview->getReviewTitle();
+        if($this->SourceReview)
+            echo $this->SourceReview->getReviewTitle();
         echo RI::ni(1), "</span>";
 
         echo RI::ni(1), "<span class='review-account'>Review by<br/>";
@@ -53,8 +53,8 @@ class HTMLSongReview implements IRenderHTML, IHTMLSupportHeaders
         echo RI::ni(1), "</span>";
 
         echo RI::ni(1), "<div class='review-content'>";
-        if($this->SongReview)
-            echo $this->SongReview->getFormattedReview();
+        if($this->SourceReview)
+            echo $this->SourceReview->getFormattedReview();
         echo RI::ni(1), "</div>";
 
         echo RI::ni(0), "</div>";

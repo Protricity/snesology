@@ -20,8 +20,9 @@ use CPath\Response\IResponse;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
 use Site\SiteMap;
-use Site\Song\Review\HTML\HTMLSongsTable;
-use Site\Song\Review\HTML\HTMLSongTagsTable;
+use Site\Song\HTML\HTMLSongsTable;
+use Site\Song\Review\HTHTMLTagsTableble;
+use Site\Song\Tag\HTML\HTMLTagsTable;
 
 class SearchSongTags implements IExecutable, IBuildable, IRoutable
 {
@@ -57,7 +58,7 @@ class SearchSongTags implements IExecutable, IBuildable, IRoutable
             $tagValue = $Request[self::PARAM_VALUE];
 
 		$Pagination = new HTMLPagination($row_count, $page, $total);
-		$SearchTable = new HTMLSongTagsTable("{$row_count} OFFSET {$offset}", $tagName, $tagValue);
+		$SearchTable = new HTMLTagsTable("{$row_count} OFFSET {$offset}", $tagName, $tagValue);
 
         $SearchTable->validateRequest($Request);
 

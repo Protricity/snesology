@@ -42,7 +42,7 @@ class ReviewTagEntry implements IBuildable, IKeyMap, IRenderHTML
      * @column VARCHAR(64) NOT NULL
      * @index --name index_review_tag
      */
-    protected $song_id;
+    protected $review_id;
 
 
     /**
@@ -63,8 +63,8 @@ class ReviewTagEntry implements IBuildable, IKeyMap, IRenderHTML
      */
     protected $value;
 
-	public function getSongID() {
-		return $this->song_id;
+	public function getReviewID() {
+		return $this->review_id;
 	}
 
     public function getAccountFingerprint() {

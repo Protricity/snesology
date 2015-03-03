@@ -18,7 +18,7 @@ use CPath\Response\IResponse;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
 use Site\Request\HTML\HTMLRequestHistory;
-use Site\Song\Review\HTML\HTMLSongsTable;
+use Site\Song\HTML\HTMLSongsTable;
 
 class SiteIndex implements IExecutable, IBuildable, IRoutable
 {

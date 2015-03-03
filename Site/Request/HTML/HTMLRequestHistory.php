@@ -17,7 +17,7 @@ use CPath\Request\IRequest;
 use Site\Account\DB\AccountEntry;
 use Site\Request\DB\RequestEntry;
 use Site\Request\DB\RequestTable;
-use Site\Song\Review\DB\SongReviewEntry;
+use Site\Song\Review\DB\ReviewEntry;
 
 class HTMLRequestHistory extends HTMLPDOQueryTable
 {
