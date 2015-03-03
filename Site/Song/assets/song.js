@@ -20,7 +20,7 @@
             url: url,
             success: success,
             error: function(jqXHR, textStatus, errorThrown) {
-                console.error(arguments);
+                console.error(errorThrown, arguments);
             }
         };
 
@@ -59,9 +59,12 @@
                 var onInput = function() {
                     var tagName = InputName.val();
                     var tagValue = InputValue.val();
-                    var path = searchSongTagsFullPath + encodeURIComponent(tagName) + '/' + encodeURIComponent(tagValue);
+                    var path = searchSongTagsFullPath 
+                    + encodeURIComponent(tagName)
+                    + '/' + encodeURIComponent(tagValue.substr(0,2));
 
-                    if(typeof pathCache[path] == 'Object') {
+
+                    if(typeof pathCache[path] == 'object') {
                         var data = pathCache[path];
                         DataList.html('');
                         if(data)

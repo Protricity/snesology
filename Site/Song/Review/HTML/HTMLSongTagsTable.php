@@ -21,7 +21,7 @@ class HTMLSongTagsTable extends HTMLPDOQueryTable
             ->limit($count ?: 25);
 
         $tagName === null ?: $Query->where(SongTagTable::COLUMN_TAG, $tagName);
-        $tagValue === null ?: $Query->where(SongTagTable::COLUMN_VALUE, $tagValue);
+        $tagValue === null ?: $Query->where(SongTagTable::COLUMN_VALUE, $tagValue . '%', ' LIKE ?');
 
 //        $Query->groupBy(SongTagTable::TABLE_NAME . '.' . SongTagTable::COLUMN_TAG . ',' . SongTagTable::TABLE_NAME . '.' . SongTagTable::COLUMN_VALUE);
 

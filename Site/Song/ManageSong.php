@@ -163,9 +163,9 @@ class ManageSong implements IExecutable, IBuildable, IRoutable
                     )
                 ),
 
-                new HTMLCheckBoxField(self::PARAM_SONG_TAG_VALUE,
-                    new Attributes('disabled', 'disabled')
-                ),
+//                new HTMLCheckBoxField(self::PARAM_SONG_TAG_VALUE,
+//                    new Attributes('disabled', 'disabled')
+//                ),
 
                 "<br/><br/>",
                 new HTMLButton(self::PARAM_SUBMIT, 'Add Tag', 'add-song-tag')
