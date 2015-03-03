@@ -31,8 +31,8 @@
     var ready = function() {
 
         var domainPath = jQuery('head meta[name=' + META_DOMAIN_PATH + ']').attr('content');
-        var domainFullPath = window.location.protocol + "//" + window.location.host + domainPath;
-        var searchSongTagsFullPath = domainFullPath + '/search/songtags/';
+        var domainFullPath = window.location.protocol + "//" + window.location.host + "/" + domainPath;
+        var searchSongTagsFullPath = domainFullPath + 'search/songtags/';
 
         jQuery('fieldset')
             .has('*[name=' + PARAM_TAG_NAME + ']')
