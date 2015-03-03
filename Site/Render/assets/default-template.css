@@ -97,27 +97,28 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .navbar a {
-    background: url("img/button-old.jpg") left;
+    background: url("img/button.jpg") left;
     background-size: cover;
 
-    color: #FFFFFF;
+    color: #000000;
     border-width: 3px;
-    /*     border-color: rgb(176, 51, 28); */
+    border-color: rgb(255, 140, 0);
     border-style: outset;
-    /* box-shadow: inset 1px 1px 1px #CB7130; */
+    box-shadow: inset 1px 1px 1px #CB7130;
 
     font-family: monospace;
     font-weight: bold;
-    text-decoration: none;
 
     display: block;
 
-    font-size: 16px;
-    width: 116px;
+    /* font-size: 19px; */
+    width: 120px;
     height: 30px;
 
-    padding-top: 08px;
+    font-size: 13px;
+    padding-top: 17px;
 
+    text-decoration: none;
     text-align: center;
     margin: 15px;
 }
@@ -127,10 +128,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .navbar a:hover {
-    background-image: url("img/buttonpress-old.jpg");
+    background-image: url("img/buttonpress.jpg");
     font-style: italic;
 
-    /* box-shadow: inset 1px 1px 1px #666; */
+/*     box-shadow: inset 1px 1px 1px #666; */
 }
 
 .navbar a + a {
