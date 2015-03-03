@@ -308,7 +308,10 @@ Version: GnuPG v1
 //
 //	}
 
-const TEST_PUBLIC_KEY = "-----BEGIN PGP PUBLIC KEY BLOCK-----
+    const TEST_FINGERPRINT = '3ad63323f7969265';
+    const TEST_USER = 'test-user';
+    const TEST_USER_EMAIL = 'test-user@email.com';
+    const TEST_PUBLIC_KEY = "-----BEGIN PGP PUBLIC KEY BLOCK-----
 Version: OpenPGP.js v0.8.2
 Comment: http://openpgpjs.org
 
@@ -348,8 +351,8 @@ wC4LtwPVHIpRsVpM3/4Z7eakculsOi5+J/wz93xr
         if($OldTestAccount)
             AccountEntry::delete($Test, $OldTestAccount->getFingerprint());
 
-        $Test->setRequestParameter(self::PARAM_EMAIL, 'test-user@email.com');
-        $Test->setRequestParameter(self::PARAM_USER, 'test-user');
+        $Test->setRequestParameter(self::PARAM_EMAIL, self::TEST_USER_EMAIL);
+        $Test->setRequestParameter(self::PARAM_USER, self::TEST_USER);
         $Test->setRequestParameter(self::PARAM_PUBLIC_KEY, self::TEST_PUBLIC_KEY);
 
         try {
@@ -358,7 +361,7 @@ wC4LtwPVHIpRsVpM3/4Z7eakculsOi5+J/wz93xr
 
         }
 
-        $PGPDelete = new PGPDeletePublicKeyCommand('3ad63323f7969265');
+        $PGPDelete = new PGPDeletePublicKeyCommand(self::TEST_FINGERPRINT);
         $PGPDelete->setPrimaryKeyRing(AccountEntry::KEYRING_NAME);
         $PGPDelete->execute($Test);
     }

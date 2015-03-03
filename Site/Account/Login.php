@@ -30,11 +30,13 @@ use CPath\Response\Common\RedirectResponse;
 use CPath\Response\IResponse;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
+use CPath\UnitTest\ITestable;
+use CPath\UnitTest\IUnitTestRequest;
 use Site\Account\DB\AccountEntry;
 use Site\Path\HTML\HTMLPathTip;
 use Site\SiteMap;
 
-class Login implements IExecutable, IBuildable, IRoutable
+class Login implements IExecutable, IBuildable, IRoutable, ITestable
 {
     const FIELDSET_PASSPHRASE = 'fieldset-passphrase';
     const FIELDSET_CHALLENGE = 'fieldset-challenge';
@@ -155,7 +157,7 @@ Once the <b>challenge answer</b> is entered, you may log in';
 
 		$Form->validateRequest($Request);
 		$answer = $Form->validateField($Request, self::PARAM_CHALLENGE_ANSWER);
-		$Account->assertChallengeAnswer($answer, $Form);
+		$Account->assertChallengeAnswer($Request, $answer, $Form);
 		$Account->generateChallenge($Request, array($Account->getFingerprint()));
 
 		$Account->startSession($SessionRequest);
@@ -197,4 +199,21 @@ Once the <b>challenge answer</b> is entered, you may log in';
 			| IRequest::MATCH_NO_SESSION
 			, "Login");
 	}
+
+    /**
+     * Perform a unit test
+     * @param IUnitTestRequest $Test the unit test request inst for this test session
+     * @return void
+     * @test --disable 0
+     * Note: Use doctag 'test' with '--disable 1' to have this ITestable class skipped during a build
+     */
+    static function handleStaticUnitTest(IUnitTestRequest $Test) {
+
+//        $Login = new Login();
+//
+//        $Test->setRequestParameter(self::PARAM_FINGERPRINT, Register::TEST_FINGERPRINT);
+//        $Test->setRequestParameter(self::PARAM_CHALLENGE_ANSWER, Register::TEST_USER_EMAIL);
+//        $Login->execute($Test);
+
+    }
 }
