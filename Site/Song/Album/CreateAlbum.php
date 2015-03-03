@@ -167,7 +167,7 @@ class CreateAlbum implements IExecutable, IBuildable, IRoutable, ITestable
                     )
                 ),
 
-                new HTMLPopUpBox(null, HTMLPopUpBox::CLASS_IMPORTANT, 'Free file hosting for chip-tune originals!'),
+                new HTMLPopUpBox(null, HTMLPopUpBox::CLASS_IMPORTANT, 'Free file hosting for chip-tune albums!'),
 
                 new HTMLElement('fieldset', 'fieldset-album-chip-style inline',
                     new HTMLElement('legend', 'legend-album-chip-style', "Chip Style:"),
