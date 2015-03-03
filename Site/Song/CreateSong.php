@@ -197,8 +197,8 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
                     )
                 ),
 
-				"<br/><br/>",
-				new HTMLButton('submit', 'Create', 'submit')
+				"<br/>",
+				new HTMLButton('submit', 'Create Song Entry', 'submit')
 			),
 			"<br/>"
 		);

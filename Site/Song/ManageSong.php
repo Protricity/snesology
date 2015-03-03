@@ -135,7 +135,7 @@ class ManageSong implements IExecutable, IBuildable, IRoutable
 //                    )
 //                ),
 
-                "<br/><br/>",
+                "<br/>",
                 new HTMLButton(self::PARAM_SUBMIT, 'Update', 'update')
             ),
 

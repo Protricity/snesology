@@ -9,6 +9,9 @@
 
     var PARAM_TAG_NAME = 'tag-name';
     var PARAM_TAG_VALUE = 'tag-value';
+
+    var PARAM_SONG_ARTIST = 'song-artist';
+
     var META_DOMAIN_PATH  = 'domain-path';
 
     var doRequest = function(url, data, success, method) {
@@ -33,60 +36,70 @@
         var domainPath = jQuery('head meta[name=' + META_DOMAIN_PATH + ']').attr('content');
         domainPath = domainPath.replace(/^\//, '');
         var domainFullPath = window.location.protocol + "//" + window.location.host + "/" + domainPath;
-        var searchSongTagsFullPath = domainFullPath + 'search/songtags/';
+        var searchSongTagsPath = 'search/songtags/';
+
+        var doAutoList = function(input, tagName) {
+            if(typeof input.__initSongAutoTag !== 'undefined')
+                return;    
+
+            console.log("Found Song Auto Tag Input: ", input);
+            input.__initSongAutoTag = true;
+            
+            var InputValue = jQuery(input); // FieldSet.find('*[name=' + PARAM_TAG_VALUE + ']');
+
+            var id = 'datalist_song_tag_' + incID++;
+            var DataList = jQuery('<datalist id="' + id + '" />');
+            InputValue.after("<br/>");
+            InputValue.after(DataList);
+            InputValue.attr('list', id);
+
+            var pathCache = {};
+
+            var onInput = function() {
+
+                var tagValue = InputValue.val();
+                var path = searchSongTagsPath 
+                + encodeURIComponent(typeof tagName == 'function' ? tagName() : tagName)
+                + '/' + encodeURIComponent(tagValue.substr(0,2));
+
+                if(typeof pathCache[path] === true) {
+                    console.info("Cache miss: ", path);
+                } else if(typeof pathCache[path] == 'object') {
+                    var data = pathCache[path];
+                    DataList.html('');
+                    if(data)
+                        for(var i=0; i<data.length; i++) 
+                            DataList.append('<option value="' + data[i]['tag-value'] + '" />');
+
+                } else {
+                    pathCache[path] = true;
+                    doRequest(domainFullPath + path, data, function(data) {
+                        pathCache[path] = data;
+                        DataList.html('');
+                        if(data)
+                            for(var i=0; i<data.length; i++) 
+                                DataList.append('<option value="' + data[i]['tag-value'] + '" />');
+                    });
+                }
+            };
+            InputValue.on('input', onInput);
+            onInput();
+        };
 
         jQuery('fieldset')
             .has('*[name=' + PARAM_TAG_NAME + ']')
             .has('*[name=' + PARAM_TAG_VALUE + ']')
             .each(function(i, fieldset) {
-                if(typeof fieldset.__initSongAutoTag !== 'undefined')
-                    return;    
-
-                console.log("Found Song Auto Tag Fieldset: ", fieldset);
-                fieldset.__initSongAutoTag = true;
-                var FieldSet = jQuery(fieldset);
-                var InputName = FieldSet.find('*[name=' + PARAM_TAG_NAME + ']');
-                var InputValue = FieldSet.find('*[name=' + PARAM_TAG_VALUE + ']').first();
-
-                var id = 'datalist_song_tag_' + incID++;
-                var DataList = jQuery('<datalist id="' + id + '" />');
-                DataList.append('<option value="wut" />');
-                InputValue.after("<br/>");
-                InputValue.after(DataList);
-                InputValue.attr('list', id);
-
-                var pathCache = {};
-
-                var onInput = function() {
-                    var tagName = InputName.val();
-                    var tagValue = InputValue.val();
-                    var path = searchSongTagsFullPath 
-                    + encodeURIComponent(tagName)
-                    + '/' + encodeURIComponent(tagValue.substr(0,2));
-
-
-                    if(typeof pathCache[path] == 'object') {
-                        var data = pathCache[path];
-                        DataList.html('');
-                        if(data)
-                            for(var i=0; i<data.length; i++) 
-                                DataList.append('<option value="' + data[i]['tag-value'] + '" />');
-                        
-                    } else {
-                        doRequest(path, data, function(data) {
-                            pathCache[path] = data;
-                            DataList.html('');
-                            if(data)
-                                for(var i=0; i<data.length; i++) 
-                                    DataList.append('<option value="' + data[i]['tag-value'] + '" />');
-                        });
-                    }
-                };
-                InputName.on('input change', onInput);
-                InputValue.on('input', onInput);
-                onInput();
+                var InputName = jQuery(fieldset).find('*[name=' + PARAM_TAG_NAME + ']');
+                var InputValue = jQuery(fieldset).find('*[name=' + PARAM_TAG_VALUE + ']');
+                doAutoList(InputValue[0], function() { return InputName.val(); });
+                InputName.on('change input', function() { InputValue.trigger('input'); });
             });
 
+        jQuery('*[name=' + PARAM_SONG_ARTIST + ']')
+            .each(function(i, input) {
+                doAutoList(input, 'artist');
+            });
     };
 
     jQuery(document).ready(function() {

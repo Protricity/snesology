@@ -27,7 +27,7 @@ class HTMLSongsTable extends HTMLPDOQueryTable
             $this->addColumn('song-description', 'description');
         }
         $this->addColumn('song-artist', 'artist');
-        $this->addColumn('song-tags', 'tags');
+//        $this->addColumn('song-tags', 'tags');
         if(!$short) {
             $this->addColumn('song-system', 'system');
             $this->addColumn('song-genre', 'genre');
