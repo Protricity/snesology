@@ -33,17 +33,21 @@ use CPath\Response\Common\RedirectResponse;
 use CPath\Response\IResponse;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
+use CPath\UnitTest\ITestable;
+use CPath\UnitTest\IUnitTestRequest;
 use Site\Account\DB\AccountEntry;
+use Site\Account\Register;
 use Site\Config;
 use Site\Render\PopUpBox\HTMLPopUpBox;
 use Site\Request\DB\RequestEntry;
 use Site\SiteMap;
 use Site\Song\DB\SongEntry;
+use Site\Song\DB\SongTable;
 use Site\Song\Review\HTML\HTMLSongReviewsTable;
 use Site\Song\Tag\DB\TagEntry;
 
 
-class ManageSong implements IExecutable, IBuildable, IRoutable
+class ManageSong implements IExecutable, IBuildable, IRoutable, ITestable
 {
 	const TITLE = 'Manage a Song';
 
@@ -309,5 +313,45 @@ class ManageSong implements IExecutable, IBuildable, IRoutable
 	static function handleBuildStatic(IBuildRequest $Request) {
 		$RouteBuilder = new RouteBuilder($Request, new SiteMap());
 		$RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION, __CLASS__);
+    }
+
+    /**
+     * Perform a unit test
+     * @param IUnitTestRequest $Test the unit test request inst for this test session
+     * @return void
+     * @test --disable 0
+     * Note: Use doctag 'test' with '--disable 1' to have this ITestable class skipped during a build
+     */
+    static function handleStaticUnitTest(IUnitTestRequest $Test) {
+        $Session = &$Test->getSession();
+        $TestAccount = new AccountEntry('78E02897', Register::TEST_PUBLIC_KEY);
+        $Session[AccountEntry::SESSION_KEY] = serialize($TestAccount);
+
+        SongEntry::table()->delete(SongTable::COLUMN_TITLE, 'test-song-title');
+
+        $CreateSong = new CreateSong();
+
+        $Test->clearRequestParameters();
+        $Test->setRequestParameter(CreateSong::PARAM_SONG_TITLE, 'test-song-title');
+        $Test->setRequestParameter(CreateSong::PARAM_SONG_ARTIST, 'test-song-artist');
+        $Test->setRequestParameter(CreateSong::PARAM_SONG_SIMILAR, 'test-song-similar');
+        $Test->setRequestParameter(CreateSong::PARAM_SONG_ORIGINAL, 'test-song-original');
+        $Test->setRequestParameter(CreateSong::PARAM_SONG_CHIP_STYLE, '8-bit');
+        $Test->setRequestParameter(CreateSong::PARAM_SONG_DESCRIPTION, 'test-song-description');
+        $Test->setRequestParameter(CreateSong::PARAM_SONG_GENRE, array('test-song-genre'));
+        $Test->setRequestParameter(CreateSong::PARAM_SONG_SYSTEM, array('test-song-system'));
+        $CreateSong->execute($Test);
+
+        $id = $CreateSong->getNewSongID();
+
+        $ManageSong = new ManageSong($id);
+
+        $Test->clearRequestParameters();
+        $Test->setRequestParameter(ManageSong::PARAM_SONG_TITLE, 'test-song-title2');
+        $Test->setRequestParameter(ManageSong::PARAM_SONG_DESCRIPTION, 'test-song-description2');
+        $Test->setRequestParameter(ManageSong::PARAM_SUBMIT, 'update');
+        $ManageSong->execute($Test);
+
+        SongEntry::delete($Test, $id);
     }
 }

@@ -23,6 +23,7 @@ use Site\DB\SiteDB;
 use Site\Grant\DB\AbstractGrantEntry;
 use Site\PGP\Commands\Exceptions\PGPCommandException;
 use Site\Song\Tag\DB\TagEntry;
+use Site\Song\Tag\DB\TagTable;
 
 /**
  * Class AlbumEntry
@@ -348,6 +349,8 @@ class AlbumEntry extends AbstractGrantEntry implements IBuildable, IKeyMap, ISer
 			->execute($Request);
 		if(!$delete)
 			throw new \InvalidArgumentException("Could not delete " . __CLASS__);
+
+        TagEntry::table()->delete(TagTable::COLUMN_SOURCE_ID, $id);
 	}
 
 	/**

@@ -32,16 +32,20 @@ use CPath\Response\Common\RedirectResponse;
 use CPath\Response\IResponse;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
+use CPath\UnitTest\ITestable;
+use CPath\UnitTest\IUnitTestRequest;
 use Site\Account\DB\AccountEntry;
+use Site\Account\Register;
 use Site\Config;
 use Site\Render\PopUpBox\HTMLPopUpBox;
 use Site\Request\DB\RequestEntry;
 use Site\SiteMap;
 use Site\Song\Album\DB\AlbumEntry;
+use Site\Song\Album\DB\AlbumTable;
 use Site\Song\Review\HTML\HTMLAlbumReviewsTable;
 use Site\Song\Tag\DB\TagEntry;
 
-class ManageAlbum implements IExecutable, IBuildable, IRoutable
+class ManageAlbum implements IExecutable, IBuildable, IRoutable, ITestable
 {
 	const TITLE = 'Manage an Album';
 
@@ -184,7 +188,7 @@ class ManageAlbum implements IExecutable, IBuildable, IRoutable
 
         foreach($Album->getTagList() as $tag) {
             list($tagName, $tagValue) = $tag;
-            $title = array_search($tagName, AlbumTagEntry::$TagDefaults) ?: $tagName;
+            $title = array_search($tagName, TagEntry::$TagDefaults) ?: $tagName;
             $SelectRemoveTag->addOption($tagName.':'.$tagValue, "{$title} - {$tagValue}");
         }
 
@@ -212,34 +216,8 @@ class ManageAlbum implements IExecutable, IBuildable, IRoutable
                 return new RedirectResponse(ManageAlbum::getRequestURL($Album->getID()), "Album published successfully. You rock", 5);
 
             case 'update':
-//                $newGenres = $Form->validateField($Request, self::PARAM_ALBUM_GENRES);
-//                $newSystems = $Form->validateField($Request, self::PARAM_ALBUM_SYSTEMS);
                 $newTitle = $Form->validateField($Request, self::PARAM_ALBUM_TITLE);
                 $newDescription = $Form->validateField($Request, self::PARAM_ALBUM_DESCRIPTION);
-
-//                foreach($newGenres as $genre) {
-//                    if(in_array($genre, $oldGenres)) {
-//                        $oldGenres = array_diff($oldGenres, array($genre));
-//                    } else {
-//                        AlbumGenreEntry::addToAlbum($Request, $Album->getID(), $genre);
-//                    }
-//                }
-
-//                foreach($oldGenres as $genre) {
-//                    AlbumGenreEntry::removeFromAlbum($Request, $Album->getID(), $genre);
-//                }
-
-//                foreach($newSystems as $system) {
-//                    if(in_array($system, $oldSystems)) {
-//                        $oldSystems = array_diff($oldSystems, array($system));
-//                    } else {
-//                        AlbumSystemEntry::addToAlbum($Request, $Album->getID(), $system);
-//                    }
-//                }
-//
-//                foreach($oldSystems as $system) {
-//                    AlbumSystemEntry::removeFromAlbum($Request, $Album->getID(), $system);
-//                }
 
                 if($newTitle !== $Album->getTitle()
                  || $newDescription !== $Album->getDescription()) {
@@ -284,5 +262,45 @@ class ManageAlbum implements IExecutable, IBuildable, IRoutable
 	static function handleBuildStatic(IBuildRequest $Request) {
 		$RouteBuilder = new RouteBuilder($Request, new SiteMap());
 		$RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION, __CLASS__);
+    }
+
+    /**
+     * Perform a unit test
+     * @param IUnitTestRequest $Test the unit test request inst for this test session
+     * @return void
+     * @test --disable 0
+     * Note: Use doctag 'test' with '--disable 1' to have this ITestable class skipped during a build
+     */
+    static function handleStaticUnitTest(IUnitTestRequest $Test) {
+        $Session = &$Test->getSession();
+        $TestAccount = new AccountEntry('78E02897', Register::TEST_PUBLIC_KEY);
+        $Session[AccountEntry::SESSION_KEY] = serialize($TestAccount);
+
+        AlbumEntry::table()->delete(AlbumTable::COLUMN_TITLE, 'test-album-title');
+
+        $CreateAlbum = new CreateAlbum();
+
+        $Test->clearRequestParameters();
+        $Test->setRequestParameter(CreateAlbum::PARAM_ALBUM_TITLE, 'test-album-title');
+        $Test->setRequestParameter(CreateAlbum::PARAM_ALBUM_ARTIST, 'test-album-artist');
+        $Test->setRequestParameter(CreateAlbum::PARAM_ALBUM_SIMILAR, 'test-album-similar');
+        $Test->setRequestParameter(CreateAlbum::PARAM_ALBUM_ORIGINAL, 'test-album-original');
+        $Test->setRequestParameter(CreateAlbum::PARAM_ALBUM_CHIP_STYLE, '8-bit');
+        $Test->setRequestParameter(CreateAlbum::PARAM_ALBUM_DESCRIPTION, 'test-album-description');
+        $Test->setRequestParameter(CreateAlbum::PARAM_ALBUM_GENRE, array('test-album-genre'));
+        $Test->setRequestParameter(CreateAlbum::PARAM_ALBUM_SYSTEM, array('test-album-system'));
+        $CreateAlbum->execute($Test);
+
+        $id = $CreateAlbum->getNewAlbumID();
+
+        $ManageAlbum = new ManageAlbum($id);
+
+        $Test->clearRequestParameters();
+        $Test->setRequestParameter(ManageAlbum::PARAM_ALBUM_TITLE, 'test-album-title2');
+        $Test->setRequestParameter(ManageAlbum::PARAM_ALBUM_DESCRIPTION, 'test-album-description2');
+        $Test->setRequestParameter(ManageAlbum::PARAM_SUBMIT, 'update');
+        $ManageAlbum->execute($Test);
+
+        AlbumEntry::delete($Test, $id);
     }
 }

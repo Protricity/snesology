@@ -317,7 +317,9 @@ class SongEntry implements IBuildable, IKeyMap, ISerializable
 			->execute($Request);
 		if(!$delete)
 			throw new \InvalidArgumentException("Could not delete " . __CLASS__);
-	}
+
+        TagEntry::table()->delete(TagTable::COLUMN_SOURCE_ID, $id);
+    }
 
 	/**
 	 * @param $id

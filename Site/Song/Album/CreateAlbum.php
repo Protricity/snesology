@@ -315,9 +315,7 @@ class CreateAlbum implements IExecutable, IBuildable, IRoutable, ITestable
 
         $id = $CreateAlbum->getNewAlbumID();
 
-        AlbumEntry::table()->delete(AlbumTable::COLUMN_ID, $id);
-        TagEntry::table()->delete(TagTable::COLUMN_SOURCE_ID, $id);
-//        AlbumEntry::delete($Test, $id);
+        AlbumEntry::delete($Test, $id);
 
     }
 }

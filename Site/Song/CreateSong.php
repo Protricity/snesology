@@ -316,9 +316,7 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
 
         $id = $CreateSong->getNewSongID();
 
-        SongEntry::table()->delete(SongTable::COLUMN_ID, $id);
-        TagEntry::table()->delete(TagTable::COLUMN_SOURCE_ID, $id);
-//        SongEntry::delete($Test, $id);
+        SongEntry::delete($Test, $id);
 
     }
 }

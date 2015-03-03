@@ -304,7 +304,8 @@ class AccountEntry extends AbstractGrantEntry implements IBuildable, IKeyMap, IS
     }
 
     static function loadFromSession(ISessionRequest $SessionRequest) {
-        if(!$SessionRequest->isStarted())
+        $started = $SessionRequest->isStarted();
+        if(!$started)
             $SessionRequest->startSession();
         $Session = $SessionRequest->getSession();
 
@@ -314,7 +315,8 @@ class AccountEntry extends AbstractGrantEntry implements IBuildable, IKeyMap, IS
             $SessionRequest->destroySession();
             throw new \InvalidArgumentException("Not logged in");
         }
-        $SessionRequest->endSession();
+        if(!$started)
+            $SessionRequest->endSession();
 
         return $AccountEntry;
     }
