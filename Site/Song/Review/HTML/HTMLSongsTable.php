@@ -7,6 +7,8 @@
  */
 namespace Site\Song\Review\HTML;
 
+use CPath\Data\Map\ISequenceMap;
+use CPath\Data\Map\ISequenceMapper;
 use CPath\Render\HTML\Element\Table\HTMLPDOQueryTable;
 use Site\Song\DB\SongEntry;
 use Site\Song\DB\SongTable;
@@ -19,16 +21,13 @@ class HTMLSongsTable extends HTMLPDOQueryTable
             ->limit($count ?: 25);
 
         parent::__construct($Query);
-        if(!$short) {
-            $this->addColumn('song-id');
-            $this->addSearchColumn(SongTable::COLUMN_ID, 'song-id');
-        }
-        $this->addColumn('song-title', 'title');
-        $this->addSearchColumn(SongTable::COLUMN_TITLE, 'title');
+        $this->addColumn('song-id', 'song');
+        $this->addSearchColumn(SongTable::COLUMN_ID, 'song');
         if(!$short) {
             $this->addColumn('song-description', 'description');
         }
         $this->addColumn('song-artist', 'artist');
+        $this->addColumn('song-tags', 'tags');
         if(!$short) {
             $this->addColumn('song-system', 'system');
             $this->addColumn('song-genre', 'genre');

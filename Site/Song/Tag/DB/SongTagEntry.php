@@ -10,6 +10,7 @@ use CPath\Build\IBuildable;
 use CPath\Build\IBuildRequest;
 use CPath\Data\Map\IKeyMap;
 use CPath\Data\Map\IKeyMapper;
+use CPath\Data\Schema\PDO\PDOSelectBuilder;
 use CPath\Data\Schema\PDO\PDOTableClassWriter;
 use CPath\Data\Schema\PDO\PDOTableWriter;
 use CPath\Data\Schema\TableSchema;
@@ -18,6 +19,7 @@ use CPath\Render\HTML\Attribute\IAttributes;
 use CPath\Render\HTML\IRenderHTML;
 use CPath\Request\IRequest;
 use Site\DB\SiteDB;
+use Site\Song\DB\SongTable;
 
 /**
  * Class SongTagEntry
@@ -65,6 +67,7 @@ class SongTagEntry implements IBuildable, IKeyMap, IRenderHTML
 
     const TAG_TRACK_NUMBER = 'track-number';
     const TAG_SIMILAR = 'similar';
+    const JOIN_COLUMN_SONGS = 'songs';
 
     static $TagDefaults = array(
         "Origin URL" => self::TAG_URL_ORIGIN,
@@ -121,11 +124,22 @@ class SongTagEntry implements IBuildable, IKeyMap, IRenderHTML
      */
     protected $value;
 
-	public function getSongID() {
-		return $this->song_id;
-	}
+    protected $songs;
 
-	public function getTagName() {
+    public function getSongID() {
+        return $this->song_id;
+    }
+
+    public function getSongList() {
+        $songs = array();
+        foreach(explode('||', $this->songs) as $song) {
+            list($songID, $songTitle) = explode('::', $song);
+            if($songID)
+                $songs[$songID] = $songTitle;
+        }
+        return $songs;
+    }
+    public function getTagName() {
 		return $this->tag;
 	}
 
@@ -140,7 +154,10 @@ class SongTagEntry implements IBuildable, IKeyMap, IRenderHTML
      * @return void
      */
     function mapKeys(IKeyMapper $Map) {
-        $Map->map('tag-' . $this->getTagName(), $this->getTagValue());
+        $Map->map('tag', $this->getTagName());
+        $Map->map('tag-value', $this->getTagValue());
+        foreach($this->getSongList() as $songID => $songTitle)
+            $Map->map('song', $songID, $songTitle);
     }
 
     /**
@@ -157,6 +174,24 @@ class SongTagEntry implements IBuildable, IKeyMap, IRenderHTML
 	// Static
 
 
+    /**
+     * @return PDOSelectBuilder
+     */
+    static function query() {
+        return self::table()
+            ->select(SongTagTable::TABLE_NAME . '.' . SongTagTable::COLUMN_TAG)
+            ->select(SongTagTable::TABLE_NAME . '.' . SongTagTable::COLUMN_VALUE)
+//            ->select(SongTagTable::TABLE_NAME . '.' . SongTagTable::COLUMN_SONG_ID, SongTagTable::COLUMN_SONG_ID, "GROUP_CONCAT(%s SEPARATOR ', ')")
+
+            ->select(SongTable::TABLE_NAME . '.' . SongTable::COLUMN_TITLE, 'song_title', "GROUP_CONCAT(%s SEPARATOR ', ')")
+            ->select('GROUP_CONCAT(DISTINCT CONCAT(' . SongTagTable::TABLE_NAME . '.' . SongTagTable::COLUMN_SONG_ID . ', "::", ' . SongTable::TABLE_NAME . '.' . SongTable::COLUMN_TITLE. ') SEPARATOR "||")', self::JOIN_COLUMN_SONGS)
+
+            ->leftJoin(SongTable::TABLE_NAME, SongTagTable::TABLE_NAME . '.' . SongTagTable::COLUMN_SONG_ID, SongTable::TABLE_NAME . '.' . SongTable::COLUMN_ID)
+
+            ->groupBy(SongTagTable::TABLE_NAME . '.' . SongTagTable::COLUMN_TAG . ',' . SongTagTable::TABLE_NAME . '.' . SongTagTable::COLUMN_VALUE)
+
+            ->setFetchMode(SongTagTable::FETCH_MODE, SongTagTable::FETCH_CLASS);
+    }
 
     static function removeFromSong($Request, $songID, $tag, $tagValue) {
         $delete = self::table()

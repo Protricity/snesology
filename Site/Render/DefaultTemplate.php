@@ -215,9 +215,20 @@ class CustomHTMLValueRenderer implements IHTMLValueRenderer, IHTMLSupportHeaders
 
             case 'song':
             case 'song-id':
-            $domain = $this->Request->getDomainPath();
+                $domain = $this->Request->getDomainPath();
                 $href = $domain . ltrim(ManageSong::getRequestURL($value), '/');
                 echo "<a href='{$href}'>", $arg1 ?: $value, "</a>";
+                return true;
+
+            case 'song':
+            case 'song-title':
+                if($arg1) {
+                    $domain = $this->Request->getDomainPath();
+                    $href = $domain . ltrim(ManageSong::getRequestURL($arg1), '/');
+                    echo "<a href='{$href}'>", $value, "</a>";
+                } else {
+                    echo $value;
+                }
                 return true;
 
             case 'description':

@@ -7,84 +7,82 @@
  */
 (function(){
 
-    var JSON_PASSPHRASE = 'passphrase';
+    var PARAM_TAG_NAME = 'tag-name';
+    var PARAM_TAG_VALUE = 'tag-value';
+    var META_DOMAIN_PATH  = 'domain-path';
 
-    var PARAM_CHALLENGE = 'challenge';
-    var PARAM_CHALLENGE_ANSWER = 'challenge-answer';
+    var doRequest = function(url, data, success, method) {
+        method = method ? method : 'GET';
+        var ajax = {
+            method: method,
+            data: data,
+            dataType: 'json',
+            url: url,
+            success: success,
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error(arguments);
+            }
+        };
 
-    var PARAM_FINGERPRINT = 'fingerprint';
-    var PARAM_USER_SELECT = 'user-select';
+        jQuery.ajax(ajax);
+    };
 
-    var FORM_NAME = 'login';
-
+    var incID = 0;
     var ready = function() {
 
-        var Form = jQuery('form[name=' + FORM_NAME + ']');
-        if(Form.length === 0)
-            return;
+        var domainPath = jQuery('head meta[name=' + META_DOMAIN_PATH + ']').attr('content');
+        var domainFullPath = window.location.protocol + "//" + window.location.host + domainPath;
+        var searchSongTagsFullPath = domainFullPath + '/search/songtags/';
 
-        var InputUserID = Form.find('[name=' + PARAM_FINGERPRINT + ']');
-        if(!InputUserID.val()) {
-            setTimeout(function () {
-                if(InputUserID.val())
-                    return;
+        jQuery('fieldset')
+            .has('*[name=' + PARAM_TAG_NAME + ']')
+            .has('*[name=' + PARAM_TAG_VALUE + ']')
+            .each(function(i, fieldset) {
+                if(typeof fieldset.__initSongAutoTag !== 'undefined')
+                    return;    
 
-                var keys = (new openpgp.Keyring.localstore()).loadPrivate();
+                console.log("Found Song Auto Tag Fieldset: ", fieldset);
+                fieldset.__initSongAutoTag = true;
+                var FieldSet = jQuery(fieldset);
+                var InputName = FieldSet.find('*[name=' + PARAM_TAG_NAME + ']');
+                var InputValue = FieldSet.find('*[name=' + PARAM_TAG_VALUE + ']').first();
 
-                var InputUserIDList = InputUserID.next('[name=' + PARAM_USER_SELECT + ']');
-                if(InputUserIDList.length === 0) {
-                    InputUserID.after(InputUserIDList = jQuery('<select name="' + PARAM_USER_SELECT + '" />'));
-                    InputUserIDList.hide();
-                    InputUserIDList.change(function() {
-                        document.location.href = Form.attr('action') + '?' + PARAM_FINGERPRINT + '=' + InputUserIDList.val();
-                        // InputUserIDList.trigger('navigate', url);
-                    })
-                }
-                InputUserIDList.html('');
+                var id = 'datalist_song_tag_' + incID++;
+                var DataList = jQuery('<datalist id="' + id + '" />');
+                DataList.append('<option value="wut" />');
+                InputValue.after("<br/>");
+                InputValue.after(DataList);
+                InputValue.attr('list', id);
 
-                InputUserIDList.append('<option value="">Choose an identity to log in with</option>');
-                for(var i=0; i<keys.length; i++) {
-                    var key = keys[i];
-                    if(!key.isPrivate())
-                        continue;
-                    var userID = key.getUserIds()[0];
-                    var fingerprint = key.getSigningKeyPacket().getFingerprint();
-                    var needsPassphrase = key.getEncryptionKeyPacket().isDecrypted ? '' : ' (passphrase required)';
-                    InputUserIDList.append('<option value="' + fingerprint + '">' + userID + needsPassphrase + '</option>')
-                }
+                var pathCache = {};
 
-                InputUserIDList.append('<optgroup label="' + keys.length + ' private keys found in browser"></optgroup>');
-                InputUserIDList.fadeIn();
-            }, 500);
-        }
+                var onInput = function() {
+                    var tagName = InputName.val();
+                    var tagValue = InputValue.val();
+                    var path = searchSongTagsFullPath + encodeURIComponent(tagName) + '/' + encodeURIComponent(tagValue);
 
+                    if(typeof pathCache[path] == 'Object') {
+                        var data = pathCache[path];
+                        DataList.html('');
+                        if(data)
+                            for(var i=0; i<data.length; i++) 
+                                DataList.append('<option value="' + data[i]['tag-value'] + '" />');
+                        
+                    } else {
+                        doRequest(path, data, function(data) {
+                            pathCache[path] = data;
+                            DataList.html('');
+                            if(data)
+                                for(var i=0; i<data.length; i++) 
+                                    DataList.append('<option value="' + data[i]['tag-value'] + '" />');
+                        });
+                    }
+                };
+                InputName.on('input change', onInput);
+                InputValue.on('input', onInput);
+                onInput();
+            });
 
-        var TextAreaChallenge = jQuery('textarea[name=' + PARAM_CHALLENGE + ']');
-        if(!TextAreaChallenge.length)
-            throw new Error("Text area challenge not found");
-        var InputPassphrase = jQuery('input[name=' + PARAM_CHALLENGE_ANSWER + ']');
-        if(!InputPassphrase.length)
-            throw new Error("Passphrase input field not found");
-        if(TextAreaChallenge.val().indexOf("-----BEGIN PGP MESSAGE-----") === -1)
-            return console.error("Text area does not contain PGP message");
-
-        decrypt(TextAreaChallenge,
-            function(decryptedMessage) {
-                var json = jQuery.parseJSON(decryptedMessage);
-
-                if(typeof json[JSON_PASSPHRASE] === 'string') {
-                    InputPassphrase.val(json[JSON_PASSPHRASE]);
-                } else {
-                    InputPassphrase.filter(':hidden').fadeIn();
-                    InputPassphrase.parents(':hidden').fadeIn();
-                    InputPassphrase.trigger('error', "Invalid json passphrase: " + decryptedMessage);
-                }
-            }, function (error) {
-                InputPassphrase.filter(':hidden').fadeIn();
-                InputPassphrase.parents(':hidden').fadeIn();
-                InputPassphrase.trigger('error', error);
-            }
-        );
     };
 
     jQuery(document).ready(function() {
