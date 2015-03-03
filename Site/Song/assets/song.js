@@ -31,6 +31,7 @@
     var ready = function() {
 
         var domainPath = jQuery('head meta[name=' + META_DOMAIN_PATH + ']').attr('content');
+        domainPath = domainPath.replace(/^\//, '');
         var domainFullPath = window.location.protocol + "//" + window.location.host + "/" + domainPath;
         var searchSongTagsFullPath = domainFullPath + 'search/songtags/';
 
