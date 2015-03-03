@@ -1,40 +1,40 @@
+
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <script src='CPath/Render/HTML/Header/assets/jquery.min.js'></script>
-    <script src='Site/Render/assets/default-template.js'></script>
-    <link rel='stylesheet' href='Site/Render/assets/default-template.css' />
+    <script src='./Site/Render/assets/default-template.js'></script>
+    <link rel='stylesheet' href='./Site/Render/assets/default-template.css' />
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="path" content="/songs/">
-    <meta name="domain-path" content="">
-    <script src='Site/PGP/assets/libs/openpgpjs-dist/openpgp.js'></script>
-    <link rel='stylesheet' href='Site/Render/PopUpBox/assets/popup.css' />
-    <meta name="title" content="Search Songs">
-    <meta name="title" content="Create a new Song">
-    <script src='Site/Song/assets/song.js'></script>
-    <link rel='stylesheet' href='Site/Song/assets/song.css' />
-    <meta name="title" content="Search Songs">
-    <meta name="title" content="Create a new Song">
+    <meta name="path" content="/albums/">
+    <meta name="domain-path" content="snesology/">
+    <script src='./Site/PGP/assets/libs/openpgpjs-dist/openpgp.js'></script>
+    <link rel='stylesheet' href='./Site/Render/PopUpBox/assets/popup.css' />
+    <meta name="title" content="Search Albums">
+    <meta name="title" content="Create a new Album Entry">
+    <script src='./Site/Song/Album/assets/album.js'></script>
+    <link rel='stylesheet' href='./Site/Song/Album/assets/album.css' />
+    <meta name="title" content="Search Albums">
+    <meta name="title" content="Create a new Album Entry">
 </head>
 <body>
 <section class="header">
-    <h1 class="header-title">BETA - GET /songs/</h1></section>
+    <h1 class="header-title">BETA - GET /albums/</h1></section>
 <section class="content">
     <div class="navbar">
-        <a href="http://localhosthome/">My Account</a>
-        <a href="http://localhostlogout/">Logout</a>
-        <a href="http://localhostpaths/">Paths</a>
-        <a href="http://localhostchat/">Chat</a>
-        <a href="http://localhostsongs/">Songs</a></div>
-    <form action="songs/" method="GET" name="Site\Song\SearchSongs">
+        <a href="http://localhost/home/">My Account</a>
+        <a href="http://localhost/chat/">Chat</a>
+        <a href="http://localhost/albums/">Albums</a>
+        <a href="http://localhost/songs/">Songs</a>
+        <a href="http://localhost/logout/">Logout</a></div>
+    <div class="pathbar">/albums/</div>
+    <form action="#" method="GET" name="Site\Song\Album\SearchAlbums">
         <fieldset>
-            <legend class="legend-submit">Search Songs</legend>
+            <legend class="legend-submit">Search Albums</legend>
             <table>
                 <thead>
                 <tr>
-                    <th><a href='?sort-song-id=DESC'>Song Id</a>
-                    </th>
-                    <th><a href='?sort-title=DESC'>Title</a>
+                    <th><a href='?sort-album=DESC'>Album</a>
                     </th>
                     <th>Description
                     </th>
@@ -51,71 +51,11 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td><a href='http://localhostmanage/song/S54F412A1CF1A4'>S54F412A1CF1A4</a></td>
-                    <td>test song 4</td>
-                    <td>
-                        <div class='popup description'>
-                            <div class='content'>
-                                <div class='popup description'></div>
-                                TEST OSNG FORRRTEST OSNG FORRRTEST OSNG FORRRTEST OSNG FORRRTEST OSNG FORRR
-                            </div>
-                        </div></td>
-                    <td></td>
-                    <td><a href='http://localhostss/gdfgdfgfd'>gdfgdfgfd</a></td>
-                    <td><a href='http://localhostsg/Blues'>Blues</a>, <a href='http://localhostsg/Club'>Club</a>, <a href='http://localhostsg/Atari+XEGS'>Atari XEGS</a>, <a href='http://localhostsg/Turbo+Grafx'>Turbo Grafx</a></td>
-                    <td>Unpublished</td>
-                    <td>14 minutes ago</td>
-                </tr>
-                <tr>
-                    <td><a href='http://localhostmanage/song/S54EB31C8CD87B'>S54EB31C8CD87B</a></td>
-                    <td>test-song-3</td>
-                    <td>
-                        <div class='popup description'>
-                            <div class='content'>
-                                <div class='popup description'></div>
-                                daflksjd;flakdsfj;adsfasdf
-                            </div>
-                        </div></td>
-                    <td><a href='http://localhostsa/artist1'>artist1</a></td>
-                    <td></td>
-                    <td><a href='http://localhostsg/Rock'>Rock</a></td>
-                    <td>Unpublished</td>
-                    <td>7 days ago</td>
-                </tr>
-                <tr>
-                    <td><a href='http://localhostmanage/song/S54EA88465ECAB'>S54EA88465ECAB</a></td>
-                    <td>test-song-1</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>Unpublished</td>
-                    <td>last week</td>
-                </tr>
-                <tr>
-                    <td><a href='http://localhostmanage/song/S54EA687B0AEB3'>S54EA687B0AEB3</a></td>
-                    <td>test-song-2</td>
-                    <td>
-                        <div class='popup description'>
-                            <div class='content'>
-                                <div class='popup description'></div>
-                                gfagadfg
-                            </div>
-                        </div></td>
-                    <td><a href='http://localhostsa/artist1'>artist1</a>, <a href='http://localhostsa/ARTIST2'>ARTIST2</a></td>
-                    <td></td>
-                    <td></td>
-                    <td>ed</td>
-                    <td>last week</td>
-                </tr>
                 </tbody>
                 <tfoot>
                 <tr>
                     <td>
-                        <input placeholder="Search id" style="width: 100%;" class="input search transparent" name="search-song-id" class="input"/></td>
-                    <td>
-                        <input placeholder="Search title" style="width: 100%;" class="input search transparent" name="search-title" class="input"/></td>
+                        <input placeholder="Search id" style="width: 100%;" class="input search transparent" name="search-album" class="input"/></td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -123,46 +63,91 @@
                     <td>
                         <input placeholder="Search status" style="width: 100%;" class="input search transparent" name="search-status" class="input"/></td>
                     <td>
-                        <input placeholder="Search created" style="width: 100%;" class="input search transparent" name="search-created" class="input"/></td>
+                        <select name="sort-created" class="input input search transparent">
+                            <option value="">Sort by created...</option>
+                            <option value="ASC">Ascending</option>
+                            <option value="DESC">Descending</option></select></td>
                 </tr>
                 </tfoot>
             </table>
           <span class='pages'>
-            <span class='page-first'><a href='http://localhostsongs/?page=0'>first</a></span>
-            <span class='page-current'><a href='http://localhostsongs/?page=0'>(0)</a></span>
-            <span class='page-next'><a href='http://localhostsongs/?page=1'>next</a></span>
+            <span class='page-first'><a href='http://localhost/albums/?page=0'>first</a></span>
+            <span class='page-current'><a href='http://localhost/albums/?page=0'>(0)</a></span>
+            <span class='page-next'><a href='http://localhost/albums/?page=1'>next</a></span>
           </span><br/><br/>
             <button name="submit" class="input" value="submit">Submit</button>
         </fieldset><br/>
     </form>
-    <form action="songs/" method="POST" name="create-song">
-        <fieldset class="fieldset-create-song">
-            <legend class="legend-song">Create a new Song</legend>
+    <form action="snesology/albums/" method="POST" name="create-album">
+        <fieldset class="fieldset-create-album">
+            <legend class="legend-album">Create a new Album Entry</legend>
             <div class='popup info'>
                 <div class='content'>
                     <div class='popup info'></div>
-                    <b>Create a new song entry</b><br/><br/>This fieldset enters a new song into the database
-                    <br/><a class='add' href='http://localhostcreate/path/?path=%2Fsongs%2F%23gen-tips'>Expand content</a>
+                    <b>Create a new album entry</b><br/><br/>This fieldset enters a new album into the database
+                    <br/><a class='add' href='http://localhost/create/path/?path=%2Falbums%2F%23gen-tips'>Expand content</a>
                 </div>
             </div>
-            <label>Song Title:<br/>
-                <input placeholder="My Song Title" required="required" name="song-title" class="input"/>
-            </label><br/><br/>
-            <label>Description:<br/>
-                <textarea placeholder="Enter a song description" placeholder="Enter a song description" rows="10" cols="40" required="required" name="song-description" class="input"></textarea>
-            </label><br/><br/>
-            <label>Game Systems:<br/>
-                <select multiple="multiple" required="required" name="song-system[]" class="input">
+            <fieldset class="fieldset-album-data inline">
+                <legend class="legend-album-data">Album Information:</legend>
+                <label>Album Title:<br/>
+                    <input placeholder="My Album Title" required="required" name="album-title" class="input"/>
+                </label><br/><br/>
+                <label>Album Artist(s) [comma delimited]:<br/>
+                    <input placeholder='i.e. "Artist1, Artist2"' required="required" name="album-artist" class="input"/>
+                </label><br/><br/>
+                <label>Description:<br/>
+                    <textarea placeholder="Enter an album description" placeholder="Enter an album description" rows="6" cols="30" required="required" name="album-description" class="input"></textarea>
+                </label><br/>
+                <div class='popup info'>
+                    <span>Allowed Tags</span>
+                    <div class='content'>
+                        <div class='popup info'></div>
+                        &#60;b&#62;, &#60;i&#62;, &#60;em&#62;, &#60;strong&#62;, &#60;small&#62;, &#60;mark&#62;, &#60;del&#62;, &#60;ins&#62;, &#60;sub&#62;, &#60;sup&#62;
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset class="fieldset-album-association inline">
+                <legend class="legend-album-association">Sources:</legend>
+                <label>Source URLs [comma delimited]:<br/>
+                    <input placeholder='i.e. "http://coundsoud.cod/albums/smbalbum"' size="42" name="album-source-url" class="input"/>
+                </label><br/><br/>
+                <label>File Download URLs [comma delimited]:<br/>
+                    <input placeholder='i.e. "http://fileserver.com/mirror/smbalbum/"' size="42" name="album-download-url" class="input"/>
+                </label><br/><br/>
+                <label>Remix/Cover of Original [comma delimited]:<br/>
+                    <input placeholder='i.e. "Super Mario Brothers"' size="42" required="required" name="album-original" class="input"/>
+                </label><br/><br/>
+                <label>Similar Albums [comma delimited]:<br/>
+                    <input placeholder='i.e. "Castle Hassle"' size="42" required="required" name="album-similar" class="input"/>
+                </label>
+            </fieldset>
+            <div class='popup important'>
+                <span>Free file hosting for chip-tune albums!</span>
+            </div>
+            <fieldset class="fieldset-album-chip-style inline">
+                <legend class="legend-album-chip-style">Chip Style:</legend>
+                <select multiple="multiple" size="5" required="required" name="album-chip-style[]" class="input">
+                    <option value="8-bit">8-bit</option>
+                    <option value="16-bit">16-bit</option>
+                    <option value="FM-Synthesis">FM-Synthesis</option>
+                    <option value="Tracker">Tracker</option>
+                    <option value="Other Chip">Other Chip</option>
+                    <option value="">Not a chip tune album</option></select>
+            </fieldset>
+            <fieldset class="fieldset-album-systems inline">
+                <legend class="legend-album-systems">Game System:</legend>
+                <select multiple="multiple" size="7" required="required" name="album-system[]" class="input">
                     <option value="Atari 2600">Atari 2600</option>
                     <option value="Commodore 64">Commodore 64</option>
                     <option value="Nintendo">Nintendo</option>
                     <option value="Sega Master System">Sega Master System</option>
                     <option value="Atari XEGS">Atari XEGS</option>
                     <option value="Atari 7800">Atari 7800</option>
+                    <option value="Super Nintendo">Super Nintendo</option>
                     <option value="Turbo Grafx">Turbo Grafx</option>
                     <option value="Sega Genesis">Sega Genesis</option>
                     <option value="NEO GEO">NEO GEO</option>
-                    <option value="Super Nintendo">Super Nintendo</option>
                     <option value="Atari Jaguar">Atari Jaguar</option>
                     <option value="3D0">3D0</option>
                     <option value="Sega 32X">Sega 32X</option>
@@ -178,11 +163,11 @@
                     <option value="Wii">Wii</option>
                     <option value="Wii U">Wii U</option>
                     <option value="PlayStation 4">PlayStation 4</option>
-                    <option value="XBOX One">XBOX One</option>
-                    <option value="test-song-system">test-song-system</option></select>
-            </label><br/><br/>
-            <label>Genres:<br/>
-                <select multiple="multiple" required="required" name="song-genre[]" class="input">
+                    <option value="XBOX One">XBOX One</option></select>
+            </fieldset>
+            <fieldset class="fieldset-album-genre inline">
+                <legend class="legend-album-genre">Genre:</legend>
+                <select multiple="multiple" size="9" required="required" name="album-genre[]" class="input">
                     <option value="Alternative">Alternative</option>
                     <option value="Blues">Blues</option>
                     <option value="BreakBeat">BreakBeat</option>
@@ -206,10 +191,9 @@
                     <option value="Rock">Rock</option>
                     <option value="Techno">Techno</option>
                     <option value="Trance">Trance</option>
-                    <option value="World">World</option>
-                    <option value="test-song-genre">test-song-genre</option></select>
-            </label><br/><br/>
-            <button name="submit" class="input" value="submit">Create</button>
+                    <option value="World">World</option></select>
+            </fieldset><br/>
+            <button name="submit" class="input" value="submit">Create Album Entry</button>
         </fieldset><br/>
     </form>
 </section>

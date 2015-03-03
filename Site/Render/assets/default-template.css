@@ -52,6 +52,28 @@ section, div.section {
     display: inline-block;
 }
 
+section.content {
+    /* display: inline-block; */  
+    /* min-width: 978px; */
+    min-height: 30em;
+    /* margin: auto; */
+    /* padding-top: 0.5em; */
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+    /* margin-top: 0; */
+    /* margin: 0.5em; */
+}
+
+/** Path Bar **/
+
+.pathbar {
+    margin-top: 1em;
+
+}
+
+/** Nav Bar **/
 
 .navbar {
     float: left;
@@ -80,7 +102,7 @@ section, div.section {
 
     color: #FFFFFF;
     border-width: 3px;
-/*     border-color: rgb(176, 51, 28); */
+    /*     border-color: rgb(176, 51, 28); */
     border-style: outset;
     /* box-shadow: inset 1px 1px 1px #CB7130; */
 
@@ -114,21 +136,6 @@ section, div.section {
 .navbar a + a {
     margin-top: 1em;
 }
-
-section.content {
-    /* display: inline-block; */  
-    /* min-width: 978px; */
-    min-height: 30em;
-    /* margin: auto; */
-    /* padding-top: 0.5em; */
-}
-
-
-h1, h2, h3, h4, h5, h6 {
-    /* margin-top: 0; */
-    /* margin: 0.5em; */
-}
-
 
 /** Tables **/
 

@@ -53,8 +53,10 @@ class DefaultTemplate extends HTMLContainer implements IRoutable, IBuildable {
 	private $mHeaderTitle;
 	/** @var HTMLElement */
 	private $mNavBar;
+    /** @var HTMLElement */
+    private $mPathBar;
 
-	public function __construct($_content=null) {
+    public function __construct($_content=null) {
 
 		$Render = new HTMLResponseBody(
 			$this->mHeader = new HTMLElement('section', 'header',
@@ -62,6 +64,9 @@ class DefaultTemplate extends HTMLContainer implements IRoutable, IBuildable {
 			),
 			$Content = new HTMLElement('section', 'content',
                 $this->mNavBar = new HTMLElement('div', 'navbar'
+
+                ),
+                $this->mPathBar = new HTMLElement('div', 'pathbar'
 
                 )
 			),
@@ -142,6 +147,7 @@ class DefaultTemplate extends HTMLContainer implements IRoutable, IBuildable {
 		$Template->mHeaderTitle->addAll(
 			'BETA - ' . $Request->getMethodName() . ' ' . $Request->getPath()
 		);
+        $Template->mPathBar->addAll($Request->getPath());
 
 		$Template->addMetaTag(HTMLMetaTag::META_CONTENT_TYPE, 'text/html; charset=utf-8');
 		$Template->addMetaTag(self::META_PATH, $Request->getPath());
