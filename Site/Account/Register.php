@@ -206,11 +206,6 @@ Version: GnuPG v1
 
 	    $publicKeyString = $Form->validateField($Request, self::PARAM_PUBLIC_KEY, 0);
 
-        $PGPImport = new PGPImportPublicKeyCommand($publicKeyString);
-        $PGPImport->setPrimaryKeyRing(AccountEntry::KEYRING_NAME);
-        $PGPImport->execute($Request);
-        $keyID = $PGPImport->getKeyID();
-
         $Account = AccountEntry::create($Request, $publicKeyString, $inviteeEmail, $inviterFingerprint);
         $fingerprint = $Account->getFingerprint();
         $this->mNewAccountFingerprint = $fingerprint;

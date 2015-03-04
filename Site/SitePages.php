@@ -35,7 +35,7 @@ class SitePages implements IExecutable, IBuildable, IRoutable
                 return new HTMLElement('div', null, '<a href="http://snesology.tumblr.com">Tumbler</a>');
 
             case self::PATH_CHAT:
-                return new HTMLRelayChat($Request, 'chat');
+                return new HTMLRelayChat($Request, 'public-chat');
 
             default:
                 return new HTMLElement('div', null, 'Invalid Page: ' . $Request->getPath());

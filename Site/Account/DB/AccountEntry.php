@@ -339,9 +339,13 @@ class AccountEntry extends AbstractGrantEntry implements IBuildable, IKeyMap, IS
         return $active;
     }
 
-    static function create(IRequest $Request, $public_key, $inviteEmail=null, $inviterFingerprint=null) {
+    static function create(IRequest $Request, $publicKeyString, $inviteEmail=null, $inviterFingerprint=null) {
+        $PGPImport = new PGPImportPublicKeyCommand($publicKeyString);
+        $PGPImport->setPrimaryKeyRing(AccountEntry::KEYRING_NAME);
+        $PGPImport->execute($Request);
+//        $keyID = $PGPImport->getKeyID();
 
-        $PublicKey = new PublicKey($public_key);
+        $PublicKey = new PublicKey($publicKeyString);
         if($inviteEmail && $inviteEmail !== $PublicKey->getUserIDEmail())
             throw new \Exception("Only invitee's email may be used");
 
@@ -353,7 +357,7 @@ class AccountEntry extends AbstractGrantEntry implements IBuildable, IKeyMap, IS
             AccountTable::COLUMN_NAME => $PublicKey->getUserIDName(),
             AccountTable::COLUMN_EMAIL => $PublicKey->getUserIDEmail(),
             AccountTable::COLUMN_CREATED => time(),
-            AccountTable::COLUMN_PUBLIC_KEY => $public_key,
+            AccountTable::COLUMN_PUBLIC_KEY => $publicKeyString,
         ))
             ->execute($Request);
 
@@ -362,7 +366,7 @@ class AccountEntry extends AbstractGrantEntry implements IBuildable, IKeyMap, IS
         $Request->log("New Account Entry Inserted: " . $fingerprint, $Request::VERBOSE);
 
         $Account = AccountEntry::get($fingerprint);
-        $Account->import($Request);
+//        $Account->import($Request);
         $Account->generateChallenge($Request, array($Account->getFingerprint()));
 
         return $Account;
