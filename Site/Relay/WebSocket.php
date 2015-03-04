@@ -110,6 +110,8 @@ class WebSocket extends Application
                 $Account = AccountEntry::loadFromSession($SessionRequest);
                 $this->mSessionClients[$client->getId()] = $Account;
                 echo "Session detected: ", $Account->getName(), "\n";
+            } else {
+                echo "No Active Session Found: ", $sessionID, "\n";
             }
 			session_write_close();
 		}
