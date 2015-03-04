@@ -16,6 +16,8 @@ use CPath\Data\Schema\PDO\PDOTableWriter;
 use CPath\Data\Schema\TableSchema;
 use CPath\Render\Helpers\RenderIndents as RI;
 use CPath\Request\IRequest;
+use CPath\UnitTest\ITestable;
+use CPath\UnitTest\IUnitTestRequest;
 use Site\Config;
 use Site\DB\SiteDB;
 use Site\Song\Review\ReviewTag\DB\ReviewTagEntry;
@@ -32,6 +34,7 @@ class ReviewEntry implements IBuildable, IKeyMap
     const STATUS_WRITE_UP =             0x000010;
     const STATUS_CRITIQUE =             0x000020;
     const JOIN_COLUMN_TAGS = 'tags';
+    const ID_PREFIX = 'R';
 
     static $StatusOptions = array(
         "Published" =>              self::STATUS_PUBLISHED,
@@ -87,6 +90,7 @@ class ReviewEntry implements IBuildable, IKeyMap
     protected $created;
 
     protected $tags;
+
 
     public function getID() {
         return $this->id;
@@ -179,6 +183,7 @@ class ReviewEntry implements IBuildable, IKeyMap
      * @return void
      */
     function mapKeys(IKeyMapper $Map) {
+        $Map->map('review-id', $this->getID());
         $Map->map('source-id', $this->getSourceID());
         $Map->map('source-type', $this->getSourceType());
         $Map->map('review-account-fingerprint', $this->getAccountFingerprint());
@@ -250,20 +255,22 @@ class ReviewEntry implements IBuildable, IKeyMap
             ->setFetchMode(ReviewTable::FETCH_MODE, ReviewTable::FETCH_CLASS);
     }
 
-
-    static function removeFromSource($Request, $reviewID, $accountFingerprint) {
-        $delete = self::table()
+    public static function delete(IRequest $Request, $reviewID, $accountFingerprint=null) {
+        $Delete = self::table()
             ->delete()
-            ->where(ReviewTable::COLUMN_ID, $reviewID)
-            ->where(ReviewTable::COLUMN_ACCOUNT_FINGERPRINT, $accountFingerprint)
-            ->execute($Request);
+            ->where(ReviewTable::COLUMN_ID, $reviewID);
 
-        if(!$delete)
+        $accountFingerprint === null ?: $Delete->where(ReviewTable::COLUMN_ACCOUNT_FINGERPRINT, $accountFingerprint);
+
+        if(!$Delete->execute($Request))
             throw new \InvalidArgumentException("Could not delete " . __CLASS__);
     }
 
     static function addToSource(IRequest $Request, $sourceID, $sourceType, $accountFingerprint, $review, $reviewTitle=null, $status=0) {
+        $id = strtoupper(uniqid(self::ID_PREFIX));
+
         $inserted = self::table()->insert(array(
+            ReviewTable::COLUMN_ID => $id,
             ReviewTable::COLUMN_SOURCE_ID => $sourceID,
             ReviewTable::COLUMN_SOURCE_TYPE => $sourceType,
             ReviewTable::COLUMN_ACCOUNT_FINGERPRINT => $accountFingerprint,
@@ -276,6 +283,8 @@ class ReviewEntry implements IBuildable, IKeyMap
         if(!$inserted)
             throw new \InvalidArgumentException("Could not insert " . __CLASS__);
         $Request->log("Review added to song: " . $sourceID, $Request::VERBOSE);
+
+        return $id;
     }
 
     static function table() {
@@ -297,6 +306,5 @@ class ReviewEntry implements IBuildable, IKeyMap
 		$DBWriter = new PDOTableWriter($DB);
 		$Schema->writeSchema($DBWriter);
 	}
-
 }
 

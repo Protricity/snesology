@@ -31,21 +31,27 @@ use CPath\Request\Session\ISessionRequest;
 use CPath\Request\Validation\RequiredValidation;
 use CPath\Response\Common\RedirectResponse;
 use CPath\Response\IResponse;
+use CPath\Response\Response;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
+use CPath\UnitTest\ITestable;
+use CPath\UnitTest\IUnitTestRequest;
 use Site\Account\DB\AccountEntry;
+use Site\Account\Register;
 use Site\Config;
 use Site\Path\HTML\HTMLPathTip;
 use Site\Render\PopUpBox\HTMLPopUpBox;
 use Site\Request\DB\RequestEntry;
 use Site\SiteMap;
 use Site\Song\DB\SongEntry;
+use Site\Song\DB\SongTable;
 use Site\Song\Review\DB\ReviewEntry;
+use Site\Song\Review\DB\ReviewTable;
 use Site\Song\Review\HTML\HTMLSourceReview;
 use Site\Song\Review\ReviewTag\DB\ReviewTagEntry;
 
 
-class ReviewSong implements IExecutable, IBuildable, IRoutable
+class ReviewSong implements IExecutable, IBuildable, IRoutable, ITestable
 {
 	const TITLE = 'Review a Song';
 
@@ -73,7 +79,7 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable
 	 * Execute a command and return a response. Does not render
 	 * @param IRequest $Request
 	 * @throws \Exception
-	 * @return IResponse the execution response
+	 * @return Response the execution response
 	 */
 	function execute(IRequest $Request) {
 		$SessionRequest = $Request;
@@ -84,9 +90,13 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable
         $Song = SongEntry::get($this->id);
         $ReviewEntry = ReviewEntry::fetch($Song->getID(), $Account->getFingerprint());
 
-        $Preview = new HTMLSourceReview($ReviewEntry, $Account);
+        $Preview = null;
+        $oldTags = array();
+        if($ReviewEntry) {
+            $oldTags = $ReviewEntry->getTagList();
+            $Preview = new HTMLSourceReview($ReviewEntry, $Account);
+        }
         $tagList = ReviewTagEntry::$TagDefaults;
-        $oldTags = $ReviewEntry->getTagList();
 
         $Form = new HTMLForm(self::FORM_METHOD, $Request->getPath(), self::FORM_NAME,
 			new HTMLMetaTag(HTMLMetaTag::META_TITLE, self::TITLE),
@@ -137,7 +147,7 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable
                 $Preview
             ),
 
-            ($ReviewEntry->hasFlags(ReviewEntry::STATUS_PUBLISHED)
+            ($ReviewEntry && $ReviewEntry->hasFlags(ReviewEntry::STATUS_PUBLISHED)
                 ? null
                 : new HTMLElement('fieldset', 'fieldset-manage-song-publish inline',
                     new HTMLElement('legend', 'legend-song-publish', "Publish!"),
@@ -238,6 +248,16 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable
                 $ReviewEntry->update($Request, null, null, $status);
                 return new RedirectResponse(ReviewSong::getRequestURL($Song->getID()), "Published Song Review. omg omg omg...", 5);
 
+            case 'create':
+                $status = $Form->validateField($Request, self::PARAM_SONG_STATUS);
+                $status = array_sum($status);
+                $review = $Form->validateField($Request, self::PARAM_SONG_REVIEW);
+                $reviewTitle = $Form->validateField($Request, self::PARAM_SONG_REVIEW_TITLE);
+                $reviewID = ReviewEntry::addToSource($Request, $Song->getID(), 'song', $Account->getFingerprint(), $review, $reviewTitle, $status);
+                $Response = new RedirectResponse(ReviewSong::getRequestURL($Song->getID()), "Added Song Review. Re(view)creating...", 5);
+                $Response->setData('id', $reviewID);
+                return $Response;
+
             case 'update':
                 $status = $Form->validateField($Request, self::PARAM_SONG_STATUS);
                 $status = array_sum($status);
@@ -246,13 +266,6 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable
                 $ReviewEntry->update($Request, $review, $reviewTitle, $status);
                 return new RedirectResponse(ReviewSong::getRequestURL($Song->getID()), "Updated Song Review. Re(view)directing...", 5);
 
-            case 'create':
-                $status = $Form->validateField($Request, self::PARAM_SONG_STATUS);
-                $status = array_sum($status);
-                $review = $Form->validateField($Request, self::PARAM_SONG_REVIEW);
-                $reviewTitle = $Form->validateField($Request, self::PARAM_SONG_REVIEW_TITLE);
-                ReviewEntry::addToSource($Request, $Song->getID(), 'song', $Account->getFingerprint(), $review, $reviewTitle, $status);
-                return new RedirectResponse(ReviewSong::getRequestURL($Song->getID()), "Added Song Review. Re(view)creating...", 5);
 
             default:
                 throw new \InvalidArgumentException("Invalid submit: " . $submit);
@@ -289,5 +302,60 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable
 	static function handleBuildStatic(IBuildRequest $Request) {
 		$RouteBuilder = new RouteBuilder($Request, new SiteMap());
 		$RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION, __CLASS__);
+    }
+
+    /**
+     * Perform a unit test
+     * @param IUnitTestRequest $Test the unit test request inst for this test session
+     * @return void
+     * @test --disable 0
+     * Note: Use doctag 'test' with '--disable 1' to have this ITestable class skipped during a build
+     */
+    static function handleStaticUnitTest(IUnitTestRequest $Test) {
+        $Session = &$Test->getSession();
+        $TestAccount = new AccountEntry('78E02897', Register::TEST_PUBLIC_KEY);
+        $Session[AccountEntry::SESSION_KEY] = serialize($TestAccount);
+
+
+        SongEntry::table()->delete(SongTable::COLUMN_TITLE, 'test-review-title');
+
+
+        $CreateSong = new CreateSong();
+
+        $Test->clearRequestParameters();
+        $Test->setRequestParameter(CreateSong::PARAM_SONG_TITLE, 'test-review-title');
+        $Test->setRequestParameter(CreateSong::PARAM_SONG_ARTIST, 'test-review-artist');
+        $Test->setRequestParameter(CreateSong::PARAM_SONG_SIMILAR, 'test-review-similar');
+        $Test->setRequestParameter(CreateSong::PARAM_SONG_ORIGINAL, 'test-review-original');
+        $Test->setRequestParameter(CreateSong::PARAM_SONG_CHIP_STYLE, '8-bit');
+        $Test->setRequestParameter(CreateSong::PARAM_SONG_DESCRIPTION, 'test-review-description');
+        $Test->setRequestParameter(CreateSong::PARAM_SONG_GENRE, array('test-review-genre'));
+        $Test->setRequestParameter(CreateSong::PARAM_SONG_SYSTEM, array('test-review-system'));
+        $CreateSong->execute($Test);
+
+        $id = $CreateSong->getNewSongID();
+
+
+        $ReviewSong = new ReviewSong($id);
+
+        $Test->clearRequestParameters();
+
+        $Test->setRequestParameter(ReviewSong::PARAM_SUBMIT, 'create');
+        $Test->setRequestParameter(ReviewSong::PARAM_SONG_STATUS, array(ReviewEntry::STATUS_WRITE_UP));
+        $Test->setRequestParameter(ReviewSong::PARAM_SONG_REVIEW, 'test-review-content');
+        $Test->setRequestParameter(ReviewSong::PARAM_SONG_REVIEW_TITLE, 'test-review-title');
+
+        $Response = $ReviewSong->execute($Test);
+        $id = $Response->getData('id');
+
+        $Test->clearRequestParameters();
+
+        $Test->setRequestParameter(ReviewSong::PARAM_SUBMIT, 'update');
+        $Test->setRequestParameter(ReviewSong::PARAM_SONG_STATUS, array(ReviewEntry::STATUS_CRITIQUE));
+        $Test->setRequestParameter(ReviewSong::PARAM_SONG_REVIEW, 'test-review-content2');
+        $Test->setRequestParameter(ReviewSong::PARAM_SONG_REVIEW_TITLE, 'test-review-title2');
+
+        ReviewEntry::delete($Test, $id, $TestAccount->getFingerprint());
+        SongEntry::delete($Test, $id);
     }
 }
