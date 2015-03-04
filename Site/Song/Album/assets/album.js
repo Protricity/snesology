@@ -106,7 +106,7 @@
     jQuery(document).ready(function() {
         jQuery('body')
             .on('ready', ready);
-        ready();
+        setTimeout(ready, 100);
     });
 
 })();

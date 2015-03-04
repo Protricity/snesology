@@ -88,7 +88,7 @@
     };
     jQuery(document).ready(function() {
         jQuery('body').on('ready', ready);
-        ready();
+        setTimeout(ready, 100);
 
         if(typeof openpgp._worker_init === 'undefined') {
             var src = jQuery('script[src$=openpgp\\.js], script[src$=openpgp\\.min\\.js]').attr('src');

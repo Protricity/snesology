@@ -275,7 +275,7 @@
 
         jQuery('body').on(EVENTS, eventHandler)
             .on('ready', ready);
-        ready();
+        setTimeout(ready, 100);
 
         window[EVENTS] = EVENTS;
 
