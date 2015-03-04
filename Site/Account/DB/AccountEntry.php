@@ -304,6 +304,9 @@ class AccountEntry extends AbstractGrantEntry implements IBuildable, IKeyMap, IS
     }
 
     static function loadFromSession(ISessionRequest $SessionRequest) {
+        if(!$SessionRequest->hasSessionCookie())
+            throw new \InvalidArgumentException("No Session Cookie");
+
         $started = $SessionRequest->isStarted();
         if(!$started)
             $SessionRequest->startSession();
@@ -322,12 +325,17 @@ class AccountEntry extends AbstractGrantEntry implements IBuildable, IKeyMap, IS
     }
 
     static function hasActiveSession(ISessionRequest $SessionRequest) {
-        if(!$SessionRequest->isStarted())
+        if(!$SessionRequest->hasSessionCookie())
+            return false;
+
+        $started = $SessionRequest->isStarted();
+        if(!$started)
             $SessionRequest->startSession();
         $Session = $SessionRequest->getSession();
 
         $active = !empty($Session[AccountEntry::SESSION_KEY]);
-        $SessionRequest->endSession();
+        if(!$started)
+            $SessionRequest->endSession();
         return $active;
     }
 
