@@ -118,10 +118,10 @@ class SongEntry implements IBuildable, IKeyMap, ISerializable
 
     public function getStatusList() {
         $statusList = array();
-        $statusFlags = $this->getStatusFlags();
+        $statusFlags = $this->getStatusFlags() ?: 1;
         foreach(self::$StatusOptions as $name => $flag) {
             if ($statusFlags & $flag) {
-                $statusList[] = substr($name, 7);
+                $statusList[] = $name;
             }
         }
         return $statusList ?: array("Unpublished");

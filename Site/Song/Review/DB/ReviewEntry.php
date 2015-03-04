@@ -88,6 +88,10 @@ class ReviewEntry implements IBuildable, IKeyMap
 
     protected $tags;
 
+    public function getID() {
+        return $this->id;
+    }
+
     public function getSourceID() {
 		return $this->source_id;
 	}
@@ -161,7 +165,7 @@ class ReviewEntry implements IBuildable, IKeyMap
         $reviewTitle === null ?: $Update->update(ReviewTable::COLUMN_REVIEW_TITLE, $reviewTitle);
         $status === null ?: $Update->update(ReviewTable::COLUMN_STATUS, $status);
 
-        $Update->where(ReviewTable::COLUMN_SONG_ID, $this->getSourceID());
+        $Update->where(ReviewTable::COLUMN_ID, $this->getID());
         $Update->where(ReviewTable::COLUMN_ACCOUNT_FINGERPRINT, $this->getAccountFingerprint());
 
         if(!$Update->execute($Request))
@@ -247,10 +251,10 @@ class ReviewEntry implements IBuildable, IKeyMap
     }
 
 
-    static function removeFromSource($Request, $sourceID, $accountFingerprint) {
+    static function removeFromSource($Request, $reviewID, $accountFingerprint) {
         $delete = self::table()
             ->delete()
-            ->where(ReviewTable::COLUMN_SOURCE_ID, $sourceID)
+            ->where(ReviewTable::COLUMN_ID, $reviewID)
             ->where(ReviewTable::COLUMN_ACCOUNT_FINGERPRINT, $accountFingerprint)
             ->execute($Request);
 
