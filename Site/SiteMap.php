@@ -32,7 +32,7 @@ class SiteMap implements IRouteMap, IBuildable
      * @build routes --disable 0
      * Note: Set --disable 1 or remove doc tag to stop code auto-generation on build for this method
      */
-    function mapRoutes(IRequest $Request, IRouteMapper $Mapper) {
+    function mapRoutes(IRequest $Request, IRouteMapper $Map) {
 		return
 			// @group Site\Account\AccountHome
 			$Map->route('ANY /home/', 'Site\\Account\\AccountHome', 272, 'My Account') ||
