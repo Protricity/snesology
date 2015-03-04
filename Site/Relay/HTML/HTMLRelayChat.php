@@ -19,6 +19,7 @@ class HTMLRelayChat implements IRenderHTML, IHTMLSupportHeaders
 {
 
     private $path;
+    private $Render = null;
 
     public function __construct($path) {
         $this->path = $path;
@@ -32,8 +33,7 @@ class HTMLRelayChat implements IRenderHTML, IHTMLSupportHeaders
      * @return String|void always returns void
      */
     function renderHTML(IRequest $Request, IAttributes $Attr = null, IRenderHTML $Parent = null) {
-        $PathLog = new PathLog($this->path);
-        $Render = new ExecutableRenderer($PathLog, false);
+        $Render = $this->Render ?: $this->Render = new ExecutableRenderer(new PathLog($this->path), false);
         $Render->renderHTML($Request, $Attr, $Parent);
     }
 
@@ -44,8 +44,7 @@ class HTMLRelayChat implements IRenderHTML, IHTMLSupportHeaders
      * @return void
      */
     function writeHeaders(IRequest $Request, IHeaderWriter $Head) {
-        $PathLog = new PathLog($this->path);
-        $Render = new ExecutableRenderer($PathLog, false);
+        $Render = $this->Render ?: $this->Render = new ExecutableRenderer(new PathLog($this->path), false);
         $Render->writeHeaders($Request, $Head);
     }
 }
