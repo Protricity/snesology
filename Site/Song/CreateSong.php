@@ -19,6 +19,7 @@ use CPath\Render\HTML\Element\HTMLElement;
 use CPath\Render\HTML\Header\HTMLHeaderScript;
 use CPath\Render\HTML\Header\HTMLHeaderStyleSheet;
 use CPath\Render\HTML\Header\HTMLMetaTag;
+use CPath\Render\HTML\IHTMLContainer;
 use CPath\Request\Executable\ExecutableRenderer;
 use CPath\Request\Executable\IExecutable;
 use CPath\Request\Form\IFormRequest;
@@ -36,6 +37,7 @@ use Site\Account\DB\AccountEntry;
 use Site\Account\Register;
 use Site\Config;
 use Site\Path\HTML\HTMLPathTip;
+use Site\Relay\HTML\HTMLRelayChat;
 use Site\Render\PopUpBox\HTMLPopUpBox;
 use Site\Request\DB\RequestEntry;
 use Site\SiteMap;
@@ -209,7 +211,9 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
 			"<br/>"
 		);
 
-		if(!$Request instanceof IFormRequest)
+        $Form->addContent(new HTMLRelayChat($Request, 'public-chat-songs'), IHTMLContainer::KEY_RENDER_CONTENT_AFTER);
+
+        if(!$Request instanceof IFormRequest)
 			return $Form;
 
         $Form->setFormValues($Request);
