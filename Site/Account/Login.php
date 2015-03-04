@@ -98,7 +98,7 @@ Once the <b>challenge answer</b> is entered, you may log in';
 			)
 		);
 
-        $FormSelectFingerprint->addContent(new HTMLRelayChat('public-chat-login'), IHTMLContainer::KEY_RENDER_CONTENT_AFTER);
+        $FormSelectFingerprint->addContent(new HTMLRelayChat($Request, 'public-chat-login'), IHTMLContainer::KEY_RENDER_CONTENT_AFTER);
 
         if(!isset($Request[self::PARAM_FINGERPRINT]))
 			return $FormSelectFingerprint;
@@ -156,7 +156,7 @@ Once the <b>challenge answer</b> is entered, you may log in';
 
 		$Form->setFormValues($Request);
 
-        $Form->addContent(new HTMLRelayChat('public-chat-login'), IHTMLContainer::KEY_RENDER_CONTENT_AFTER);
+        $Form->addContent(new HTMLRelayChat($Request, 'public-chat-login'), IHTMLContainer::KEY_RENDER_CONTENT_AFTER);
 
         if(!$Request instanceof IFormRequest)
 			return $Form;

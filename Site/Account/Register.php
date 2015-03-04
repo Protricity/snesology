@@ -197,7 +197,7 @@ Version: GnuPG v1
 
 	    );
 
-        $Form->addContent(new HTMLRelayChat('public-chat-registration'), IHTMLContainer::KEY_RENDER_CONTENT_AFTER);
+        $Form->addContent(new HTMLRelayChat($Request, 'public-chat-registration'), IHTMLContainer::KEY_RENDER_CONTENT_AFTER);
 
 	    $Form->setFormValues($Request);
 	    if(!$Request instanceof IFormRequest)

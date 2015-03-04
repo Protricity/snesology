@@ -18,11 +18,13 @@ use Site\Relay\PathLog;
 class HTMLRelayChat implements IRenderHTML, IHTMLSupportHeaders
 {
 
-    private $path;
-    private $Render = null;
+    /** @var ExecutableRenderer */
+    private $Render;
 
-    public function __construct($path) {
-        $this->path = $path;
+    public function __construct(IRequest $Request, $path) {
+        $PathLog = new PathLog($path);
+        $this->Render = new ExecutableRenderer($PathLog, false);
+        $this->Render->execute($Request);
     }
 
     /**
@@ -33,7 +35,7 @@ class HTMLRelayChat implements IRenderHTML, IHTMLSupportHeaders
      * @return String|void always returns void
      */
     function renderHTML(IRequest $Request, IAttributes $Attr = null, IRenderHTML $Parent = null) {
-        $Render = $this->Render ?: $this->Render = new ExecutableRenderer(new PathLog($this->path), false);
+        $Render = $this->Render;
         $Render->renderHTML($Request, $Attr, $Parent);
     }
 
@@ -44,7 +46,7 @@ class HTMLRelayChat implements IRenderHTML, IHTMLSupportHeaders
      * @return void
      */
     function writeHeaders(IRequest $Request, IHeaderWriter $Head) {
-        $Render = $this->Render ?: $this->Render = new ExecutableRenderer(new PathLog($this->path), false);
+        $Render = $this->Render;
         $Render->writeHeaders($Request, $Head);
     }
 }
