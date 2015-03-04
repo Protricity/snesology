@@ -86,14 +86,12 @@ class BlankTemplate extends HTMLContainer implements IRoutable, IBuildable {
 	 * If an object is returned, it is passed along to the next handler
 	 */
 	static function routeRequestStatic(IRequest $Request, Array &$Previous = array(), $RouteRenderer=null, $args=array()) {
-		$class = Config::$OrderPageTemplateClass;
-		/** @var BlankTemplate $Template */
-		$Template = new $class();
+		$Template = new BlankTemplate();
 
 		$Object = reset($Previous);
 		if($RouteRenderer instanceof RouteRenderer) {
 			if(!$Object)
-				$Object = new RouteIndex(, $RouteRenderer);
+				$Object = new RouteIndex($Request, $RouteRenderer);
 
 //			$NavBarTitle = new HTMLElement('h3', 'navbar-title');
 //			$Template->mNavBar->

@@ -1,4 +1,4 @@
-#!/bin/sd
+#!/bin/sh
 
 # Init repo
 git submodule init;
