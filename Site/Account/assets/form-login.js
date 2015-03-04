@@ -101,14 +101,15 @@
         }
 
         var prompt = function(resumeWithPassphrase) {
-            var Form = jQuery(target.form);
+            var Form = jQuery(Target[0].form);
             var InputPassphrase = Form.find('input[type=password][name=' + PARAM_PASSPHRASE + ']');
             var passphrase = InputPassphrase.val();
 
             var ButtonDecrypt = InputPassphrase.siblings('button[name=decrypt-passphrase]');
             if(ButtonDecrypt.length === 0 ) {
-                ButtonDecrypt = jQuery("<button name='decrypt-passphrase'>Decrypt</button>");
+                ButtonDecrypt = jQuery("<button class='input' name='decrypt-passphrase'>Decrypt</button>");
                 InputPassphrase.after(ButtonDecrypt);
+                InputPassphrase.after('&nbsp;');
                 ButtonDecrypt.on('click', function(e) {
                     e.preventDefault();
                     prompt(resumeWithPassphrase);

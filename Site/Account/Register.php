@@ -75,7 +75,7 @@ Version: GnuPG v1
 ...
 -----END PGP PUBLIC KEY BLOCK-----";
 
-    const TIPS_GEN = "<b>Generate PGP Key Pair</b><br/><br/>This fieldset generates a new PGP Key pair and stores it on your browser. Only the public key is sent to the server";
+    const TIPS_GEN = "<b>Generate PGP Key Pair</b><br/><br/>This fieldset generates a new PGP Key pair and stores it on your browser. Only the public key is sent to the server. Passphrase is <b>optional</b>";
     const TIPS_PGP = "<b>PGP Public Key</b><br/><br/>This fieldset contains the PGP Public Key used to create your new account";
     const TIPS_PGP_LOAD_STORAGE = "<b>Load from Browser</b><br/><br/>This button will cycle through any PGP Key pairs stored on your browser and load the public key";
     const TIPS_PGP_LOAD_FILE = "<b>Load from File</b><br/><br/>This field allows you to load a PGP Public Key from a text file";
@@ -128,7 +128,7 @@ Version: GnuPG v1
                     ($inviteeEmail ? new Attributes('disabled', 'disabled') : null)
                 ),
 
-			    "<br/><br/>Choose an optional passphrase for your private key<br/>",
+			    "<br/><br/>Choose an <b>optional</b> passphrase for your private key<br/>",
 			    new HTMLPasswordField(self::PARAM_PASSPHRASE, 'field-passphrase'),
 
 			    "<br/><br/>Generate your user account PGP key pair<br/>",

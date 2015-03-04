@@ -11,7 +11,7 @@
     var PARAM_LOG = 'log';
     var LOG_CONTAINER = 'log-container';
 
-    var CLIENT_PORT = 7846; // 7845;
+    var CLIENT_PORT = 7845; // 7845;
     var WEB_SOCKET_URL = 'ws://' + document.location.host + ':' + CLIENT_PORT + '/socket';
     var RECONNECT_TIMEOUT = 5000;
 
@@ -92,7 +92,12 @@
 
             var initWebSocket = null;
             initWebSocket = function() {
-                ChatSocket = new WebSocket(WEB_SOCKET_URL);
+                try {
+                    ChatSocket = new WebSocket(WEB_SOCKET_URL);
+                } catch (error) {
+                    LogContainer.append('<div class="error">' + error + '</span>');
+                }
+                
                 ChatSocket.onopen = function(e) {
                     console.info("WebSocket Open: " + WEB_SOCKET_URL, e);
                 };
@@ -113,7 +118,7 @@
 
                 ChatSocket.onerror = function(e) {
                     console.error(e);
-                    LogContainer.append('<div class="error">' + e.message + '</span>');
+                    // LogContainer.append('<div class="error">' + e.message + '</span>');
                 };
             };
             initWebSocket();
