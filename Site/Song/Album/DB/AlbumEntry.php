@@ -332,7 +332,7 @@ class AlbumEntry extends AbstractGrantEntry implements IBuildable, IKeyMap, ISer
         try {
             $Album->generateChallenge($Request, array($Creator->getFingerprint()));
         } catch (PGPCommandException $ex) {
-            if (strpos($ex->getMessage(), 'not found') !== false) {
+            if (preg_match('/(not found|no public key)/i', $ex->getMessage())) {
                 $Creator->import($Request);
                 $Album->generateChallenge($Request, array($Creator->getFingerprint()));
             } else {
