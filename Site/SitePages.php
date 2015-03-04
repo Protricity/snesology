@@ -16,6 +16,7 @@ use CPath\Request\IRequest;
 use CPath\Response\IResponse;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
+use Site\Relay\HTML\HTMLRelayChat;
 use Site\Relay\PathLog;
 
 class SitePages implements IExecutable, IBuildable, IRoutable
@@ -34,7 +35,7 @@ class SitePages implements IExecutable, IBuildable, IRoutable
                 return new HTMLElement('div', null, '<a href="http://snesology.tumblr.com">Tumbler</a>');
 
             case self::PATH_CHAT:
-                return new ExecutableRenderer(new PathLog(PathLog::getRequestURL('chat')));
+                return new HTMLRelayChat($Request, self::PATH_CHAT);
 
             default:
                 return new HTMLElement('div', null, 'Invalid Page: ' . $Request->getPath());
