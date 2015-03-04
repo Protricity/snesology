@@ -28,7 +28,7 @@
     display:none;
 
     position:absolute;
-    margin-right: 1em;
+    margin-left: -20em;
     /* right: 2em; */
 
     padding:14px 20px;
@@ -36,7 +36,7 @@
 
     border-radius:8px;
     box-shadow: 5px 5px 8px #777;
-    max-width: 25em;
+    max-width: 15em;
     /* height: 1em; */
     /* height: 5em; */
 }
@@ -47,4 +47,5 @@
     color:#111;
     border:1px solid #DCA;
     background:#fffAF0;
+    min-width: 20em;
 }

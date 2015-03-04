@@ -11,7 +11,7 @@
     var PARAM_LOG = 'log';
     var LOG_CONTAINER = 'log-container';
 
-    var CLIENT_PORT = 7845; // 7845;
+    var CLIENT_PORT = 7846; // 7845;
     var WEB_SOCKET_URL = 'ws://' + document.location.host + ':' + CLIENT_PORT + '/socket';
     var RECONNECT_TIMEOUT = 5000;
 
