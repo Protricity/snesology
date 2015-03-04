@@ -56,19 +56,19 @@ class WebSocket extends Application
 		$this->mServer->run();
 	}
 
-	/**
-	 * @param $eventName
-	 * @param $msg
-	 * @param Connection $connection
-	 * @throws \Wrench\Exception\ConnectionException
-	 * @throws \Wrench\Exception\HandshakeException
-	 * @return bool
-	 */
-	private function send($eventName, $msg, $connection) {
-		$connection->send($eventName . ' ' . $msg);
-		echo $eventName . ' ' . $msg . "\n";
-		return true;
-	}
+//	/**
+//	 * @param $eventName
+//	 * @param $msg
+//	 * @param Connection $connection
+//	 * @throws \Wrench\Exception\ConnectionException
+//	 * @throws \Wrench\Exception\HandshakeException
+//	 * @return bool
+//	 */
+//	private function send($eventName, $msg, $connection) {
+//		$connection->send($eventName . ' ' . $msg);
+//		echo $eventName . ' ' . $msg . "\n";
+//		return true;
+//	}
 
 	/**
 	 * @param Connection $client
@@ -90,7 +90,19 @@ class WebSocket extends Application
 	public function onConnect($client)
 	{
 		echo "Client connected: " . $client->getIp() . "\n";
-		if($sessionID = $this->hasSessionID($client)) {
+
+        $sessionID = null;
+        $headers = $client->getHeaders();
+        if($cookies = $headers['Cookie']) {
+            echo "Cookies: ", $cookies, "\n";
+            parse_str(str_replace('; ', '&', $cookies), $cookies);
+            if (!empty($cookies[session_name()]))
+                echo "Session Cookie: ", $sessionID = $cookies[session_name()], "\n";
+            else
+                echo "Session Cookie Not Found\n";
+        }
+
+		if($sessionID) {
 			session_id($sessionID);
 			@session_start();
 			$SessionRequest = new SessionRequest();
