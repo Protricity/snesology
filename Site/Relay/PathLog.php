@@ -11,12 +11,16 @@ use CPath\Build\IBuildable;
 use CPath\Build\IBuildRequest;
 use CPath\Data\Map\ArrayKeyMapper;
 use CPath\Render\Helpers\RenderIndents as RI;
+use CPath\Render\HTML\Attribute\IAttributes;
 use CPath\Render\HTML\Element\Form\HTMLButton;
 use CPath\Render\HTML\Element\Form\HTMLForm;
 use CPath\Render\HTML\Element\Form\HTMLInputField;
 use CPath\Render\HTML\Element\HTMLElement;
 use CPath\Render\HTML\Header\HTMLHeaderScript;
 use CPath\Render\HTML\Header\HTMLHeaderStyleSheet;
+use CPath\Render\HTML\IRenderHTML;
+use CPath\Render\IRenderAll;
+use CPath\Request\Exceptions\RequestException;
 use CPath\Request\Executable\ExecutableRenderer;
 use CPath\Request\Executable\IExecutable;
 use CPath\Request\Form\IFormRequest;
@@ -98,18 +102,15 @@ class PathLog implements IExecutable, IBuildable, IRoutable, ITestable
 		if (!$SessionRequest instanceof ISessionRequest)
 			throw new \Exception("Session required");
 
-        $Account = AccountEntry::loadFromSession($SessionRequest);
-
         $path = $this->path;
 
-		$Form = new HTMLForm(self::FORM_METHOD, $Request->getPath(), self::FORM_NAME, self::FORM_CLASS,
+		$Form = new HTMLForm(self::FORM_METHOD, self::getRequestURL($path), self::FORM_NAME, self::FORM_CLASS,
 //			new HTMLMetaTag(HTMLMetaTag::META_TITLE, self::TITLE),
 			new HTMLHeaderScript(__DIR__ . '/assets/relay.js'),
 			new HTMLHeaderStyleSheet(__DIR__ . '/assets/relay.css'),
 
-			"<br/><br/>",
-			new HTMLElement('fieldset', 'fieldset-log inline',
-                new HTMLElement('legend', 'legend-relay-log', "Log: " . $path),
+			$FieldSetLog = new HTMLElement('fieldset', 'fieldset-log inline',
+                new HTMLElement('legend', 'legend-relay-log', "Relay Chat Room: " . $path),
 
                 "<div class='" . self::LOG_CONTAINER . "'>",
                 function() use ($path) {
@@ -119,21 +120,49 @@ class PathLog implements IExecutable, IBuildable, IRoutable, ITestable
 
                         while($LogEntry = $Query->fetch()) {
                             /** @var RelayLogEntry $LogEntry */
-                            echo RI::ni(), '<div class="relay-log"><span class="relay-account">', $LogEntry->getAccountName(), "</span> ", $LogEntry->getLog(), '</div>';
+                            echo RI::ni(), '<div class="relay-log">',
+                                '<span class="relay-account">',
+                                    $LogEntry->getAccountName() ?: $LogEntry->getAccountFingerprint(),
+                                "</span> ",
+                                $LogEntry->getLog(),
+                            '</div>';
                         }
                     }
                 },
-                "</div>",
-
-                new HTMLInputField(self::PARAM_LOG,
-//                    new Attributes('placeholder', 'i.e. "sup giez"'),
-                    new RequiredValidation()
-                ),
-                new HTMLButton('submit', 'Send', 'submit')
+                "</div>"
             )
 		);
 
-		if(!$Request instanceof IFormRequest)
+
+        if(!AccountEntry::hasActiveSession($SessionRequest)) {
+            if(strpos($path, 'public') === false)
+                return $Form;
+
+            if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+                $ip = $_SERVER['HTTP_CLIENT_IP'];
+            } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+                $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+            } else {
+                $ip = $_SERVER['REMOTE_ADDR'];
+            }
+            if($Request instanceof SocketRequest && !$ip)
+                $ip = $Request->getSocketConnection()->getIp() . ':' . $Request->getSocketConnection()->getPort();
+            $Account = new AccountEntry(preg_replace('/[^a-zA-Z0-9]/', '-', $ip ?: 'public'));
+
+        } else {
+            $Account = AccountEntry::loadFromSession($SessionRequest);
+
+        }
+
+        $FieldSetLog->addAll(
+            new HTMLInputField(self::PARAM_LOG,
+//                    new Attributes('placeholder', 'i.e. "sup giez"'),
+                new RequiredValidation()
+            ),
+            new HTMLButton('submit', 'Send', 'submit')
+        );
+
+        if(!$Request instanceof IFormRequest)
 			return $Form;
 
         $Form->setFormValues($Request);
@@ -142,10 +171,9 @@ class PathLog implements IExecutable, IBuildable, IRoutable, ITestable
 
 		RelayLogEntry::create($Request, $path, $Account->getFingerprint(), $log);
 
-
         $Response = new RedirectResponse(PathLog::getRequestURL($path), "Log Entered", 5);
         $Response->setData('log', $log);
-        $Response->setData('path', $path);
+        $Response->setData('path', PathLog::getRequestURL($path));
         $Response->setData('account', $Account);
 
         if($Request instanceof SocketRequest) {
@@ -172,7 +200,7 @@ class PathLog implements IExecutable, IBuildable, IRoutable, ITestable
 	 * If an object is returned, it is passed along to the next handler
 	 */
 	static function routeRequestStatic(IRequest $Request, Array &$Previous = array(), $_arg = null) {
-		$Render = new ExecutableRenderer(new static($Request[self::PARAM_PATH]), true);
+		$Render = new ExecutableRenderer(new static(urldecode($Request[self::PARAM_PATH])), true);
 		$Render->execute($Request);
 		return $Render;
 	}
@@ -210,3 +238,4 @@ class PathLog implements IExecutable, IBuildable, IRoutable, ITestable
         RelayLogEntry::table()->delete(RelayLogTable::COLUMN_PATH, 'test-path');
     }
 }
+

@@ -19,6 +19,7 @@ use CPath\Render\HTML\Element\HTMLElement;
 use CPath\Render\HTML\Header\HTMLHeaderScript;
 use CPath\Render\HTML\Header\HTMLHeaderStyleSheet;
 use CPath\Render\HTML\Header\HTMLMetaTag;
+use CPath\Render\HTML\IHTMLContainer;
 use CPath\Request\Executable\ExecutableRenderer;
 use CPath\Request\Executable\IExecutable;
 use CPath\Request\Form\IFormRequest;
@@ -34,6 +35,7 @@ use CPath\UnitTest\ITestable;
 use CPath\UnitTest\IUnitTestRequest;
 use Site\Account\DB\AccountEntry;
 use Site\Path\HTML\HTMLPathTip;
+use Site\Relay\HTML\HTMLRelayChat;
 use Site\SiteMap;
 
 class Login implements IExecutable, IBuildable, IRoutable, ITestable
@@ -96,7 +98,9 @@ Once the <b>challenge answer</b> is entered, you may log in';
 			)
 		);
 
-		if(!isset($Request[self::PARAM_FINGERPRINT]))
+        $FormSelectFingerprint->addContent(new HTMLRelayChat('public-chat-login'), IHTMLContainer::KEY_RENDER_CONTENT_AFTER);
+
+        if(!isset($Request[self::PARAM_FINGERPRINT]))
 			return $FormSelectFingerprint;
 
 		$fingerprint = $Request[self::PARAM_FINGERPRINT];
@@ -152,7 +156,9 @@ Once the <b>challenge answer</b> is entered, you may log in';
 
 		$Form->setFormValues($Request);
 
-		if(!$Request instanceof IFormRequest)
+        $Form->addContent(new HTMLRelayChat('public-chat-login'), IHTMLContainer::KEY_RENDER_CONTENT_AFTER);
+
+        if(!$Request instanceof IFormRequest)
 			return $Form;
 
 		$Form->validateRequest($Request);

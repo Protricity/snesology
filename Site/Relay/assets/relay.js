@@ -28,6 +28,7 @@
             var Form = jQuery(input.form);
             var LogContainer = Form.find('.' + LOG_CONTAINER);
             var ChatSocket;
+            var formAction = Form.attr('action');
 
             if(pending > 1)
                 throw new Error("Too many pending activeRequests");
@@ -45,13 +46,13 @@
                     jQuery.each(Form.serializeArray(), function(i, pair) {
                        data[pair.name] = pair.value;
                     });
-                    data['action'] = Form.attr('action');
+                    data['action'] = formAction;
                     console.log("Sending: ", data);
                     ChatSocket.send(JSON.stringify(data));
                     
                     Input.val('');
-                    LogContainer.append('<div class="relay-log"><span class="relay-account">' + data.account.name + '</span> ' + data.log + '</span>');
-                    LogContainer.scrollTop(LogContainer[0].scrollHeight);
+//                     LogContainer.append('<div class="relay-log"><span class="relay-account">' + data.account.name + '</span> ' + data.log + '</span>');
+//                     LogContainer.scrollTop(LogContainer[0].scrollHeight);
 
                     return;
                 }
@@ -104,8 +105,10 @@
                 ChatSocket.onmessage = function(e) {
                     console.info("Receiving: ", e.data);
                     var data = jQuery.parseJSON(e.data);
-                    LogContainer.append('<div class="relay-log"><span class="relay-account">' + data.account.name + '</span> ' + data.log + '</span>');
-                    LogContainer.scrollTop(LogContainer[0].scrollHeight);
+                    if(data.path = formAction) {
+                        LogContainer.append('<div class="relay-log"><span class="relay-account">' + (data.account.name || data.account.fingerprint) + '</span> ' + data.log + '</span>');
+                        LogContainer.scrollTop(LogContainer[0].scrollHeight);
+                    }
                 };
 
                 ChatSocket.onerror = function(e) {

@@ -20,6 +20,7 @@ use CPath\Render\HTML\Element\HTMLElement;
 use CPath\Render\HTML\Header\HTMLHeaderScript;
 use CPath\Render\HTML\Header\HTMLHeaderStyleSheet;
 use CPath\Render\HTML\Header\HTMLMetaTag;
+use CPath\Render\HTML\IHTMLContainer;
 use CPath\Request\Executable\ExecutableRenderer;
 use CPath\Request\Executable\IExecutable;
 use CPath\Request\Form\IFormRequest;
@@ -43,6 +44,7 @@ use Site\PGP\Commands\PGPImportPublicKeyCommand;
 use Site\PGP\Commands\PGPSearchCommand;
 use Site\PGP\Exceptions\PGPKeyAlreadyImported;
 use Site\PGP\PublicKey;
+use Site\Relay\HTML\HTMLRelayChat;
 use Site\SiteMap;
 
 class Register implements IExecutable, IBuildable, IRoutable, ITestable
@@ -191,15 +193,11 @@ Version: GnuPG v1
                 new HTMLElement('legend', 'legend-submit', "Submit Registration"),
                 new HTMLButton(self::PARAM_SUBMIT, 'Register', null, 'submit', 'field-submit'),
                 new HTMLButton(self::PARAM_RESET, 'Reset Form', null, 'reset', 'field-reset')
-            ),
-
-            "<br/><br/>",
-            new HTMLElement('fieldset', 'fieldset-chat',
-                new HTMLElement('legend', 'legend-chat', "Chat: " . $Request->getPath())
-
-//                new ExecutableRenderer(new PathLog($Request->getPath()))
             )
+
 	    );
+
+        $Form->addContent(new HTMLRelayChat('public-chat-registration'), IHTMLContainer::KEY_RENDER_CONTENT_AFTER);
 
 	    $Form->setFormValues($Request);
 	    if(!$Request instanceof IFormRequest)

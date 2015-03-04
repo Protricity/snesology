@@ -33,6 +33,8 @@ use Site\Account\ViewAccount;
 use Site\Config;
 use Site\Path\ManagePath;
 use Site\PGP\PGPSupportHeaders;
+use Site\Relay\HTML\HTMLRelayChat;
+use Site\Relay\PathLog;
 use Site\Render\PopUpBox\HTMLPopUpBox;
 use Site\SiteMap;
 use Site\Song\Artist\ViewArtist;
@@ -126,7 +128,7 @@ class DefaultTemplate extends HTMLContainer implements IRoutable, IBuildable {
 		$Object = reset($Previous);
 		if($RouteRenderer instanceof RouteRenderer) {
 			if(!$Object)
-				$Object = new RouteIndex($RouteRenderer);
+				$Object = new RouteIndex($Request, $RouteRenderer);
 
 //			$NavBarTitle = new HTMLElement('h3', 'navbar-title');
 //			$Template->mNavBar->

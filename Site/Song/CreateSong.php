@@ -27,6 +27,7 @@ use CPath\Request\Session\ISessionRequest;
 use CPath\Request\Validation\RequiredValidation;
 use CPath\Response\Common\RedirectResponse;
 use CPath\Response\IResponse;
+use CPath\Response\Response;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
 use CPath\UnitTest\ITestable;
@@ -83,6 +84,9 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
 		$SessionRequest = $Request;
 		if (!$SessionRequest instanceof ISessionRequest)
 			throw new \Exception("Session required");
+
+        if(!AccountEntry::hasActiveSession($SessionRequest))
+            return new Response("Login required for editing");
 
         $Account = AccountEntry::loadFromSession($SessionRequest);
 

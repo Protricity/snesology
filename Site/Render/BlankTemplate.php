@@ -93,7 +93,7 @@ class BlankTemplate extends HTMLContainer implements IRoutable, IBuildable {
 		$Object = reset($Previous);
 		if($RouteRenderer instanceof RouteRenderer) {
 			if(!$Object)
-				$Object = new RouteIndex($RouteRenderer);
+				$Object = new RouteIndex(, $RouteRenderer);
 
 //			$NavBarTitle = new HTMLElement('h3', 'navbar-title');
 //			$Template->mNavBar->

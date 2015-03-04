@@ -101,7 +101,12 @@ class CreateLogEntry implements IExecutable, IBuildable, IRoutable, ITestable
 
                         while($LogEntry = $Query->fetch()) {
                             /** @var RelayLogEntry $LogEntry */
-                            echo RI::ni(), '<div class="relay-log"><span class="relay-account">', $LogEntry->getAccountName(), "</span> ", $LogEntry->getLog(), '</div>';
+                            echo RI::ni(), '<div class="relay-log">",
+                                "<span class="relay-account">',
+                                    $LogEntry->getAccountName() ?: $LogEntry->getAccountFingerprint(),
+                                "</span> ",
+                                $LogEntry->getLog(),
+                            '</div>';
                         }
                     }
                 },
