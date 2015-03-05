@@ -189,10 +189,11 @@ class ReviewEntry implements IBuildable, IKeyMap
      */
     function mapKeys(IKeyMapper $Map) {
         $Map->map('id', $this->getID());
+        $Map->map('title', $this->getReviewTitle());
+        $Map->map('song-review', $this->getReview());
         $Map->map('source-id', $this->getSourceID());
         $Map->map('source-type', $this->getSourceType());
-        $Map->map('review-account-fingerprint', $this->getAccountFingerprint());
-        $Map->map('review', $this->getReview());
+        $Map->map('review-fingerprint', $this->getAccountFingerprint());
     }
 
     public function getFormattedReview() {

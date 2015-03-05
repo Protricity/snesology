@@ -130,7 +130,7 @@ class Invite implements IExecutable, IBuildable, IRoutable
             throw new \InvalidArgumentException("Invitee Email not found in session");
         $fingerprint = $Session[self::SESSION_KEY_INVITE_FINGERPRINT];
         if(!$fingerprint)
-            throw new \InvalidArgumentException("Inviter Fingerprint not found in session");
+            throw new \InvalidArgumentException("Invite Fingerprint not found in session");
 
         if(!$started)
             $Request->endSession();

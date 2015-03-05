@@ -220,7 +220,8 @@ class CustomHTMLValueRenderer implements IHTMLValueRenderer, IHTMLSupportHeaders
 
             case 'account':
             case 'song-entry-account':
-            case 'inviter-fingerprint':
+            case 'invite-fingerprint':
+            case 'review-fingerprint':
             case 'inviter':
             case 'fingerprint':
                 $domain = $this->Request->getDomainPath();
@@ -258,6 +259,7 @@ class CustomHTMLValueRenderer implements IHTMLValueRenderer, IHTMLSupportHeaders
                 return true;
 
             case 'description':
+            case 'song-review':
             case 'song-description':
                 if($value) {
                     $PopUp = new HTMLPopUpBox($value, HTMLPopUpBox::CLASS_DESCRIPTION);

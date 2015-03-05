@@ -117,7 +117,7 @@ class AccountEntry extends AbstractGrantEntry implements IBuildable, IKeyMap, IS
      * @select
      * @search
      */
-    protected $inviter_fingerprint;
+    protected $invite_fingerprint;
 
 
     public function getFingerprint() {
@@ -127,8 +127,8 @@ class AccountEntry extends AbstractGrantEntry implements IBuildable, IKeyMap, IS
     /**
      * @return mixed
      */
-    public function getInviterFingerprint() {
-        return $this->inviter_fingerprint;
+    public function getInviteFingerprint() {
+        return $this->invite_fingerprint;
     }
 
 
@@ -161,7 +161,7 @@ class AccountEntry extends AbstractGrantEntry implements IBuildable, IKeyMap, IS
      */
     function mapKeys(IKeyMapper $Map) {
         $Map->map('fingerprint', $this->getFingerprint());
-        $Map->map('inviter', $this->getInviterFingerprint());
+        $Map->map('inviter', $this->getInviteFingerprint());
         $Map->map('name', $this->getName());
         $Map->map('email', $this->getEmail());
         $Map->map('created', $this->getCreatedTimestamp());
@@ -341,7 +341,7 @@ class AccountEntry extends AbstractGrantEntry implements IBuildable, IKeyMap, IS
         return $active;
     }
 
-    static function create(IRequest $Request, $publicKeyString, $inviteEmail=null, $inviterFingerprint=null) {
+    static function create(IRequest $Request, $publicKeyString, $inviteEmail=null, $inviteFingerprint=null) {
         $PGPImport = new PGPImportPublicKeyCommand($publicKeyString);
         $PGPImport->setPrimaryKeyRing(AccountEntry::KEYRING_NAME);
         $PGPImport->execute($Request);
@@ -355,7 +355,7 @@ class AccountEntry extends AbstractGrantEntry implements IBuildable, IKeyMap, IS
 
         $inserted = self::table()->insert(array(
             AccountTable::COLUMN_FINGERPRINT => $fingerprint,
-            AccountTable::COLUMN_INVITER_FINGERPRINT => $inviterFingerprint,
+            AccountTable::COLUMN_INVITE_FINGERPRINT => $inviteFingerprint,
             AccountTable::COLUMN_NAME => $PublicKey->getUserIDName(),
             AccountTable::COLUMN_EMAIL => $PublicKey->getUserIDEmail(),
             AccountTable::COLUMN_CREATED => time(),
@@ -421,7 +421,7 @@ class AccountEntry extends AbstractGrantEntry implements IBuildable, IKeyMap, IS
             ->select(AccountTable::TABLE_NAME . '.' . AccountTable::COLUMN_NAME)
 //            ->select(AccountTable::TABLE_NAME . '.' . AccountTable::COLUMN_EMAIL)
             ->select(AccountTable::TABLE_NAME . '.' . AccountTable::COLUMN_CREATED)
-            ->select(AccountTable::TABLE_NAME . '.' . AccountTable::COLUMN_INVITER_FINGERPRINT)
+            ->select(AccountTable::TABLE_NAME . '.' . AccountTable::COLUMN_INVITE_FINGERPRINT)
 
             ->setFetchMode(AccountTable::FETCH_MODE, AccountTable::FETCH_CLASS);
         if($withPublicKey)

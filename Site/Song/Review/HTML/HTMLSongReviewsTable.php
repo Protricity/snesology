@@ -16,6 +16,12 @@ class HTMLSongReviewsTable extends HTMLPDOQueryTable
     public function __construct(IRequest $Request, $songID, $count=null) {
         $Query = ReviewEntry::getLast($songID, $count);
         parent::__construct($Query);
+
+//        $this->addColumn('id');
+//        $this->addColumn('source-id');
+//        $this->addColumn('review-fingerprint');
+//        $this->addColumn('review');
+//        $this->addColumn('review-fingerprint');
     }
 }
 

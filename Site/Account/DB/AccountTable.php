@@ -82,7 +82,7 @@ class AccountTable extends AbstractBase {
 	 * @select
 	 * @search
 	 */
-	const COLUMN_INVITER_FINGERPRINT = 'inviter_fingerprint';
+	const COLUMN_INVITE_FINGERPRINT = 'invite_fingerprint';
 	/**
 
 	 * @index UNIQUE

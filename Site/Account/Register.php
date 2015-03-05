@@ -95,12 +95,12 @@ Version: GnuPG v1
 	 */
     function execute(IRequest $Request) {
         $inviteeEmail = null;
-        $inviterFingerprint = null;
+        $inviteFingerprint = null;
         $isInvite = false;
         if($Request instanceof ISessionRequest) {
             if(Invite::hasInviteContent($Request)) {
                 $isInvite = true;
-                list($inviteeEmail, $inviterFingerprint) = Invite::getInviteContent($Request);
+                list($inviteeEmail, $inviteFingerprint) = Invite::getInviteContent($Request);
             }
         }
 
@@ -206,7 +206,7 @@ Version: GnuPG v1
 
 	    $publicKeyString = $Form->validateField($Request, self::PARAM_PUBLIC_KEY, 0);
 
-        $Account = AccountEntry::create($Request, $publicKeyString, $inviteeEmail, $inviterFingerprint);
+        $Account = AccountEntry::create($Request, $publicKeyString, $inviteeEmail, $inviteFingerprint);
         $fingerprint = $Account->getFingerprint();
         $this->mNewAccountFingerprint = $fingerprint;
 
