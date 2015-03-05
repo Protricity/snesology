@@ -16,6 +16,7 @@ use CPath\Data\Schema\TableSchema;
 use CPath\Render\Helpers\RenderIndents as RI;
 use CPath\Render\HTML\Attribute\IAttributes;
 use CPath\Render\HTML\IRenderHTML;
+use CPath\Request\Exceptions\RequestException;
 use CPath\Request\IRequest;
 use Site\DB\SiteDB;
 
@@ -37,6 +38,11 @@ class ReviewTagEntry implements IBuildable, IKeyMap, IRenderHTML
         "Recommended" => self::TAG_RECOMMENDED,
         "5 Star Rating" => self::TAG_RATING,
     );
+
+    public function __construct($tag=null, $value=null) {
+        $tag === null ?: $this->tag = $tag;
+        $value === null ?: $this->value = $value;
+    }
 
     /**
      * @column VARCHAR(64) NOT NULL
@@ -101,31 +107,32 @@ class ReviewTagEntry implements IBuildable, IKeyMap, IRenderHTML
 
 	// Static
 
-    static function removeFromSong($Request, $songID, $accountFingerprint, $tag, $tagValue) {
+    static function removeFromReview($Request, $reviewID, $accountFingerprint, $tag, $tagValue='%') {
         $delete = self::table()
             ->delete()
-            ->where(ReviewTagTable::COLUMN_SONG_ID, $songID)
+            ->where(ReviewTagTable::COLUMN_REVIEW_ID, $reviewID)
             ->where(ReviewTagTable::COLUMN_ACCOUNT_FINGERPRINT, $accountFingerprint)
             ->where(ReviewTagTable::COLUMN_TAG, $tag)
-            ->where(ReviewTagTable::COLUMN_VALUE, $tagValue)
+            ->where(ReviewTagTable::COLUMN_VALUE, $tagValue, " LIKE ?")
             ->execute($Request);
 
         if(!$delete)
             throw new \InvalidArgumentException("Could not delete " . __CLASS__);
     }
 
-    static function addToSong(IRequest $Request, $songID, $accountFingerprint, $tag, $tagValue) {
+    static function addToReview(IRequest $Request, $reviewID, $accountFingerprint, $tagName, $tagValue) {
+        $tagValue = ReviewTagEntry::sanitize($tagName, $tagValue);
         $inserted = self::table()->insert(array(
-            ReviewTagTable::COLUMN_SONG_ID => $songID,
-            ReviewTagTable::COLUMN_TAG => $tag,
+            ReviewTagTable::COLUMN_REVIEW_ID => $reviewID,
             ReviewTagTable::COLUMN_ACCOUNT_FINGERPRINT=> $accountFingerprint,
+            ReviewTagTable::COLUMN_TAG => $tagName,
             ReviewTagTable::COLUMN_VALUE => $tagValue,
         ))
             ->execute($Request);
 
         if(!$inserted)
             throw new \InvalidArgumentException("Could not insert " . __CLASS__);
-        $Request->log("Review Tag added to song: " . $tag, $Request::VERBOSE);
+        $Request->log("Review Tag added to song: " . $tagName, $Request::VERBOSE);
     }
 
     static function table() {
@@ -147,4 +154,29 @@ class ReviewTagEntry implements IBuildable, IKeyMap, IRenderHTML
 		$DBWriter = new PDOTableWriter($DB);
 		$Schema->writeSchema($DBWriter);
 	}
+
+
+    static function sanitize($tagName, $tagValue) {
+        $tagType = null;
+        if(strpos($tagName, ':') !== false)
+            list($tagType) = explode(':', $tagName);
+
+        switch($tagType) {
+            default:
+            case self::TAG_TYPE_STRING:
+                $tagValue = preg_replace('/[^a-zA-Z0-9_ -]/', ' ', $tagValue);
+                break;
+            case self::TAG_TYPE_BOOLEAN:
+                $tagValue = $tagValue === true || strcasecmp($tagValue, 'true') === 0 || strcasecmp($tagValue, 'yes') === 0 || $tagValue == 1;
+                break;
+            case self::TAG_TYPE_5STAR:
+                $tagValue = floatval($tagValue);
+                if($tagValue < 0 || $tagValue > 5)
+                    throw new RequestException("Invalid 5 star rating");
+                $tagValue = sprintf('%.1f', $tagValue);
+                break;
+        }
+
+        return $tagValue;
+    }
 }

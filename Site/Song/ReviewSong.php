@@ -49,6 +49,7 @@ use Site\Song\Review\DB\ReviewEntry;
 use Site\Song\Review\DB\ReviewTable;
 use Site\Song\Review\HTML\HTMLSourceReview;
 use Site\Song\Review\ReviewTag\DB\ReviewTagEntry;
+use Site\Song\Tag\DB\TagEntry;
 
 
 class ReviewSong implements IExecutable, IBuildable, IRoutable, ITestable
@@ -62,13 +63,17 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable, ITestable
     const PARAM_SONG_ID = 'id';
     const PARAM_SONG_REVIEW_TITLE = 'title';
     const PARAM_SONG_REVIEW = 'review';
-    const PARAM_SUBMIT = 'submit';
     const PARAM_SONG_STATUS = 'status';
     const PARAM_REVIEW_REMOVE_TAG = 'review-remove-tag';
     const PARAM_REVIEW_TAG_NAME = 'review-tag-name';
     const PARAM_REVIEW_TAG_VALUE = 'review-tag-value';
+    const PARAM_SONG_REVIEW_5STAR = 'review-5star';
+
+    const PARAM_SUBMIT = 'submit';
 
     const TIP_REVIEW = '<b>Review a song</b><br /><br />Create a song review';
+    const PARAM_SONG_REVIEW_RECOMMEND = 'review-recommend';
+    const PARAM_SONG_REVIEW_UNRECOMMEND = 'review-unrecommend';
     private $id;
 
     public function __construct($songID) {
@@ -97,6 +102,8 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable, ITestable
             $Preview = new HTMLSourceReview($ReviewEntry, $Account);
         }
         $tagList = ReviewTagEntry::$TagDefaults;
+        $old5StarReview = isset($oldTags[ReviewTagEntry::TAG_RATING]) ? $oldTags[ReviewTagEntry::TAG_RATING] : '3.0';
+        $recommended = isset($oldTags[ReviewTagEntry::TAG_RECOMMENDED]) ? $oldTags[ReviewTagEntry::TAG_RECOMMENDED] : false;
 
         $Form = new HTMLForm(self::FORM_METHOD, $Request->getPath(), self::FORM_NAME,
 			new HTMLMetaTag(HTMLMetaTag::META_TITLE, self::TITLE),
@@ -130,8 +137,8 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable, ITestable
                 "<br/><br/>",
                 new HTMLElement('label', null, "Status:<br/>",
                     $SelectStatus = new HTMLSelectField(self::PARAM_SONG_STATUS . '[]', ReviewEntry::$StatusOptions,
-                        new Attributes('multiple', 'multiple'),
-                        new RequiredValidation()
+                        new Attributes('multiple', 'multiple')
+//                        new RequiredValidation()
                     )
                 ),
 
@@ -149,12 +156,33 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable, ITestable
 
             ($ReviewEntry && $ReviewEntry->hasFlags(ReviewEntry::STATUS_PUBLISHED)
                 ? null
-                : new HTMLElement('fieldset', 'fieldset-manage-song-publish inline',
-                    new HTMLElement('legend', 'legend-song-publish', "Publish!"),
+                : new HTMLElement('fieldset', 'fieldset-manage-review-publish inline',
+                    new HTMLElement('legend', 'legend-review-publish', "Publish!"),
 
                     "Nailed it down? <br/> All set? <br/><br/>",
                     new HTMLButton(self::PARAM_SUBMIT, 'Publish Review', 'publish')
                 )
+            ),
+
+
+            new HTMLElement('fieldset', 'fieldset-review-recommend inline',
+                new HTMLElement('legend', 'legend-review-recommend', "Recommend this song"),
+
+                !$recommended
+                    ? new HTMLButton(self::PARAM_SUBMIT, 'Recommend', self::PARAM_SONG_REVIEW_RECOMMEND)
+                    : new HTMLButton(self::PARAM_SUBMIT, 'Remove Recommendation', self::PARAM_SONG_REVIEW_UNRECOMMEND)
+            ),
+
+            new HTMLElement('fieldset', 'fieldset-review-5star inline',
+                new HTMLElement('legend', 'legend-view-review-5star', "5 Star Rating"),
+
+                new HTMLInputField(self::PARAM_SONG_REVIEW_5STAR, $old5StarReview),
+                "<br/>",
+                new HTMLRangeInputField(self::PARAM_SONG_REVIEW_5STAR . '_range', $old5StarReview, '0.0', '5.0', '0.1',
+                    new Attributes('oninput', 'var i=jQuery(this); i.siblings("input").val(i.val())')
+                ),
+                "<br/>",
+                new HTMLButton(self::PARAM_SUBMIT, 'Submit Score', self::PARAM_SONG_REVIEW_5STAR)
             ),
 
             "<br/><br/>",
@@ -169,21 +197,7 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable, ITestable
 
                 "<br/><br/>",
                 new HTMLElement('label', null, "Tag Value<br/>",
-                    new HTMLInputField(self::PARAM_REVIEW_TAG_VALUE, null, null, 'input tag-type tag-type-' . ReviewTagEntry::TAG_TYPE_STRING),
-
-                    new HTMLInputField(self::PARAM_REVIEW_TAG_VALUE, 0, 'hidden', 'input tag-type tag-type-' . ReviewTagEntry::TAG_TYPE_BOOLEAN),
-                    new HTMLCheckBoxField(self::PARAM_REVIEW_TAG_VALUE, false, 1, 'input tag-type tag-type-' . ReviewTagEntry::TAG_TYPE_BOOLEAN,
-                        new StyleAttributes('display', 'none')
-                    ),
-
-                    new HTMLInputField(self::PARAM_REVIEW_TAG_VALUE, null, null, 'input tag-type tag-type-' . ReviewTagEntry::TAG_TYPE_5STAR,
-                        new Attributes('size', 1)
-                    ),
-                    new HTMLRangeInputField(self::PARAM_REVIEW_TAG_VALUE, 0, 0, 5, 0.1, 'input tag-type tag-type-' . ReviewTagEntry::TAG_TYPE_5STAR,
-                        new Attributes('oninput', 'var i=jQuery(this); i.siblings("input").val(i.val())'),
-                        new StyleAttributes('display', 'none')
-                    )
-
+                    new HTMLInputField(self::PARAM_REVIEW_TAG_VALUE, null, null, 'input tag-type tag-type-' . ReviewTagEntry::TAG_TYPE_STRING)
                 ),
 
                 "<br/><br/>",
@@ -214,7 +228,7 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable, ITestable
 		);
 
         if($ReviewEntry)
-            foreach(SongEntry::$StatusOptions as $desc => $flag)
+            foreach(ReviewEntry::$StatusOptions as $desc => $flag)
                 if($ReviewEntry->hasFlags($flag))
                     $SelectStatus->addOption($flag, $desc, true);
 
@@ -229,6 +243,18 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable, ITestable
         $submit = $Form->validateField($Request, self::PARAM_SUBMIT);
 
         RequestEntry::createFromRequest($Request, $Account);
+
+        $CreateResponse = new Response("Error", false);
+        if(!$ReviewEntry) {
+            $status = $Form->validateField($Request, self::PARAM_SONG_STATUS) ?: array();
+            $status = array_sum($status);
+            $review = $Form->validateField($Request, self::PARAM_SONG_REVIEW);
+            $reviewTitle = $Form->validateField($Request, self::PARAM_SONG_REVIEW_TITLE);
+            $reviewID = ReviewEntry::addToSource($Request, $Song->getID(), 'song', $Account->getFingerprint(), $review, $reviewTitle, $status);
+            $CreateResponse = new RedirectResponse(ReviewSong::getRequestURL($Song->getID()), "Added Song Review. Re(view)creating...", 5);
+            $CreateResponse->setData('id', $reviewID);
+            $ReviewEntry = ReviewEntry::fetch($Song->getID(), $Account->getFingerprint());
+        }
 
         switch($submit) {
             case 'add-review-tag':
@@ -248,18 +274,35 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable, ITestable
                 $ReviewEntry->update($Request, null, null, $status);
                 return new RedirectResponse(ReviewSong::getRequestURL($Song->getID()), "Published Song Review. omg omg omg...", 5);
 
+            case self::PARAM_SONG_REVIEW_5STAR:
+                $tagName = ReviewTagEntry::TAG_RATING;
+                $tagValue = $Form->validateField($Request, self::PARAM_SONG_REVIEW_5STAR);
+
+                $ReviewEntry->removeAllTags($Request, $tagName);
+                $ReviewEntry->addTag($Request, $tagName, $tagValue);
+                return new RedirectResponse(ReviewSong::getRequestURL($Song->getID()), "Added Scored Rating successfully. That'll show em...", 5);
+
+            case self::PARAM_SONG_REVIEW_UNRECOMMEND:
+            case self::PARAM_SONG_REVIEW_RECOMMEND:
+                $tagName = ReviewTagEntry::TAG_RECOMMENDED;
+                $tagValue = $submit === self::PARAM_SONG_REVIEW_RECOMMEND;
+
+                $ReviewEntry->removeAllTags($Request, $tagName);
+                $ReviewEntry->addTag($Request, $tagName, $tagValue);
+                return new RedirectResponse(ReviewSong::getRequestURL($Song->getID()), "Updated recommendation successfully. There's no going. You just go...", 5);
+
             case 'create':
-                $status = $Form->validateField($Request, self::PARAM_SONG_STATUS);
-                $status = array_sum($status);
-                $review = $Form->validateField($Request, self::PARAM_SONG_REVIEW);
-                $reviewTitle = $Form->validateField($Request, self::PARAM_SONG_REVIEW_TITLE);
-                $reviewID = ReviewEntry::addToSource($Request, $Song->getID(), 'song', $Account->getFingerprint(), $review, $reviewTitle, $status);
-                $Response = new RedirectResponse(ReviewSong::getRequestURL($Song->getID()), "Added Song Review. Re(view)creating...", 5);
-                $Response->setData('id', $reviewID);
-                return $Response;
+//                $status = $Form->validateField($Request, self::PARAM_SONG_STATUS);
+//                $status = array_sum($status);
+//                $review = $Form->validateField($Request, self::PARAM_SONG_REVIEW);
+//                $reviewTitle = $Form->validateField($Request, self::PARAM_SONG_REVIEW_TITLE);
+//                $reviewID = ReviewEntry::addToSource($Request, $Song->getID(), 'song', $Account->getFingerprint(), $review, $reviewTitle, $status);
+//                $Response = new RedirectResponse(ReviewSong::getRequestURL($Song->getID()), "Added Song Review. Re(view)creating...", 5);
+//                $Response->setData('id', $reviewID);
+                return $CreateResponse;
 
             case 'update':
-                $status = $Form->validateField($Request, self::PARAM_SONG_STATUS);
+                $status = $Form->validateField($Request, self::PARAM_SONG_STATUS) ?: array();
                 $status = array_sum($status);
                 $review = $Form->validateField($Request, self::PARAM_SONG_REVIEW);
                 $reviewTitle = $Form->validateField($Request, self::PARAM_SONG_REVIEW_TITLE);

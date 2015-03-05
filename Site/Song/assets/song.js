@@ -65,6 +65,7 @@
 
                 if(typeof pathCache[path] === true) {
                     console.info("Cache miss: ", path);
+
                 } else if(typeof pathCache[path] == 'object') {
                     var data = pathCache[path];
                     DataList.html('');

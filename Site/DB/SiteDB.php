@@ -17,6 +17,8 @@ use Site\Request\DB\RequestTable;
 use Site\Song\Artist\DB\ArtistTable;
 use Site\Song\DB\SongTable;
 use Site\Song\Genre\DB\GenreTable;
+use Site\Song\Review\DB\ReviewTable;
+use Site\Song\Review\ReviewTag\DB\ReviewTagTable;
 use Site\Song\System\DB\SystemTable;
 use Site\Song\Tag\DB\TagTable;
 
@@ -60,6 +62,8 @@ class SiteDB extends \PDO implements IReadableSchema, IRepairableSchema
 			array(
 				new AccountTable(),
                 new SongTable(),
+                new ReviewTable(),
+                new ReviewTagTable(),
                 new TagTable(),
                 new SystemTable(),
                 new GenreTable(),

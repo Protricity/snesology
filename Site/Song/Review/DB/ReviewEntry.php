@@ -154,11 +154,15 @@ class ReviewEntry implements IBuildable, IKeyMap
     }
 
     public function addTag($Request, $tagName, $tagValue) {
-        ReviewTagEntry::addToSong($Request, $this->getSourceID(), $this->getAccountFingerprint(), $tagName, $tagValue);
+        ReviewTagEntry::addToReview($Request, $this->getID(), $this->getAccountFingerprint(), $tagName, $tagValue);
     }
 
     public function removeTag($Request, $tagName, $tagValue) {
-        ReviewTagEntry::removeFromSong($Request, $this->getSourceID(), $this->getAccountFingerprint(), $tagName, $tagValue);
+        ReviewTagEntry::removeFromReview($Request, $this->getID(), $this->getAccountFingerprint(), $tagName, $tagValue);
+    }
+
+    public function removeAllTags($Request, $tagName) {
+        ReviewTagEntry::removeFromReview($Request, $this->getID(), $this->getAccountFingerprint(), $tagName, '%');
     }
 
     function update(IRequest $Request, $review=null, $reviewTitle=null, $status=null) {
@@ -224,11 +228,11 @@ class ReviewEntry implements IBuildable, IKeyMap
      * @return ReviewEntry
      */
     public static function fetch($sourceID, $accountFingerprint, $type='song') {
-        return self::query()
+        $Query = self::query()
             ->where(ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_SOURCE_ID, $sourceID)
             ->where(ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_SOURCE_TYPE, $type)
-            ->where(ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_ACCOUNT_FINGERPRINT, $accountFingerprint)
-            ->fetch();
+            ->where(ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_ACCOUNT_FINGERPRINT, $accountFingerprint);
+        return $Query->fetch();
     }
 
 
@@ -237,6 +241,7 @@ class ReviewEntry implements IBuildable, IKeyMap
      */
     static function query() {
         return self::table()
+            ->select(ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_ID)
             ->select(ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_SOURCE_ID)
             ->select(ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_SOURCE_TYPE)
             ->select(ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_ACCOUNT_FINGERPRINT)
@@ -244,13 +249,11 @@ class ReviewEntry implements IBuildable, IKeyMap
             ->select(ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_REVIEW)
             ->select(ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_CREATED)
             ->select(ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_STATUS)
-//
-//            ->select('GROUP_CONCAT(DISTINCT CONCAT(' . ReviewTagTable::TABLE_NAME . '.' . ReviewTagTable::COLUMN_TAG . ', "::", ' . ReviewTagTable::TABLE_NAME . '.' . ReviewTagTable::COLUMN_VALUE . ') SEPARATOR "||")', self::JOIN_COLUMN_TAGS)
-//            ->leftJoin(ReviewTagTable::TABLE_NAME
-//                . ' ON ' . ReviewTagTable::TABLE_NAME . '.' . ReviewTagTable::COLUMN_SONG_ID . ' = ' . ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_SONG_ID
-//                . ' AND ' . ReviewTagTable::TABLE_NAME . '.' . ReviewTagTable::COLUMN_ACCOUNT_FINGERPRINT . ' = ' . ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_ACCOUNT_FINGERPRINT)
 
-//            ->groupBy(ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_SONG_ID . ', ' . ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_ACCOUNT_FINGERPRINT)
+            ->select('GROUP_CONCAT(DISTINCT CONCAT(' . ReviewTagTable::TABLE_NAME . '.' . ReviewTagTable::COLUMN_TAG . ', "::", ' . ReviewTagTable::TABLE_NAME . '.' . ReviewTagTable::COLUMN_VALUE . ') SEPARATOR "||")', self::JOIN_COLUMN_TAGS)
+            ->leftJoin(ReviewTagTable::TABLE_NAME . ' ON ' . ReviewTagTable::TABLE_NAME . '.' . ReviewTagTable::COLUMN_REVIEW_ID . ' = ' . ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_ID)
+
+            ->groupBy(ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_ID)
 
             ->setFetchMode(ReviewTable::FETCH_MODE, ReviewTable::FETCH_CLASS);
     }
