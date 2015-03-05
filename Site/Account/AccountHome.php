@@ -49,6 +49,9 @@ class AccountHome implements IExecutable, IBuildable, IRoutable
     const PARAM_INVITE_CONTENT = 'invite-content';
     const PARAM_GENERATE_INVITE = 'generate-invite';
     const CLS_ANCHOR_SEND_EMAIL = 'send-email';
+    const PARAM_PRIVATE_MESSAGE = 'private-message';
+    const PARAM_PRIVATE_MESSAGE_RECIPIENT = 'private-message-recipient';
+    const PARAM_ENCRYPT = 'encrypt';
 
     /**
 	 * Execute a command and return a response. Does not render
@@ -110,6 +113,28 @@ class AccountHome implements IExecutable, IBuildable, IRoutable
 
                 new HTMLAnchor('#', "Send Email", self::CLS_ANCHOR_SEND_EMAIL  . ' ' . HTMLConfig::$DefaultInputClass
                 )
+            ),
+
+            new HTMLElement('fieldset', 'fieldset-private-message inline',
+                new HTMLElement('legend', 'legend-private-message', "Create a Private Message"),
+
+                "Recipient's Email Address or User ID:<br/>",
+                new HTMLInputField(self::PARAM_PRIVATE_MESSAGE_RECIPIENT),
+
+                "<br/><br/>Private Message:<br/>",
+                new HTMLTextAreaField(self::PARAM_PRIVATE_MESSAGE,
+                    new Attributes('cols', 40, 'rows', 12)
+                ),
+
+                "<br/><br/>Encrypt:<br/>",
+                new HTMLButton(self::PARAM_ENCRYPT, 'Encrypt For Recipient(s)',
+                    new Attributes('disabled', 'disabled')
+                ),
+
+                "<br/><br/>Send:<br/>",
+                new HTMLButton(self::PARAM_SUBMIT, 'Send Message', self::PARAM_PRIVATE_MESSAGE,
+                    new Attributes('disabled', 'disabled')
+                )
             )
 
 		);
@@ -121,8 +146,8 @@ class AccountHome implements IExecutable, IBuildable, IRoutable
 
 		switch($submit) {
 			case 'update':
-				$status = $Form->validateField($Request, self::PARAM_ACCOUNT_STATUS);
-				$Account->update($Request, $Account, $status);
+//				$status = $Form->validateField($Request, self::PARAM_ACCOUNT_STATUS);
+//				$Account->update($Request, $Account, $status);
 				return new RedirectResponse(AccountHome::getRequestURL(), "Account updated successfully. Redirecting...", 5);
 		}
 

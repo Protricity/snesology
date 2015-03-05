@@ -150,20 +150,20 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable, ITestable
                     : new HTMLButton(self::PARAM_SUBMIT, 'Create', 'create')
             ),
 
-            new HTMLElement('fieldset', 'fieldset-view-song-review-preview inline',
-                new HTMLElement('legend', 'legend-view-song-review-preview', "Review Preview or is it Preview Review"),
-
-                $Preview
-            ),
-
             ($ReviewEntry && $ReviewEntry->hasFlags(ReviewEntry::STATUS_PUBLISHED)
                 ? null
-                : new HTMLElement('fieldset', 'fieldset-manage-review-publish inline',
+                : new HTMLElement('fieldset', 'fieldset-manage-review-publish float',
                     new HTMLElement('legend', 'legend-review-publish', "Publish!"),
 
                     "Nailed it down? <br/> All set? <br/><br/>",
                     new HTMLButton(self::PARAM_SUBMIT, 'Publish Review', 'publish')
                 )
+            ),
+
+            new HTMLElement('fieldset', 'fieldset-view-song-review-preview inline',
+                new HTMLElement('legend', 'legend-view-song-review-preview', "Review Preview or is it Preview Review"),
+
+                $Preview
             ),
 
 
@@ -220,7 +220,7 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable, ITestable
                 new HTMLButton(self::PARAM_SUBMIT, 'Remove Tag', 'remove-review-tag')
             ),
 
-            new HTMLElement('fieldset', 'fieldset-view-song-info inline',
+            new HTMLElement('fieldset', 'fieldset-view-song-info float',
                 new HTMLElement('legend', 'legend-view-song-info', "Song Information"),
 
                 new MapRenderer($Song)

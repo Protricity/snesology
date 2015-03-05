@@ -12,7 +12,6 @@ use CPath\Build\IBuildRequest;
 use CPath\Render\HTML\Element\Form\HTMLButton;
 use CPath\Render\HTML\Element\Form\HTMLForm;
 use CPath\Render\HTML\Element\HTMLElement;
-use CPath\Render\HTML\Element\Table\HTMLPDOQueryTable;
 use CPath\Render\HTML\Header\HTMLMetaTag;
 use CPath\Render\HTML\Pagination\HTMLPagination;
 use CPath\Request\Executable\IExecutable;
@@ -20,7 +19,9 @@ use CPath\Request\IRequest;
 use CPath\Response\IResponse;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
+use Site\Account\DB\AccountEntry;
 use Site\Account\DB\AccountTable;
+use Site\Account\HTML\HTMLAccountsTable;
 use Site\SiteMap;
 
 class SearchAccounts implements IExecutable, IBuildable, IRoutable
@@ -28,12 +29,13 @@ class SearchAccounts implements IExecutable, IBuildable, IRoutable
 	const TITLE = 'Search Accounts';
 
 	const FORM_ACTION = '/accounts/';
-	const FORM_ACTION2 = '/search/accounts/';
+	const FORM_ACTION2 = '/search/accounts/:search';
 	const FORM_METHOD = 'GET';
 	const FORM_NAME = __CLASS__;
 	const CLS_TABLE_ACCOUNT_SEARCH = 'search-account';
 
 	const PARAM_PAGE = 'page';
+    const PARAM_SEARCH = 'search';
 
 	/**
 	 * Execute a command and return a response. Does not render
@@ -41,8 +43,6 @@ class SearchAccounts implements IExecutable, IBuildable, IRoutable
 	 * @return IResponse the execution response
 	 */
 	function execute(IRequest $Request) {
-		$Table = new AccountTable();
-
 		$page = 0;
 		$total = null;
 		$row_count = 5;
@@ -52,45 +52,49 @@ class SearchAccounts implements IExecutable, IBuildable, IRoutable
 
 		$Pagination = new HTMLPagination($row_count, $page, $total);
 
-		$SearchQuery = $Table
-			->select()
-			->limit("{$row_count} OFFSET {$offset}");
+        $SearchTable = new HTMLAccountsTable("{$row_count} OFFSET {$offset}");
 
-		$SearchTable = new HTMLPDOQueryTable($SearchQuery);
-		$SearchTable->addSearchColumn(AccountTable::COLUMN_ID, 'account');
-		$SearchTable->addSearchColumn(AccountTable::COLUMN_STATUS, 'status');
-		$SearchTable->addSearchColumn(AccountTable::COLUMN_NAME, 'name');
-		$SearchTable->addSearchColumn(AccountTable::COLUMN_EMAIL, 'email');
+        $search = null;
+        if(isset($Request[self::PARAM_SEARCH])) {
+            $search = explode(',', $Request[self::PARAM_SEARCH]);
+            foreach($search as &$s)
+                $s = trim($s);
+            $SearchTable->getQuery()->where(AccountTable::COLUMN_FINGERPRINT, $search);
+            $SearchTable->getQuery()->orWhere(AccountTable::COLUMN_NAME, $search);
+            $SearchTable->getQuery()->orWhere(AccountTable::COLUMN_EMAIL, $search);
+        }
 
 		$SearchTable->validateRequest($Request);
 
-		$Form = new HTMLForm(self::FORM_METHOD, $Request->getPath(), self::FORM_NAME,
-			new HTMLMetaTag(HTMLMetaTag::META_TITLE, self::TITLE),
-//			new HTMLHeaderScript(__DIR__ . '\assets\form-login.js'),
-//			new HTMLHeaderStyleSheet(__DIR__ . '\assets\form-login.css'),
-
-//			new HTMLElement('h3', null, self::TITLE),
-
-			new HTMLElement('fieldset',
-				new HTMLElement('legend', 'legend-submit', self::TITLE),
-
-				$SearchTable,
-				$Pagination,
-
-				"<br/><br/>",
-				new HTMLButton('submit', 'Submit', 'submit')
-			),
-			"<br/>"
-		);
-
-		return $Form;
+        return $SearchTable;
+//
+//		$Form = new HTMLForm(self::FORM_METHOD, $Request->getPath(), self::FORM_NAME,
+//			new HTMLMetaTag(HTMLMetaTag::META_TITLE, self::TITLE),
+////			new HTMLHeaderScript(__DIR__ . '\assets\form-login.js'),
+////			new HTMLHeaderStyleSheet(__DIR__ . '\assets\form-login.css'),
+//
+////			new HTMLElement('h3', null, self::TITLE),
+//
+//			new HTMLElement('fieldset',
+//				new HTMLElement('legend', 'legend-submit', self::TITLE),
+//
+//				$SearchTable,
+//				$Pagination,
+//
+//				"<br/><br/>",
+//				new HTMLButton('submit', 'Submit', 'submit')
+//			),
+//			"<br/>"
+//		);
+//
+//		return $Form;
 	}
 
 	// Static
 
-	public static function getRequestURL() {
-		return self::FORM_ACTION;
-	}
+    public static function getRequestURL($accountID) {
+        return str_replace(':' . self::PARAM_SEARCH, $accountID, self::FORM_ACTION);
+    }
 
 	/**
 	 * Route the request to this class object and return the object

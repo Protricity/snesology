@@ -13,6 +13,10 @@
     var PARAM_INVITE_CONTENT = 'invite-content';
     var CLS_ANCHOR_SEND_EMAIL = 'send-email';
 
+    var PARAM_PRIVATE_MESSAGE = 'private-message';
+    var PARAM_PRIVATE_MESSAGE_RECIPIENT = 'private-message-recipient';
+    var PARAM_ENCRYPT = 'encrypt';
+
     var META_DOMAIN_PATH  = 'domain-path';
 
     var DEFAULT_MESSAGE = "You have been invited.";
@@ -22,8 +26,9 @@
     var ready = function() {
 
         var domainPath = jQuery('head meta[name=' + META_DOMAIN_PATH + ']').attr('content');
-        var domainFullPath = window.location.protocol + "//" + window.location.host + domainPath;
+        var domainFullPath = window.location.protocol + "//" + window.location.host + '/' + domainPath;
         var inviteFullPath = domainFullPath + 'invite/';
+        var listAccountsFullPath = domainFullPath + 'search/accounts/';
 
         jQuery('button[name=' + PARAM_GENERATE_INVITE + ']').each(function(i, button) {
             if (typeof button.inviteInit !== 'undefined')
@@ -82,6 +87,48 @@
                 }
 
                 throw new Error("Key pair not found in browser: " + accountFingerprint);
+            });
+            Button.removeAttr('disabled');
+        });
+
+
+        jQuery('button[name=' + PARAM_ENCRYPT + ']').each(function(i, button) {
+            if (typeof button.encryptInit !== 'undefined')
+                return;
+            button.encryptInit = true;
+
+            var Button = jQuery(button);
+            var Form = jQuery(button.form);
+            var TextAreaPrivateMessage = Form.find('*[name=' + PARAM_PRIVATE_MESSAGE + ']');
+            var InputRecipients = Form.find('*[name=' + PARAM_PRIVATE_MESSAGE_RECIPIENT + ']');
+
+            console.info("Private Message Encrypt Button Found: ", Button[0]);
+            Button.on('click input', function(e) {
+                e.preventDefault();
+
+                var message = TextAreaPrivateMessage.val();
+                var recipients = InputRecipients.val();
+
+                if(recipients)
+                jQuery.getJSON(listAccountsFullPath + recipients,
+                    function (json) {
+                        var keys = [];
+                        for (var i = 0; i < json.length; i++) {
+                            var account = json[i];
+                            console.log(account);
+
+                            var publicKey = openpgp.key.readArmored(account['public-key']);
+                            keys.push(publicKey.keys[0]);
+                        }
+
+                        openpgp.encryptMessage(keys, message).then(function(pgpMessage) {
+                            TextAreaPrivateMessage.val(pgpMessage);
+                        }).catch(function(error) {
+                            console.error(error);
+                        });
+
+                    }
+                );
             });
             Button.removeAttr('disabled');
         });

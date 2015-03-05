@@ -27,7 +27,7 @@ class SiteMap implements IRouteMap, IBuildable
     /**
      * Maps all routes to the route map. Returns true if the route prefix was matched
      * @param IRequest $Request
-     * @param IRouteMapper $Mapper
+     * @param IRouteMapper $Map
      * @return bool if true the route prefix was matched, otherwise false
      * @build routes --disable 0
      * Note: Set --disable 1 or remove doc tag to stop code auto-generation on build for this method
@@ -48,7 +48,7 @@ class SiteMap implements IRouteMap, IBuildable
 
 			// @group Site\Account\SearchAccounts
 			$Map->route('ANY /accounts/', 'Site\\Account\\SearchAccounts') ||
-			$Map->route('ANY /search/accounts/', 'Site\\Account\\SearchAccounts') ||
+			$Map->route('ANY /search/accounts/:search', 'Site\\Account\\SearchAccounts') ||
 
 			// @group Site\Account\ViewAccount
 			$Map->route('ANY /a/:id', 'Site\\Account\\ViewAccount') ||

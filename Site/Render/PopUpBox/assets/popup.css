@@ -5,6 +5,10 @@
     padding: 0 20px;
 }
 
+.popup .pre {
+    white-space: pre;
+}
+
 .popup.info,
 .popup.description,
 .popup.important {
@@ -36,7 +40,7 @@
 
     border-radius:8px;
     box-shadow: 5px 5px 8px #777;
-    max-width: 15em;
+    min-width: 15em;
     /* height: 1em; */
     /* height: 5em; */
 }

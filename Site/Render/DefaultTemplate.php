@@ -247,6 +247,13 @@ class CustomHTMLValueRenderer implements IHTMLValueRenderer, IHTMLSupportHeaders
                 }
                 return true;
 
+            case 'public-key':
+                if($value) {
+                    $PopUp = new HTMLPopUpBox(nl2br(trim($value)), HTMLPopUpBox::CLASS_DESCRIPTION);
+                    $PopUp->renderHTML($this->Request);
+                }
+                return true;
+
             case 'artist':
             case 'song-artist':
             case 'artist-name':
@@ -289,6 +296,11 @@ class CustomHTMLValueRenderer implements IHTMLValueRenderer, IHTMLSupportHeaders
             case 'url-cover-back':
                 $href = $value;
                 echo "<a href='{$href}'>", $arg1 ?: 'link', "</a>";
+                return true;
+
+            case 'song-url:origin':
+                $href = $value;
+                echo "<a href='{$href}'>", $arg1 ?: 'Origin', "</a>";
                 return true;
 
             case 'path':

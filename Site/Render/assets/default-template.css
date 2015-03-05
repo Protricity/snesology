@@ -209,6 +209,10 @@ fieldset.inline {
     /* position: relative; */
 }
 
+fieldset.float {
+    float: right;
+}
+
 /*form * + label {*/
      /*margin-top: 10pt;*/
 /*}*/

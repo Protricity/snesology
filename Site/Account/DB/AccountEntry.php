@@ -10,6 +10,7 @@ use CPath\Build\IBuildable;
 use CPath\Build\IBuildRequest;
 use CPath\Data\Map\IKeyMap;
 use CPath\Data\Map\IKeyMapper;
+use CPath\Data\Schema\PDO\PDOSelectBuilder;
 use CPath\Data\Schema\PDO\PDOTableClassWriter;
 use CPath\Data\Schema\PDO\PDOTableWriter;
 use CPath\Data\Schema\TableSchema;
@@ -164,6 +165,7 @@ class AccountEntry extends AbstractGrantEntry implements IBuildable, IKeyMap, IS
         $Map->map('name', $this->getName());
         $Map->map('email', $this->getEmail());
         $Map->map('created', $this->getCreatedTimestamp());
+        $Map->map('public-key', $this->public_key);
     }
 
     public function loadChallenge(IRequest $Request) {
@@ -399,14 +401,32 @@ class AccountEntry extends AbstractGrantEntry implements IBuildable, IKeyMap, IS
      * @return AccountEntry
      */
     static function get($fingerprint, $compare = '=?') {
-        return self::table()->fetchOne(AccountTable::COLUMN_FINGERPRINT, $fingerprint, $compare);
+        return self::query()->fetchOne(AccountTable::COLUMN_FINGERPRINT, $fingerprint, $compare);
     }
 
     static function search($search) {
-        return self::table()->select()
+        return self::query()
             ->where(AccountTable::COLUMN_FINGERPRINT, $search)
             ->orWhere(AccountTable::COLUMN_EMAIL, $search)
             ->orWhere(AccountTable::COLUMN_NAME, $search);
+    }
+
+    /**
+     * @param bool $withPublicKey
+     * @return PDOSelectBuilder
+     */
+    static function query($withPublicKey=false) {
+        $Select =self::table()
+            ->select(AccountTable::TABLE_NAME . '.' . AccountTable::COLUMN_FINGERPRINT)
+            ->select(AccountTable::TABLE_NAME . '.' . AccountTable::COLUMN_NAME)
+//            ->select(AccountTable::TABLE_NAME . '.' . AccountTable::COLUMN_EMAIL)
+            ->select(AccountTable::TABLE_NAME . '.' . AccountTable::COLUMN_CREATED)
+            ->select(AccountTable::TABLE_NAME . '.' . AccountTable::COLUMN_INVITER_FINGERPRINT)
+
+            ->setFetchMode(AccountTable::FETCH_MODE, AccountTable::FETCH_CLASS);
+        if($withPublicKey)
+            $Select->select(AccountTable::TABLE_NAME . '.' . AccountTable::COLUMN_PUBLIC_KEY);
+        return $Select;
     }
 
     /**
