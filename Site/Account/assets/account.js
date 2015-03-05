@@ -26,7 +26,9 @@
     var ready = function() {
 
         var domainPath = jQuery('head meta[name=' + META_DOMAIN_PATH + ']').attr('content');
-        var domainFullPath = window.location.protocol + "//" + window.location.host + '/' + domainPath;
+        if(domainPath[0] !== '/')
+            domainPath = '/' + domainPath;
+        var domainFullPath = window.location.protocol + "//" + window.location.host + domainPath;
         var inviteFullPath = domainFullPath + 'invite/';
         var listAccountsFullPath = domainFullPath + 'search/accounts/';
 
