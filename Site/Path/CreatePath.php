@@ -31,6 +31,8 @@ use CPath\Route\RouteBuilder;
 use CPath\UnitTest\ITestable;
 use CPath\UnitTest\IUnitTestRequest;
 use Site\Account\DB\AccountEntry;
+use Site\Account\Guest\TestAccount;
+use Site\Account\Session\DB\SessionEntry;
 use Site\Path\DB\PathEntry;
 use Site\Path\DB\PathTable;
 use Site\Request\DB\RequestEntry;
@@ -178,9 +180,7 @@ class CreatePath implements IExecutable, IBuildable, IRoutable, ITestable
      * Note: Use doctag 'test' with '--disable 1' to have this ITestable class skipped during a build
      */
     static function handleStaticUnitTest(IUnitTestRequest $Test) {
-        $Session = &$Test->getSession();
-        $TestAccount = new AccountEntry('test-fp');
-        $Session[AccountEntry::SESSION_KEY] = serialize($TestAccount);
+        SessionEntry::create($Test, TestAccount::PGP_FINGERPRINT);
 
         $CreatePath = new CreatePath();
 

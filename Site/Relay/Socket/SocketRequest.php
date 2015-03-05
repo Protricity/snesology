@@ -20,11 +20,13 @@ class SocketRequest extends Request implements IFormRequest, ISessionRequest
 	const METHOD_SOCKET = 'SOCK';
 	private $mSessionRequest = null;
 	private $mSocket;
+    private $sessionID;
 
-	public function __construct($socket, $method, $path, $parameters = array(), IRequestedMimeType $MimeType = null) {
+    public function __construct($socket, $method, $path, $parameters = array(), $sessionID=null, IRequestedMimeType $MimeType = null) {
 		$this->mSocket = $socket;
+        $this->sessionID = $sessionID;
 		parent::__construct($method, $path, $parameters, $MimeType);
-	}
+    }
 
     function getDomainPath($withDomain = false) {
         return "NO DOMAIN";
@@ -43,16 +45,21 @@ class SocketRequest extends Request implements IFormRequest, ISessionRequest
 			$this->mSessionRequest = new SessionRequest();
 	}
 
-	/**
-	 * Returns true if the session is active, false if inactive
-	 * @return bool
-	 */
-	function hasSessionCookie() {
-		return (isset($_COOKIE[session_name()]));
-	}
+    /**
+     * Returns the session id or false if inactive
+     * @return string|bool
+     */
+    function getSessionID() {
+        if($this->sessionID)
+            return $this->sessionID;
+        return isset($_COOKIE[session_name()]) ? $_COOKIE[session_name()] : session_id();
+    }
 
+    function setSessionID($sessionID) {
+        $this->sessionID = $sessionID;
+    }
 
-	/**
+    /**
 	 * Returns true if the session is active, false if inactive
 	 * @return bool
 	 */

@@ -34,7 +34,10 @@ use CPath\Route\RouteBuilder;
 use CPath\UnitTest\ITestable;
 use CPath\UnitTest\IUnitTestRequest;
 use Site\Account\DB\AccountEntry;
+use Site\Account\Guest\GuestAccount;
+use Site\Account\Guest\TestAccount;
 use Site\Account\Register;
+use Site\Account\Session\DB\SessionEntry;
 use Site\Config;
 use Site\Path\HTML\HTMLPathTip;
 use Site\Relay\HTML\HTMLRelayChat;
@@ -70,27 +73,20 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
     const PARAM_SONG_SOURCE_URL = 'song-source-url';
     const PARAM_SONG_DOWNLOAD_URL = 'song-download-url';
 
-    private $newSongID;
-
-    public function getNewSongID() {
-        return $this->newSongID;
-    }
-
     /**
 	 * Execute a command and return a response. Does not render
 	 * @param IRequest $Request
 	 * @throws \Exception
-	 * @return IResponse the execution response
+	 * @return Response the execution response
 	 */
 	function execute(IRequest $Request) {
 		$SessionRequest = $Request;
 		if (!$SessionRequest instanceof ISessionRequest)
 			throw new \Exception("Session required");
 
-        if(!AccountEntry::hasActiveSession($SessionRequest))
-            return new Response("Login required for editing");
-
         $Account = AccountEntry::loadFromSession($SessionRequest);
+        if($Account->getName() === GuestAccount::PGP_NAME)
+            return new Response("Login required for editing");
 
         $systemList = SystemEntry::getAll();
         $genreList = GenreEntry::getAll();
@@ -252,11 +248,11 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
 
         $Song->addTag($Request, TagEntry::TAG_ENTRY_ACCOUNT, $Account->getFingerprint());
 
-        $this->newSongID = $Song->getID();
-
         RequestEntry::createFromRequest($Request, $Account);
 
-        return new RedirectResponse(ManageSong::getRequestURL($Song->getID()), "Song created successfully. Redeflecting...", 5);
+        $Response = new RedirectResponse(ManageSong::getRequestURL($Song->getID()), "Song created successfully. Redeflecting...", 5);
+        $Response->setData('id', $Song->getID());
+        return $Response;
 	}
 
 	// Static
@@ -302,10 +298,7 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
      * Note: Use doctag 'test' with '--disable 1' to have this ITestable class skipped during a build
      */
     static function handleStaticUnitTest(IUnitTestRequest $Test) {
-        $Session = &$Test->getSession();
-
-        $TestAccount = new AccountEntry('78E02897', Register::TEST_PUBLIC_KEY);
-        $Session[AccountEntry::SESSION_KEY] = serialize($TestAccount);
+        SessionEntry::create($Test, TestAccount::PGP_FINGERPRINT);
 
         SongEntry::table()->delete(SongTable::COLUMN_TITLE, 'test-song-title');
 
@@ -320,11 +313,10 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
         $Test->setRequestParameter(self::PARAM_SONG_DESCRIPTION, 'test-song-description');
         $Test->setRequestParameter(self::PARAM_SONG_GENRE, array('test-song-genre'));
         $Test->setRequestParameter(self::PARAM_SONG_SYSTEM, array('test-song-system'));
-        $CreateSong->execute($Test);
+        $Response = $CreateSong->execute($Test);
 
-        $id = $CreateSong->getNewSongID();
+        $id = $Response->getData('id');
 
         SongEntry::delete($Test, $id);
-
     }
 }

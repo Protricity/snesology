@@ -30,7 +30,7 @@ class HTMLPathTip extends HTMLPopUpBox
 
     function renderContent(IRequest $Request, IRenderHTML $Parent = null) {
         $isSession = false;
-        if($Request instanceof ISessionRequest && $Request->hasSessionCookie())
+        if($Request instanceof ISessionRequest && $Request->getSessionID())
             $isSession = true;
 
         if($this->SubPath) {

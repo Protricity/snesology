@@ -13,6 +13,7 @@ use CPath\Data\Schema\IWritableSchema;
 use CPath\Data\Schema\PDO\AbstractPDOTable;
 use PDO;
 use Site\Account\DB\AccountTable;
+use Site\Account\Session\DB\SessionTable;
 use Site\Request\DB\RequestTable;
 use Site\Song\Artist\DB\ArtistTable;
 use Site\Song\DB\SongTable;
@@ -60,7 +61,8 @@ class SiteDB extends \PDO implements IReadableSchema, IRepairableSchema
 	public function writeSchema(IWritableSchema $DB) {
 		foreach(
 			array(
-				new AccountTable(),
+                new AccountTable(),
+                new SessionTable(),
                 new SongTable(),
                 new ReviewTable(),
                 new ReviewTagTable(),

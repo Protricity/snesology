@@ -7,15 +7,10 @@
  */
 namespace Site\Account\Session;
 
-use BC\Config;
+use Site\Account\DB\AccountEntry;
 
 class SessionConfig
 {
 	static $SessionSalt = 'eS6ZZJlQaKMAJVGUCGtbw';
-	static $SessionContentPath = 'user/session/';
-	static $SessionRoleDefaultGroup = 'general';
-
-	static function getContentPath($additionalPath = null) {
-		return Config::getContentPath(static::$SessionContentPath, $additionalPath);
-	}
 }
+

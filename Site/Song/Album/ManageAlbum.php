@@ -35,7 +35,9 @@ use CPath\Route\RouteBuilder;
 use CPath\UnitTest\ITestable;
 use CPath\UnitTest\IUnitTestRequest;
 use Site\Account\DB\AccountEntry;
+use Site\Account\Guest\TestAccount;
 use Site\Account\Register;
+use Site\Account\Session\DB\SessionEntry;
 use Site\Config;
 use Site\Render\PopUpBox\HTMLPopUpBox;
 use Site\Request\DB\RequestEntry;
@@ -272,9 +274,7 @@ class ManageAlbum implements IExecutable, IBuildable, IRoutable, ITestable
      * Note: Use doctag 'test' with '--disable 1' to have this ITestable class skipped during a build
      */
     static function handleStaticUnitTest(IUnitTestRequest $Test) {
-        $Session = &$Test->getSession();
-        $TestAccount = new AccountEntry('78E02897', Register::TEST_PUBLIC_KEY);
-        $Session[AccountEntry::SESSION_KEY] = serialize($TestAccount);
+        SessionEntry::create($Test, TestAccount::PGP_FINGERPRINT);
 
         AlbumEntry::table()->delete(AlbumTable::COLUMN_TITLE, 'test-album-title');
 
@@ -289,9 +289,9 @@ class ManageAlbum implements IExecutable, IBuildable, IRoutable, ITestable
         $Test->setRequestParameter(CreateAlbum::PARAM_ALBUM_DESCRIPTION, 'test-album-description');
         $Test->setRequestParameter(CreateAlbum::PARAM_ALBUM_GENRE, array('test-album-genre'));
         $Test->setRequestParameter(CreateAlbum::PARAM_ALBUM_SYSTEM, array('test-album-system'));
-        $CreateAlbum->execute($Test);
+        $Response = $CreateAlbum->execute($Test);
 
-        $id = $CreateAlbum->getNewAlbumID();
+        $id = $Response->getData('id');
 
         $ManageAlbum = new ManageAlbum($id);
 

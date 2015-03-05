@@ -36,7 +36,7 @@ class WebSocket extends Application
 	private $mServer = null;
 
     /** @var AccountEntry[] */
-	private $mSessionClients = array();
+//	private $mSessionClients = array();
 
     public function __construct() {
     }
@@ -72,9 +72,9 @@ class WebSocket extends Application
 
 	/**
 	 * @param Connection $client
-	 * @return bool
+	 * @return String
 	 */
-	private function hasSessionID($client) {
+	private function getSessionID($client) {
 		$headers = $client->getHeaders();
 		if($cookies = $headers['Cookie']) {
 			parse_str(str_replace('; ', '&', $cookies), $cookies);
@@ -87,46 +87,33 @@ class WebSocket extends Application
 	/**
 	 * @param Connection $client
 	 */
-	public function onConnect($client)
-	{
+	public function onConnect($client) {
 		echo "Client connected: " . $client->getIp() . "\n";
-
-        $sessionID = null;
-        $headers = $client->getHeaders();
-        if($cookies = $headers['Cookie']) {
-            echo "Cookies: ", $cookies, "\n";
-            parse_str(str_replace('; ', '&', $cookies), $cookies);
-            if (!empty($cookies[session_name()]))
-                echo "Session Cookie: ", $sessionID = $cookies[session_name()], "\n";
-            else
-                echo "Session Cookie Not Found\n";
-        }
-
+//
+//        $sessionID = null;
+//        $headers = $client->getHeaders();
+//        if($cookies = $headers['Cookie']) {
+//            echo "Cookies: ", $cookies, "\n";
+//            parse_str(str_replace('; ', '&', $cookies), $cookies);
+//            if (!empty($cookies[session_name()]))
+//                echo "Session Cookie: ", $sessionID = $cookies[session_name()], "\n";
+//            else
+//                echo "Session Cookie Not Found\n";
+//        }
+        $sessionID = $this->getSessionID($client);
 		if($sessionID) {
-			session_id($sessionID);
-			@session_start();
-			$SessionRequest = new SessionRequest();
-            if(AccountEntry::hasActiveSession($SessionRequest)) {
-                $Account = AccountEntry::loadFromSession($SessionRequest);
-                $this->mSessionClients[$client->getId()] = $Account;
-                echo "Session detected: ", $Account->getName(), "\n";
-            } else {
-                echo "No Active Session Found: ", $sessionID, "\n";
-            }
-			session_write_close();
+            echo "Session ID detected: ", $sessionID, "\n";
 		}
 	}
 
 	/**
 	 * Handle data received from a client
 	 * @param Payload $payload A payload object, that supports __toString()
-	 * @param Connection $connection
+	 * @param Connection $client
 	 * @return bool
 	 */
-	public function onData($payload, $connection) {
+	public function onData($payload, $client) {
         $json = json_decode($payload, true);
-
-//        $Account = $this->mSessionClients[$connection->getId()];
 
         if(empty($json['action']))
             return false; // TODO
@@ -147,22 +134,14 @@ class WebSocket extends Application
 
         echo $action, "\n\n\n\n";
 
-        $isSession = false;
-        if($sessionID = $this->hasSessionID($connection)) {
-            session_id($sessionID);
-            @session_start();
-            $isSession = true;
-        }
+        $sessionID = $this->getSessionID($client);
 
-        $Request = new SocketRequest($connection, 'POST', $action, $json, new TextMimeType());
+        $Request = new SocketRequest($client, 'POST', $action, $json, $sessionID,  new TextMimeType());
         $rendered = SiteMap::route($Request);
         if(!$rendered) {
             echo "Nothing rendered: " . $Request->getPath();
         }
 
-        if($isSession) {
-            session_write_close();
-        }
 		return false;
 	}
 

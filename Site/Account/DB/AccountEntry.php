@@ -22,6 +22,11 @@ use CPath\Request\IRequest;
 use CPath\Request\Session\ISessionRequest;
 use CPath\Request\Validation\Exceptions\ValidationException;
 use Site\Account\Exceptions\InvalidAccountPassword;
+use Site\Account\Guest\GuestAccount;
+use Site\Account\Session\AccountSession;
+use Site\Account\Session\DB\SessionEntry;
+use Site\Account\Session\DB\SessionTable;
+use Site\Account\Session\Exceptions\UserSessionNotFound;
 use Site\Account\ViewAccount;
 use Site\DB\SiteDB;
 use Site\Grant\DB\AbstractGrantEntry;
@@ -39,7 +44,7 @@ use Site\PGP\PublicKey;
 class AccountEntry extends AbstractGrantEntry implements IBuildable, IKeyMap, ISerializable, IRenderHTML
 {
     const ID_PREFIX = 'A';
-    const SESSION_KEY = 'session_account';
+//    const SESSION_KEY = 'session_account';
 
     const JSON_PASSPHRASE_COMMENTS = '{
 	"#comments": [
@@ -145,11 +150,13 @@ class AccountEntry extends AbstractGrantEntry implements IBuildable, IKeyMap, IS
     }
 //
 
+    /**
+     * Start a new session
+     * @param ISessionRequest $SessionRequest
+     * @return SessionEntry
+     */
     public function startSession(ISessionRequest $SessionRequest) {
-        $SessionRequest->startSession();
-        $Session = &$SessionRequest->getSession();
-        $Session[AccountEntry::SESSION_KEY] = serialize($this);
-        $SessionRequest->endSession();
+        return SessionEntry::create($SessionRequest, $this->getFingerprint());
     }
 
     /**
@@ -163,7 +170,7 @@ class AccountEntry extends AbstractGrantEntry implements IBuildable, IKeyMap, IS
         $Map->map('fingerprint', $this->getFingerprint());
         $Map->map('inviter', $this->getInviteFingerprint());
         $Map->map('name', $this->getName());
-        $Map->map('email', $this->getEmail());
+//        $Map->map('email', $this->getEmail());
         $Map->map('created', $this->getCreatedTimestamp());
         $Map->map('public-key', $this->public_key);
     }
@@ -298,47 +305,55 @@ class AccountEntry extends AbstractGrantEntry implements IBuildable, IKeyMap, IS
 
     // Static
 
+    /** @var array AccountEntry */
+    static private $SessionCache = array();
+
+    /**
+     * @param ISessionRequest|IRequest $SessionRequest
+     * @return bool|mixed|AccountEntry
+     * @throws \Exception
+     */
+    static function loadFromSession(ISessionRequest $SessionRequest) {
+        $sessionID = $SessionRequest->getSessionID();
+        if(!$sessionID) {
+            $SessionRequest->startSession();
+            $sessionID = $SessionRequest->getSessionID();
+        }
+
+        if(isset(self::$SessionCache[$sessionID]))
+            return self::$SessionCache[$sessionID];
+
+        $AccountEntry = self::query()
+            ->leftJoin(SessionTable::TABLE_NAME, AccountTable::TABLE_NAME . '.' . AccountTable::COLUMN_FINGERPRINT, SessionTable::TABLE_NAME . '.' . SessionTable::COLUMN_FINGERPRINT)
+            ->where(SessionTable::TABLE_NAME . '.' . SessionTable::COLUMN_ID, $sessionID)
+            ->fetch();
+
+        if(!$AccountEntry) {
+            $AccountEntry = AccountEntry::query()
+                ->where(AccountTable::COLUMN_FINGERPRINT, GuestAccount::PGP_FINGERPRINT)
+                ->fetch();
+
+            if(!$AccountEntry) {
+                $AccountEntry = AccountEntry::create($SessionRequest, GuestAccount::PGP_PUBLIC_KEY);
+            }
+
+            $SessionEntry = SessionEntry::table()->fetch(SessionTable::COLUMN_ID, $sessionID);
+            if($SessionEntry) {
+                $SessionEntry->update($SessionRequest, GuestAccount::PGP_FINGERPRINT);
+            } else {
+                $SessionEntry = SessionEntry::create($SessionRequest, GuestAccount::PGP_FINGERPRINT);
+            }
+        }
+        self::$SessionCache[$sessionID] = $AccountEntry;
+
+        return $AccountEntry;
+    }
+
     public static function unserialize($serialized) {
         $Inst = new AccountEntry();
         foreach(json_decode($serialized, true) as $name => $value)
             $Inst->$name = $value;
         return $Inst;
-    }
-
-    static function loadFromSession(ISessionRequest $SessionRequest) {
-        if(!$SessionRequest->hasSessionCookie())
-            throw new \InvalidArgumentException("No Session Cookie");
-
-        $started = $SessionRequest->isStarted();
-        if(!$started)
-            $SessionRequest->startSession();
-        $Session = $SessionRequest->getSession();
-
-        /** @var AccountEntry $AccountEntry */
-        $AccountEntry = unserialize($Session[AccountEntry::SESSION_KEY]);
-        if(!$AccountEntry) {
-            $SessionRequest->destroySession();
-            throw new \InvalidArgumentException("Not logged in");
-        }
-        if(!$started)
-            $SessionRequest->endSession();
-
-        return $AccountEntry;
-    }
-
-    static function hasActiveSession(ISessionRequest $SessionRequest) {
-        if(!$SessionRequest->hasSessionCookie())
-            return false;
-
-        $started = $SessionRequest->isStarted();
-        if(!$started)
-            $SessionRequest->startSession();
-        $Session = $SessionRequest->getSession();
-
-        $active = !empty($Session[AccountEntry::SESSION_KEY]);
-        if(!$started)
-            $SessionRequest->endSession();
-        return $active;
     }
 
     static function create(IRequest $Request, $publicKeyString, $inviteEmail=null, $inviteFingerprint=null) {
@@ -401,7 +416,9 @@ class AccountEntry extends AbstractGrantEntry implements IBuildable, IKeyMap, IS
      * @return AccountEntry
      */
     static function get($fingerprint, $compare = '=?') {
-        return self::query()->fetchOne(AccountTable::COLUMN_FINGERPRINT, $fingerprint, $compare);
+        return self::query()
+            ->where(AccountTable::COLUMN_FINGERPRINT, $fingerprint, $compare)
+            ->fetch();
     }
 
     static function search($search) {
@@ -419,7 +436,7 @@ class AccountEntry extends AbstractGrantEntry implements IBuildable, IKeyMap, IS
         $Select =self::table()
             ->select(AccountTable::TABLE_NAME . '.' . AccountTable::COLUMN_FINGERPRINT)
             ->select(AccountTable::TABLE_NAME . '.' . AccountTable::COLUMN_NAME)
-//            ->select(AccountTable::TABLE_NAME . '.' . AccountTable::COLUMN_EMAIL)
+            ->select(AccountTable::TABLE_NAME . '.' . AccountTable::COLUMN_EMAIL)
             ->select(AccountTable::TABLE_NAME . '.' . AccountTable::COLUMN_CREATED)
             ->select(AccountTable::TABLE_NAME . '.' . AccountTable::COLUMN_INVITE_FINGERPRINT)
 
@@ -452,3 +469,4 @@ class AccountEntry extends AbstractGrantEntry implements IBuildable, IKeyMap, IS
         $Schema->writeSchema($DBWriter);
     }
 }
+

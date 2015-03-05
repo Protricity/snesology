@@ -38,7 +38,10 @@ use CPath\Route\RouteBuilder;
 use CPath\UnitTest\ITestable;
 use CPath\UnitTest\IUnitTestRequest;
 use Site\Account\DB\AccountEntry;
+use Site\Account\Guest\GuestAccount;
+use Site\Account\Guest\TestAccount;
 use Site\Account\Register;
+use Site\Account\Session\DB\SessionEntry;
 use Site\Config;
 use Site\Path\HTML\HTMLPathTip;
 use Site\Relay\HTML\HTMLRelayChat;
@@ -357,13 +360,9 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable, ITestable
      * Note: Use doctag 'test' with '--disable 1' to have this ITestable class skipped during a build
      */
     static function handleStaticUnitTest(IUnitTestRequest $Test) {
-        $Session = &$Test->getSession();
-        $TestAccount = new AccountEntry('78E02897', Register::TEST_PUBLIC_KEY);
-        $Session[AccountEntry::SESSION_KEY] = serialize($TestAccount);
-
+        SessionEntry::create($Test, TestAccount::PGP_FINGERPRINT);
 
         SongEntry::table()->delete(SongTable::COLUMN_TITLE, 'test-review-title');
-
 
         $CreateSong = new CreateSong();
 
@@ -376,9 +375,10 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable, ITestable
         $Test->setRequestParameter(CreateSong::PARAM_SONG_DESCRIPTION, 'test-review-description');
         $Test->setRequestParameter(CreateSong::PARAM_SONG_GENRE, array('test-review-genre'));
         $Test->setRequestParameter(CreateSong::PARAM_SONG_SYSTEM, array('test-review-system'));
-        $CreateSong->execute($Test);
+        $Response = $CreateSong->execute($Test);
 
-        $id = $CreateSong->getNewSongID();
+        $id = $Response->getData('id');
+        $Test->assert(is_string($id));
 
 
         $ReviewSong = new ReviewSong($id);
@@ -400,7 +400,7 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable, ITestable
         $Test->setRequestParameter(ReviewSong::PARAM_SONG_REVIEW, 'test-review-content2');
         $Test->setRequestParameter(ReviewSong::PARAM_SONG_REVIEW_TITLE, 'test-review-title2');
 
-        ReviewEntry::delete($Test, $id, $TestAccount->getFingerprint());
+        ReviewEntry::delete($Test, $id, TestAccount::PGP_FINGERPRINT);
         SongEntry::delete($Test, $id);
     }
 }

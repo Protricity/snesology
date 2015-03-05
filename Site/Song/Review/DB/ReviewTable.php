@@ -32,6 +32,7 @@ class ReviewTable extends AbstractBase {
 
 	 * @column VARCHAR(64) NOT NULL
 	 * @index --name index_song_tag
+	 * @unique --name unique_song_review
 	 */
 	const COLUMN_SOURCE_ID = 'source_id';
 	/**
@@ -75,16 +76,16 @@ class ReviewTable extends AbstractBase {
 	const INDEX_SONG_TAG = 'index_song_tag';
 	/**
 
+	 * @index UNIQUE
+	 * @columns source_id, account_fingerprint
+	 */
+	const UNIQUE_SONG_REVIEW = 'unique_song_review';
+	/**
+
 	 * @index 
 	 * @columns source_type
 	 */
 	const INDEX_TAG_SOURCE = 'index_tag_source';
-	/**
-
-	 * @index UNIQUE
-	 * @columns account_fingerprint
-	 */
-	const UNIQUE_SONG_REVIEW = 'unique_song_review';
 	/**
 
 	 * @index 

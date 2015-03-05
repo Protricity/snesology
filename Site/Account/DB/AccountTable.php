@@ -18,10 +18,10 @@ use CPath\Data\Schema\TableSchema;
 class AccountTable extends AbstractBase {
 	const TABLE_NAME = 'account';
 	const FETCH_CLASS = 'Site\\Account\\DB\\AccountEntry';
-	const SELECT_COLUMNS = 'fingerprint, email, name, created, inviter_fingerprint';
+	const SELECT_COLUMNS = 'fingerprint, email, name, created, invite_fingerprint';
 	const UPDATE_COLUMNS = 'public_key, challenge, answer';
 	const INSERT_COLUMNS = 'email, name, public_key, challenge, answer, created';
-	const SEARCH_COLUMNS = 'fingerprint, email, name, inviter_fingerprint';
+	const SEARCH_COLUMNS = 'fingerprint, email, name, invite_fingerprint';
 	const PRIMARY_COLUMN = 'fingerprint';
 	/**
 

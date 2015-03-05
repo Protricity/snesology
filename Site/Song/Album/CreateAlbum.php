@@ -34,7 +34,10 @@ use CPath\Route\RouteBuilder;
 use CPath\UnitTest\ITestable;
 use CPath\UnitTest\IUnitTestRequest;
 use Site\Account\DB\AccountEntry;
+use Site\Account\Guest\GuestAccount;
+use Site\Account\Guest\TestAccount;
 use Site\Account\Register;
+use Site\Account\Session\DB\SessionEntry;
 use Site\Config;
 use Site\Path\HTML\HTMLPathTip;
 use Site\Relay\HTML\HTMLRelayChat;
@@ -70,26 +73,20 @@ class CreateAlbum implements IExecutable, IBuildable, IRoutable, ITestable
     const PARAM_ALBUM_SOURCE_URL = 'album-source-url';
     const PARAM_ALBUM_DOWNLOAD_URL = 'album-download-url';
 
-    private $newAlbumID;
-
-    public function getNewAlbumID() {
-        return $this->newAlbumID;
-    }
-
     /**
 	 * Execute a command and return a response. Does not render
 	 * @param IRequest $Request
 	 * @throws \Exception
-	 * @return IResponse the execution response
+	 * @return Response the execution response
 	 */
 	function execute(IRequest $Request) {
 		$SessionRequest = $Request;
 		if (!$SessionRequest instanceof ISessionRequest)
 			throw new \Exception("Session required");
 
-        if(!AccountEntry::hasActiveSession($SessionRequest))
-            return new Response("Login required for editing");
         $Account = AccountEntry::loadFromSession($SessionRequest);
+        if($Account->getName() === GuestAccount::PGP_NAME)
+            return new Response("Login required for editing");
 
         $systemList = SystemEntry::getAll();
         $genreList = GenreEntry::getAll();
@@ -251,11 +248,11 @@ class CreateAlbum implements IExecutable, IBuildable, IRoutable, ITestable
 
         $Album->addTag($Request, TagEntry::TAG_ENTRY_ACCOUNT, $Account->getFingerprint());
 
-        $this->newAlbumID = $Album->getID();
-
         RequestEntry::createFromRequest($Request, $Account);
 
-        return new RedirectResponse(ManageAlbum::getRequestURL($Album->getID()), "Album created successfully. Backspacing...", 5);
+        $Response = new RedirectResponse(ManageAlbum::getRequestURL($Album->getID()), "Album created successfully. Backspacing...", 5);
+        $Response->setData('id', $Album->getID());
+        return $Response;
 	}
 
 	// Static
@@ -301,9 +298,7 @@ class CreateAlbum implements IExecutable, IBuildable, IRoutable, ITestable
      * Note: Use doctag 'test' with '--disable 1' to have this ITestable class skipped during a build
      */
     static function handleStaticUnitTest(IUnitTestRequest $Test) {
-        $Session = &$Test->getSession();
-        $TestAccount = new AccountEntry('78E02897', Register::TEST_PUBLIC_KEY);
-        $Session[AccountEntry::SESSION_KEY] = serialize($TestAccount);
+        SessionEntry::create($Test, TestAccount::PGP_FINGERPRINT);
 
         AlbumEntry::table()->delete(AlbumTable::COLUMN_TITLE, 'test-album-title');
 
@@ -318,9 +313,9 @@ class CreateAlbum implements IExecutable, IBuildable, IRoutable, ITestable
         $Test->setRequestParameter(self::PARAM_ALBUM_DESCRIPTION, 'test-album-description');
         $Test->setRequestParameter(self::PARAM_ALBUM_GENRE, array('test-album-genre'));
         $Test->setRequestParameter(self::PARAM_ALBUM_SYSTEM, array('test-album-system'));
-        $CreateAlbum->execute($Test);
+        $Response = $CreateAlbum->execute($Test);
 
-        $id = $CreateAlbum->getNewAlbumID();
+        $id = $Response->getData('id');
 
         AlbumEntry::delete($Test, $id);
 
