@@ -376,6 +376,7 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable, ITestable
         $Test->setRequestParameter(CreateSong::PARAM_SONG_GENRE, array('test-review-genre'));
         $Test->setRequestParameter(CreateSong::PARAM_SONG_SYSTEM, array('test-review-system'));
         $Response = $CreateSong->execute($Test);
+        echo $Response->getMessage(), "\n";
 
         $id = $Response->getData('id');
         $Test->assert(is_string($id));
@@ -391,6 +392,7 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable, ITestable
         $Test->setRequestParameter(ReviewSong::PARAM_SONG_REVIEW_TITLE, 'test-review-title');
 
         $Response = $ReviewSong->execute($Test);
+        echo $Response->getMessage(), "\n";
         $id = $Response->getData('id');
 
         $Test->clearRequestParameters();
