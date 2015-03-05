@@ -21,8 +21,9 @@ use Site\Song\Review\DB\ReviewEntry;
 
 class HTMLRequestHistory extends HTMLPDOQueryTable
 {
-    public function __construct($path = null) {
+    public function __construct($path = null, $count=25) {
         $Query = RequestEntry::query();
+        $Query->limit($count);
         if($path)
             $Query->where(RequestTable::COLUMN_PATH, $path);
         parent::__construct($Query);

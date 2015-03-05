@@ -181,8 +181,8 @@ class SongEntry implements IBuildable, IKeyMap, ISerializable
 	 * @return void
 	 */
 	function mapKeys(IKeyMapper $Map) {
-        $Map->map('song-id', $this->getID(), $this->getTitle());
-        $Map->map('song-title', $this->getTitle(), $this->getID());
+        $Map->map('id', $this->getID(), $this->getTitle());
+        $Map->map('title', $this->getTitle(), $this->getID());
         $Map->map('created', $this->getCreatedTimestamp());
         $Map->map('status', implode(', ', $this->getStatusList()));
         $Map->map('description', $this->getDescription());

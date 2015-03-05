@@ -29,6 +29,8 @@ use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
 use CPath\Route\RouteIndex;
 use CPath\Route\RouteRenderer;
+use Site\Account\AccountHome;
+use Site\Account\DB\AccountEntry;
 use Site\Account\ViewAccount;
 use Site\Config;
 use Site\Path\ManagePath;
@@ -38,8 +40,10 @@ use Site\Relay\PathLog;
 use Site\Render\PopUpBox\HTMLPopUpBox;
 use Site\SiteMap;
 use Site\Song\Artist\ViewArtist;
+use Site\Song\DB\SongEntry;
 use Site\Song\Genre\ViewGenre;
 use Site\Song\ManageSong;
+use Site\Song\Review\DB\ReviewEntry;
 use Site\Song\ReviewSong;
 use Site\Song\System\ViewSystem;
 use Site\Song\ViewSong;
@@ -224,10 +228,15 @@ class CustomHTMLValueRenderer implements IHTMLValueRenderer, IHTMLSupportHeaders
                 echo "<a href='{$href}'>", $arg1 ?: $value, "</a>";
                 return true;
 
-            case 'song':
-            case 'song-id':
+            case 'id':
                 $domain = $this->Request->getDomainPath();
-                $href = $domain . ltrim(ManageSong::getRequestURL($value), '/');
+                switch(true) {
+                    case AccountEntry::ID_PREFIX === $value[0]: $url = ViewAccount::getRequestURL($value); break;
+                    case SongEntry::ID_PREFIX === $value[0]: $url = ManageSong::getRequestURL($value); break;
+                    case ReviewEntry::ID_PREFIX === $value[0]: $url = ReviewSong::getRequestURL($value); break;
+                    default: $url = $value;
+                }
+                $href = $domain . ltrim($url, '/');
                 echo "<a href='{$href}'>", $arg1 ?: $value, "</a>";
                 return true;
 

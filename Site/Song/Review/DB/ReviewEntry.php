@@ -53,6 +53,7 @@ class ReviewEntry implements IBuildable, IKeyMap
     /**
      * @column VARCHAR(64) NOT NULL
      * @index --name index_song_tag
+     * @unique --name unique_song_review
      */
     protected $source_id;
 
@@ -187,7 +188,7 @@ class ReviewEntry implements IBuildable, IKeyMap
      * @return void
      */
     function mapKeys(IKeyMapper $Map) {
-        $Map->map('review-id', $this->getID());
+        $Map->map('id', $this->getID());
         $Map->map('source-id', $this->getSourceID());
         $Map->map('source-type', $this->getSourceType());
         $Map->map('review-account-fingerprint', $this->getAccountFingerprint());
@@ -225,6 +226,7 @@ class ReviewEntry implements IBuildable, IKeyMap
     /**
      * @param $sourceID
      * @param $accountFingerprint
+     * @param string $type
      * @return ReviewEntry
      */
     public static function fetch($sourceID, $accountFingerprint, $type='song') {

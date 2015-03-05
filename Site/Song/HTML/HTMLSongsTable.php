@@ -21,8 +21,8 @@ class HTMLSongsTable extends HTMLPDOQueryTable
             ->limit($count ?: 25);
 
         parent::__construct($Query);
-        $this->addColumn('song-id', 'song');
-        $this->addSearchColumn(SongTable::COLUMN_ID, 'song');
+        $this->addColumn('id');
+        $this->addSearchColumn(SongTable::COLUMN_ID, 'id');
         if(!$short) {
             $this->addColumn('description', 'description');
         }

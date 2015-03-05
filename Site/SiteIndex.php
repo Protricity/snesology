@@ -67,13 +67,13 @@ class SiteIndex implements IExecutable, IBuildable, IRoutable
                 new HTMLElement('legend', 'legend-contribution-history', "Contribution History"),
 
                 new HTMLRequestHistory()
-            ),
-
-            new HTMLElement('fieldset', 'fieldset-songs inline',
-                new HTMLElement('legend', 'legend-songs', "Recent Songs"),
-
-                new HTMLSongsTable(20, true)
             )
+
+//            new HTMLElement('fieldset', 'fieldset-songs inline',
+//                new HTMLElement('legend', 'legend-songs', "Recent Songs"),
+//
+//                new HTMLSongsTable(20, true)
+//            )
 
         );
 
