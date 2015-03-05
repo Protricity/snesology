@@ -22,6 +22,7 @@ use CPath\Render\HTML\Element\HTMLElement;
 use CPath\Render\HTML\Header\HTMLHeaderScript;
 use CPath\Render\HTML\Header\HTMLHeaderStyleSheet;
 use CPath\Render\HTML\Header\HTMLMetaTag;
+use CPath\Render\HTML\IHTMLContainer;
 use CPath\Render\Map\MapRenderer;
 use CPath\Request\Executable\ExecutableRenderer;
 use CPath\Request\Executable\IExecutable;
@@ -38,6 +39,7 @@ use CPath\UnitTest\IUnitTestRequest;
 use Site\Account\DB\AccountEntry;
 use Site\Account\Register;
 use Site\Config;
+use Site\Relay\HTML\HTMLRelayChat;
 use Site\Render\PopUpBox\HTMLPopUpBox;
 use Site\Request\DB\RequestEntry;
 use Site\SiteMap;
@@ -212,6 +214,8 @@ class ManageSong implements IExecutable, IBuildable, IRoutable, ITestable
             $title = array_search($tagName, TagEntry::$TagDefaults) ?: $tagName;
             $SelectRemoveTag->addOption($tagName.':'.$tagValue, "{$title} - {$tagValue}");
         }
+
+        $Form->addContent(new HTMLRelayChat($Request, 'public-manage-song-' . $Song->getID()), IHTMLContainer::KEY_RENDER_CONTENT_AFTER);
 
 		if(!$Request instanceof IFormRequest)
 			return $Form;

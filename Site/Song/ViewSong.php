@@ -11,6 +11,7 @@ use CPath\Build\IBuildable;
 use CPath\Build\IBuildRequest;
 use CPath\Render\HTML\Element\Form\HTMLForm;
 use CPath\Render\HTML\Header\HTMLMetaTag;
+use CPath\Render\HTML\IHTMLContainer;
 use CPath\Render\Map\MapRenderer;
 use CPath\Request\Executable\ExecutableRenderer;
 use CPath\Request\Executable\IExecutable;
@@ -18,6 +19,7 @@ use CPath\Request\IRequest;
 use CPath\Response\IResponse;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
+use Site\Relay\HTML\HTMLRelayChat;
 use Site\SiteMap;
 use Site\Song\DB\SongEntry;
 use Site\Song\Review\HTML\HTMLSongReviewsTable;
@@ -60,6 +62,8 @@ class ViewSong implements IExecutable, IBuildable, IRoutable
 			"<br/>",
             $ReviewTable
 		);
+
+        $Form->addContent(new HTMLRelayChat($Request, 'public-song-' . $Song->getID()), IHTMLContainer::KEY_RENDER_CONTENT_AFTER);
 
 		return $Form;
 	}

@@ -22,6 +22,7 @@ use CPath\Render\HTML\Element\HTMLElement;
 use CPath\Render\HTML\Header\HTMLHeaderScript;
 use CPath\Render\HTML\Header\HTMLHeaderStyleSheet;
 use CPath\Render\HTML\Header\HTMLMetaTag;
+use CPath\Render\HTML\IHTMLContainer;
 use CPath\Render\Map\MapRenderer;
 use CPath\Request\Executable\ExecutableRenderer;
 use CPath\Request\Executable\IExecutable;
@@ -40,6 +41,7 @@ use Site\Account\DB\AccountEntry;
 use Site\Account\Register;
 use Site\Config;
 use Site\Path\HTML\HTMLPathTip;
+use Site\Relay\HTML\HTMLRelayChat;
 use Site\Render\PopUpBox\HTMLPopUpBox;
 use Site\Request\DB\RequestEntry;
 use Site\SiteMap;
@@ -218,8 +220,6 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable, ITestable
                 new HTMLButton(self::PARAM_SUBMIT, 'Remove Tag', 'remove-review-tag')
             ),
 
-            "<br/><br/>",
-
             new HTMLElement('fieldset', 'fieldset-view-song-info inline',
                 new HTMLElement('legend', 'legend-view-song-info', "Song Information"),
 
@@ -236,6 +236,8 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable, ITestable
             $title = array_search($name, ReviewTagEntry::$TagDefaults) ?: $name;
             $SelectRemoveTag->addOption($name.';'.$value, "{$title} - {$value}");
         }
+
+        $Form->addContent(new HTMLRelayChat($Request, 'public-chat-song-reviews'), IHTMLContainer::KEY_RENDER_CONTENT_AFTER);
 
 		if(!$Request instanceof IFormRequest)
 			return $Form;
