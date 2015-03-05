@@ -341,6 +341,7 @@ class ManageSong implements IExecutable, IBuildable, IRoutable, ITestable
         $Test->setRequestParameter(CreateSong::PARAM_SONG_GENRE, array('test-song-genre'));
         $Test->setRequestParameter(CreateSong::PARAM_SONG_SYSTEM, array('test-song-system'));
         $Response = $CreateSong->execute($Test);
+        echo $Response->getMessage(), "\n";
 
         $id = $Response->getData('id');
 

@@ -314,6 +314,7 @@ class CreateAlbum implements IExecutable, IBuildable, IRoutable, ITestable
         $Test->setRequestParameter(self::PARAM_ALBUM_GENRE, array('test-album-genre'));
         $Test->setRequestParameter(self::PARAM_ALBUM_SYSTEM, array('test-album-system'));
         $Response = $CreateAlbum->execute($Test);
+        echo $Response->getMessage(), "\n";
 
         $id = $Response->getData('id');
 
