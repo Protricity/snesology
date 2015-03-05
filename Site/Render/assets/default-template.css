@@ -16,8 +16,7 @@ body .popup.description {
     background-image: url("img/popup_description.gif");
     width: 14px;
     height: 14px;
-    float: right;
-    margin-left: 0.5em;
+    float: left;
 }
 
 

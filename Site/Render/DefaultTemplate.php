@@ -40,7 +40,9 @@ use Site\SiteMap;
 use Site\Song\Artist\ViewArtist;
 use Site\Song\Genre\ViewGenre;
 use Site\Song\ManageSong;
+use Site\Song\ReviewSong;
 use Site\Song\System\ViewSystem;
+use Site\Song\ViewSong;
 
 class DefaultTemplate extends HTMLContainer implements IRoutable, IBuildable {
 
@@ -229,10 +231,17 @@ class CustomHTMLValueRenderer implements IHTMLValueRenderer, IHTMLSupportHeaders
                 echo "<a href='{$href}'>", $arg1 ?: $value, "</a>";
                 return true;
 
+//            case 'review':
+//            case 'review-id':
+//                $domain = $this->Request->getDomainPath();
+//                $href = $domain . ltrim(ReviewSong::getRequestURL($value), '/');
+//                echo "<a href='{$href}'>", $arg1 ?: $value, "</a>";
+//                return true;
+
             case 'song-title':
                 if($arg1) {
                     $domain = $this->Request->getDomainPath();
-                    $href = $domain . ltrim(ManageSong::getRequestURL($arg1), '/');
+                    $href = $domain . ltrim(ViewSong::getRequestURL($arg1), '/');
                     echo "<a href='{$href}'>", $value, "</a>";
                 } else {
                     echo $value;

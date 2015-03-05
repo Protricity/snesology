@@ -11,6 +11,7 @@ use CPath\Build\IBuildable;
 use CPath\Build\IBuildRequest;
 use CPath\Render\HTML\Element\Form\HTMLForm;
 use CPath\Render\HTML\Element\HTMLElement;
+use CPath\Render\HTML\Element\Table\HTMLPDOQueryTable;
 use CPath\Render\HTML\Header\HTMLMetaTag;
 use CPath\Request\Executable\IExecutable;
 use CPath\Request\IRequest;
@@ -18,6 +19,8 @@ use CPath\Response\IResponse;
 use CPath\Route\IRoutable;
 use CPath\Route\RouteBuilder;
 use Site\Request\HTML\HTMLRequestHistory;
+use Site\Song\DB\SongEntry;
+use Site\Song\DB\SongTable;
 use Site\Song\HTML\HTMLSongsTable;
 
 class SiteIndex implements IExecutable, IBuildable, IRoutable
@@ -33,6 +36,15 @@ class SiteIndex implements IExecutable, IBuildable, IRoutable
 	 * @return IResponse the execution response
 	 */
 	function execute(IRequest $Request) {
+        $Query = SongEntry::query()
+//            ->where(SongTable::COLUMN_STATUS, SongEntry::STATUS_PUBLISHED, '&?')
+            ->orderBy(SongTable::COLUMN_CREATED, 'DESC');
+
+        $SongsTable = new HTMLPDOQueryTable($Query);
+
+//        $SongsTable->addColumn('title');
+//        $SongsTable->addColumn(SongTable::COLUMN_CREATED);
+
 		$Form = new HTMLForm(self::FORM_METHOD, $Request->getPath(), self::FORM_NAME,
 			new HTMLMetaTag(HTMLMetaTag::META_TITLE, self::TITLE),
 //			new HTMLHeaderScript(__DIR__ . '\assets\form-login.js'),
@@ -45,6 +57,12 @@ class SiteIndex implements IExecutable, IBuildable, IRoutable
 			),
 
             "<br/>",
+            new HTMLElement('fieldset', 'fieldset-published-songs inline',
+                new HTMLElement('legend', 'legend-published-songs', "Recent Published Songs"),
+
+                $SongsTable
+            ),
+
             new HTMLElement('fieldset', 'fieldset-contribution-history inline',
                 new HTMLElement('legend', 'legend-contribution-history', "Contribution History"),
 

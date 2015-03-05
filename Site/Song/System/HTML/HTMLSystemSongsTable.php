@@ -21,12 +21,12 @@ class HTMLSystemSongsTable extends HTMLPDOQueryTable
         parent::__construct($Query);
         $this->addColumn('song-id');
         $this->addColumn('song-title', 'title');
-        $this->addColumn('song-description', 'description');
-        $this->addColumn('song-artist', 'artist');
-        $this->addColumn('song-system', 'system');
+        $this->addColumn('description', 'description');
+        $this->addColumn('artist', 'artist');
+        $this->addColumn('system', 'system');
         $this->addColumn('song-genre', 'genre');
-        $this->addColumn('song-status', 'status');
-        $this->addColumn('song-created', 'created');
+        $this->addColumn('status', 'status');
+        $this->addColumn('created', 'created');
 
         $this->addSearchColumn(SongTable::COLUMN_ID, 'song-id');
         $this->addSearchColumn(SongTable::COLUMN_TITLE, 'title');

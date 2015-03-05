@@ -12,7 +12,7 @@
 .popup.info,
 .popup.description,
 .popup.important {
-    
+    margin: 0 0.5em;
 }
 
 .popup.important {
@@ -33,7 +33,6 @@
 
     position:absolute;
     margin-left: -20em;
-    /* right: 2em; */
 
     padding:14px 20px;
     line-height:16px;
@@ -41,8 +40,6 @@
     border-radius:8px;
     box-shadow: 5px 5px 8px #777;
     min-width: 15em;
-    /* height: 1em; */
-    /* height: 5em; */
 }
 
 .popup .content:hover,

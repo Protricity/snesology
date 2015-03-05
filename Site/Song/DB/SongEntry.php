@@ -118,7 +118,7 @@ class SongEntry implements IBuildable, IKeyMap, ISerializable
 
     public function getStatusList() {
         $statusList = array();
-        $statusFlags = $this->getStatusFlags() ?: 1;
+        $statusFlags = $this->getStatusFlags() ?: 0;
         foreach(self::$StatusOptions as $name => $flag) {
             if ($statusFlags & $flag) {
                 $statusList[] = $name;
@@ -183,12 +183,12 @@ class SongEntry implements IBuildable, IKeyMap, ISerializable
 	function mapKeys(IKeyMapper $Map) {
         $Map->map('song-id', $this->getID(), $this->getTitle());
         $Map->map('song-title', $this->getTitle(), $this->getID());
-        $Map->map('song-created', $this->getCreatedTimestamp());
-        $Map->map('song-status', implode(', ', $this->getStatusList()));
-        $Map->map('song-description', $this->getDescription());
+        $Map->map('created', $this->getCreatedTimestamp());
+        $Map->map('status', implode(', ', $this->getStatusList()));
+        $Map->map('description', $this->getDescription());
         foreach($this->getTagList() as $tag) {
             list($key, $value) = $tag;
-            $Map->map('song-' . $key, $value);
+            $Map->map($key, $value);
         }
 	}
 

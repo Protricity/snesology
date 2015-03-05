@@ -10,6 +10,7 @@ namespace Site\Song;
 use CPath\Build\IBuildable;
 use CPath\Build\IBuildRequest;
 use CPath\Render\HTML\Element\Form\HTMLForm;
+use CPath\Render\HTML\Element\HTMLElement;
 use CPath\Render\HTML\Header\HTMLMetaTag;
 use CPath\Render\HTML\IHTMLContainer;
 use CPath\Render\Map\MapRenderer;
@@ -57,10 +58,14 @@ class ViewSong implements IExecutable, IBuildable, IRoutable
 
         $Form = new HTMLForm(self::FORM_METHOD, $Request->getPath(), self::FORM_NAME,
 			new HTMLMetaTag(HTMLMetaTag::META_TITLE, self::TITLE),
-            
-            new MapRenderer($Song),
-			"<br/>",
-            $ReviewTable
+
+            new HTMLElement('fieldset', 'legend-song-info inline',
+                new HTMLElement('legend', 'legend-song-info', self::TITLE),
+
+                new MapRenderer($Song),
+			    "<br/>",
+                $ReviewTable
+            )
 		);
 
         $Form->addContent(new HTMLRelayChat($Request, 'public-song-' . $Song->getID()), IHTMLContainer::KEY_RENDER_CONTENT_AFTER);

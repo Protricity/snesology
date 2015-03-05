@@ -24,19 +24,17 @@ class HTMLSongsTable extends HTMLPDOQueryTable
         $this->addColumn('song-id', 'song');
         $this->addSearchColumn(SongTable::COLUMN_ID, 'song');
         if(!$short) {
-            $this->addColumn('song-description', 'description');
+            $this->addColumn('description', 'description');
         }
-        $this->addColumn('song-artist', 'artist');
-//        $this->addColumn('song-tags', 'tags');
+        $this->addColumn('artist', 'artist');
+//        $this->addColumn('tags', 'tags');
         if(!$short) {
-            $this->addColumn('song-system', 'system');
-            $this->addColumn('song-genre', 'genre');
-            $this->addColumn('song-status', 'status');
+            $this->addColumn('status', 'status');
 
             $this->addSearchColumn(SongTable::COLUMN_STATUS, 'status');
         }
 
-        $this->addColumn('song-created', 'created');
+        $this->addColumn('created', 'created');
         $this->addSortColumn(SongTable::COLUMN_CREATED, 'created');
     }
 }
