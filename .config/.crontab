@@ -1,0 +1,2 @@
+@reboot /bin/php /usr/share/nginx/html/.script/socketServer.php >> /var/log/relay-server.log
+00,25 * * * * /bin/php /usr/share/nginx/html/.script/socketServer.php >> /var/log/relay-server.log

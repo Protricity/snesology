@@ -92,7 +92,7 @@ class Invite implements IExecutable, IBuildable, IRoutable
 
         $keyID = strtoupper($fps[0]);
 
-        $Account = AccountEntry::get('%' . $keyID, " LIKE ?");
+        $Account = AccountEntry::fetch('%' . $keyID, " LIKE ?");
         $inviteEmail = trim($Account->verify($Request, $invite));
 
         $SessionRequest->startSession();

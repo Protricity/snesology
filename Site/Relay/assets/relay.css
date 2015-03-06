@@ -1,12 +1,33 @@
 
-form.form-relay-log .log-container {
-    height: 160pt;
-    /* width: 500pt; */
+fieldset.fieldset-log .log-container {
+    height: 20em;
+    width: 46em;
     overflow: auto;
+    display: inline-block;
 }
 
-form.form-relay-log input[name=log] {
-    /* width: 448pt; */
+fieldset.fieldset-log .user-list-container {
+    display: inline-block;
+    overflow: auto;
+    vertical-align: top;
+    padding-left: 0.5em;
+}
+
+fieldset.fieldset-log.small .log-container {
+    height: 14em;
+    width: 26em;
+}
+
+fieldset.fieldset-log input[name=log] {
+    width:40em;
     margin-top: 5pt;
 }
 
+fieldset.fieldset-log.small input[name=log] {
+    width:20em;
+}
+
+fieldset.fieldset-log .relay-account a {
+    text-decoration: none;
+    
+}

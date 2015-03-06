@@ -39,6 +39,7 @@ use Site\Account\Guest\GuestAccount;
 use Site\Account\Guest\TestAccount;
 use Site\Account\Session\AccountSession;
 use Site\Account\Session\DB\SessionEntry;
+use Site\Account\ViewAccount;
 use Site\Relay\DB\RelayLogEntry;
 use Site\Relay\DB\RelayLogTable;
 use Site\Relay\Socket\SocketRequest;
@@ -55,6 +56,7 @@ class PathLog implements IExecutable, IBuildable, IRoutable, ITestable
     const PARAM_LOG = 'log';
     const PARAM_PATH = 'path';
     const LOG_CONTAINER = 'log-container';
+    const USER_LIST_CONTAINER = 'user-list-container';
 
     static private $Channels = array();
 
@@ -108,29 +110,43 @@ class PathLog implements IExecutable, IBuildable, IRoutable, ITestable
 
         $path = $this->path;
 
+        $users = array();
+
 		$Form = new HTMLForm(self::FORM_METHOD, self::getRequestURL($path), self::FORM_NAME, self::FORM_CLASS,
 //			new HTMLMetaTag(HTMLMetaTag::META_TITLE, self::TITLE),
 			new HTMLHeaderScript(__DIR__ . '/assets/relay.js'),
 			new HTMLHeaderStyleSheet(__DIR__ . '/assets/relay.css'),
 
-			$FieldSetLog = new HTMLElement('fieldset', 'fieldset-log inline',
+			$FieldSetLog = new HTMLElement('fieldset', 'fieldset-log inline small',
                 new HTMLElement('legend', 'legend-relay-log', "Relay Chat Room: " . $path),
 
                 "<div class='" . self::LOG_CONTAINER . "'>",
-                function() use ($path) {
+                function() use ($path, &$users) {
                     if($path) {
                         $Query = RelayLogEntry::query()
                             ->where(RelayLogTable::COLUMN_PATH, $path);
 
                         while($LogEntry = $Query->fetch()) {
                             /** @var RelayLogEntry $LogEntry */
+                            $users[$LogEntry->getAccountFingerprint()] = $LogEntry->getAccountName() ?: substr($LogEntry->getAccountFingerprint(), -8);
                             echo RI::ni(), '<div class="relay-log">',
-                                '<span class="relay-account">',
-                                    $LogEntry->getAccountName() ?: $LogEntry->getAccountFingerprint(),
-                                "</span> ",
+                                RI::ni(1), '<span class="relay-account">',
+                                    RI::ni(2), '<a href="', ViewAccount::getRequestURL($LogEntry->getAccountFingerprint()) ,'">',
+                                        $LogEntry->getAccountName() ?: $LogEntry->getAccountFingerprint(),
+                                    "</a>",
+                                RI::ni(1), "</span> ",
                                 $LogEntry->getLog(),
                             '</div>';
                         }
+                    }
+                },
+                "</div>",
+                "<div class='" . self::USER_LIST_CONTAINER . "'>",
+                function() use ($path, &$users) {
+                    foreach($users as $fingerprint => $name) {
+                        echo RI::ni(), '<div class="relay-account">',
+                            '<a href="', ViewAccount::getRequestURL($fingerprint) ,'">', $name, "</a>",
+                        RI::ni(), "</div>";
                     }
                 },
                 "</div>"
@@ -148,6 +164,7 @@ class PathLog implements IExecutable, IBuildable, IRoutable, ITestable
         }
 
         $FieldSetLog->addAll(
+            "<br/>",
             new HTMLInputField(self::PARAM_LOG,
 //                    new Attributes('placeholder', 'i.e. "sup giez"'),
                 new RequiredValidation()

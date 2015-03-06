@@ -108,7 +108,7 @@ Once the <b>challenge answer</b> is entered, you may log in';
 		$fingerprint = $Request[self::PARAM_FINGERPRINT];
 
 		try {
-			$Account = AccountEntry::fetch($fingerprint);
+			$Account = AccountEntry::get($fingerprint);
 		} catch (\Exception $ex) {
 			throw new ValidationException($FormSelectFingerprint, $ex->getMessage(), $ex);
 		}
