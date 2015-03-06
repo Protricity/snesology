@@ -44,6 +44,7 @@ use Site\Account\Register;
 use Site\Account\Session\DB\SessionEntry;
 use Site\Config;
 use Site\Path\HTML\HTMLPathTip;
+use Site\PGP\Exceptions\PGPKeyAlreadyImported;
 use Site\Relay\HTML\HTMLRelayChat;
 use Site\Render\PopUpBox\HTMLPopUpBox;
 use Site\Request\DB\RequestEntry;
@@ -360,6 +361,9 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable, ITestable
      * Note: Use doctag 'test' with '--disable 1' to have this ITestable class skipped during a build
      */
     static function handleStaticUnitTest(IUnitTestRequest $Test) {
+        try { AccountEntry::create($Test, TestAccount::PGP_PUBLIC_KEY); }
+        catch (PGPKeyAlreadyImported $ex) {}
+
         SessionEntry::create($Test, TestAccount::PGP_FINGERPRINT);
 
         SongEntry::table()->delete(SongTable::COLUMN_TITLE, 'test-review-title');

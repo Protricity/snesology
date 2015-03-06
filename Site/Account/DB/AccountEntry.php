@@ -415,10 +415,20 @@ class AccountEntry extends AbstractGrantEntry implements IBuildable, IKeyMap, IS
      * @param string $compare
      * @return AccountEntry
      */
-    static function get($fingerprint, $compare = '=?') {
+    static function fetch($fingerprint, $compare = '=?') {
         return self::query()
             ->where(AccountTable::COLUMN_FINGERPRINT, $fingerprint, $compare)
             ->fetch();
+    }
+
+    /**
+     * @param $fingerprint
+     * @return AccountEntry
+     */
+    static function get($fingerprint) {
+        return self::query()
+            ->where(AccountTable::COLUMN_FINGERPRINT, $fingerprint)
+            ->fetchOne();
     }
 
     static function search($search) {
