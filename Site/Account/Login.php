@@ -34,7 +34,9 @@ use CPath\Route\RouteBuilder;
 use CPath\UnitTest\ITestable;
 use CPath\UnitTest\IUnitTestRequest;
 use Site\Account\DB\AccountEntry;
+use Site\Account\Guest\TestAccount;
 use Site\Path\HTML\HTMLPathTip;
+use Site\PGP\Exceptions\PGPKeyAlreadyImported;
 use Site\Relay\HTML\HTMLRelayChat;
 use Site\SiteMap;
 
@@ -215,6 +217,12 @@ Once the <b>challenge answer</b> is entered, you may log in';
      */
     static function handleStaticUnitTest(IUnitTestRequest $Test) {
 
+        try {
+            AccountEntry::create($Test, TestAccount::PGP_PUBLIC_KEY);
+        }
+        catch (PGPKeyAlreadyImported $ex) {
+
+        }
 //        $Login = new Login();
 //
 //        $Test->setRequestParameter(self::PARAM_FINGERPRINT, Register::TEST_FINGERPRINT);

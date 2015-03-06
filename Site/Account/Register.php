@@ -37,6 +37,7 @@ use CPath\UnitTest\ITestable;
 use CPath\UnitTest\IUnitTestRequest;
 use Site\Account\DB\AccountEntry;
 use Site\Account\DB\AccountTable;
+use Site\Account\Guest\TestAccount;
 use Site\Config;
 use Site\Path\HTML\HTMLPathTip;
 use Site\PGP\Commands\PGPDeletePublicKeyCommand;
@@ -336,6 +337,7 @@ wC4LtwPVHIpRsVpM3/4Z7eakculsOi5+J/wz93xr
      * Note: Use doctag 'test' with '--disable 1' to have this ITestable class skipped during a build
      */
     static function handleStaticUnitTest(IUnitTestRequest $Test) {
+
         $Register = new Register();
 
         $OldTestAccount = AccountEntry::table()

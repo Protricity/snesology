@@ -40,6 +40,7 @@ use Site\Account\Register;
 use Site\Account\Session\DB\SessionEntry;
 use Site\Config;
 use Site\Path\HTML\HTMLPathTip;
+use Site\PGP\Exceptions\PGPKeyAlreadyImported;
 use Site\Relay\HTML\HTMLRelayChat;
 use Site\Render\PopUpBox\HTMLPopUpBox;
 use Site\Request\DB\RequestEntry;
@@ -51,6 +52,7 @@ use Site\Song\Genre\DB\GenreEntry;
 use Site\Song\System\DB\SystemEntry;
 use Site\Song\Tag\DB\TagEntry;
 use Site\Song\Tag\DB\TagTable;
+use Wrench\Exception\Exception;
 
 class CreateAlbum implements IExecutable, IBuildable, IRoutable, ITestable
 {
