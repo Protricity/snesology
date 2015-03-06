@@ -201,8 +201,9 @@ class SessionEntry implements IBuildable, IKeyMap
             throw new \InvalidArgumentException("Could not insert " . __CLASS__);
         $Request->log("New Session Entry Inserted: " . $sessionID, $Request::VERBOSE);
 
-        $Session = SessionEntry::get($sessionID);
-        return $Session;
+        $SessionEntry = SessionEntry::get($sessionID);
+        self::$SessionCache[$sessionID] = $SessionEntry;
+        return $SessionEntry;
     }
 
     static function delete($Request, $sessionID) {
