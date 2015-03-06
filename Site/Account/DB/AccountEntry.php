@@ -34,6 +34,7 @@ use Site\PGP\Commands\Exceptions\PGPCommandException;
 use Site\PGP\Commands\PGPDecryptCommand;
 use Site\PGP\Commands\PGPEncryptCommand;
 use Site\PGP\Commands\PGPImportPublicKeyCommand;
+use Site\PGP\Exceptions\PGPKeyAlreadyImported;
 use Site\PGP\PublicKey;
 
 
@@ -141,8 +142,8 @@ class AccountEntry extends AbstractGrantEntry implements IBuildable, IKeyMap, IS
         return $this->created;
     }
 
-    public function getEmail() {
-        return $this->email;
+    public function getEmail($protect=true) {
+        return $protect ? '*****' . strstr($this->email, '@') : $this->email;
     }
 
     public function getName() {
@@ -170,7 +171,7 @@ class AccountEntry extends AbstractGrantEntry implements IBuildable, IKeyMap, IS
         $Map->map('fingerprint', $this->getFingerprint());
         $Map->map('inviter', $this->getInviteFingerprint());
         $Map->map('name', $this->getName());
-//        $Map->map('email', $this->getEmail());
+        $Map->map('email', $this->getEmail());
         $Map->map('created', $this->getCreatedTimestamp());
         $Map->map('public-key', $this->public_key);
     }
@@ -359,7 +360,9 @@ class AccountEntry extends AbstractGrantEntry implements IBuildable, IKeyMap, IS
     static function create(IRequest $Request, $publicKeyString, $inviteEmail=null, $inviteFingerprint=null) {
         $PGPImport = new PGPImportPublicKeyCommand($publicKeyString);
         $PGPImport->setPrimaryKeyRing(AccountEntry::KEYRING_NAME);
-        $PGPImport->execute($Request);
+        try {
+            $PGPImport->execute($Request);
+        } catch (PGPKeyAlreadyImported $ex) {}
 //        $keyID = $PGPImport->getKeyID();
 
         $PublicKey = new PublicKey($publicKeyString);

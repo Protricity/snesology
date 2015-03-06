@@ -204,7 +204,7 @@ Once the <b>challenge answer</b> is entered, you may log in';
 		$RouteBuilder = new RouteBuilder($Request, new SiteMap());
 		$RouteBuilder->writeRoute('ANY ' . self::FORM_PATH, __CLASS__,
 			IRequest::NAVIGATION_ROUTE
-			| IRequest::MATCH_NO_SESSION
+			| IRequest::NAVIGATION_NO_LOGIN
 			, "Login");
 	}
 

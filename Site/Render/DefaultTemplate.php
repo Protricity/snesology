@@ -31,6 +31,7 @@ use CPath\Route\RouteIndex;
 use CPath\Route\RouteRenderer;
 use Site\Account\AccountHome;
 use Site\Account\DB\AccountEntry;
+use Site\Account\Guest\GuestAccount;
 use Site\Account\ViewAccount;
 use Site\Config;
 use Site\Path\ManagePath;
@@ -136,9 +137,13 @@ class DefaultTemplate extends HTMLContainer implements IRoutable, IBuildable {
 			if(!$Object)
 				$Object = new RouteIndex($Request, $RouteRenderer);
 
+            $Account = AccountEntry::loadFromSession($Request);
+
 //			$NavBarTitle = new HTMLElement('h3', 'navbar-title');
 //			$Template->mNavBar->
-			$Template->mNavBar->addContent(new HTMLRouteNavigator($RouteRenderer));
+            $Navigator = new HTMLRouteNavigator($RouteRenderer);
+            $Navigator->addClass($Account->getName() === GuestAccount::PGP_NAME ? IRequest::NAVIGATION_NO_LOGIN_CLASS : IRequest::NAVIGATION_LOGIN_ONLY_CLASS);
+			$Template->mNavBar->addContent($Navigator);
 		}
 
 		if ($Object instanceof IResponseHeaders) {
@@ -225,6 +230,7 @@ class CustomHTMLValueRenderer implements IHTMLValueRenderer, IHTMLSupportHeaders
             case 'inviter':
             case 'fingerprint':
                 $domain = $this->Request->getDomainPath();
+                $arg1 ?: $arg1 = '..' . substr($value, -8);
                 $href = $domain . ltrim(ViewAccount::getRequestURL($value), '/');
                 echo "<a href='{$href}'>", $arg1 ?: $value, "</a>";
                 return true;

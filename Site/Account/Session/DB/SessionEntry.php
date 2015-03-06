@@ -93,7 +93,7 @@ class SessionEntry implements IBuildable, IKeyMap
      * @return void
      */
     function mapKeys(IKeyMapper $Map) {
-        $Map->map('id', $this->getID());
+        $Map->map('session-id', '...' . substr($this->getID(), -8));
         $Map->map('fingerprint', $this->getFingerprint());
         $Map->map('created', $this->getCreatedTimestamp());
         foreach($this->getFields() as $name => $value)
@@ -236,10 +236,11 @@ class SessionEntry implements IBuildable, IKeyMap
      * @return PDOSelectBuilder
      */
     static function query() {
-        $Select =self::table()
+        $Select = self::table()
             ->select(SessionTable::TABLE_NAME . '.' . SessionTable::COLUMN_ID)
             ->select(SessionTable::TABLE_NAME . '.' . SessionTable::COLUMN_FINGERPRINT)
             ->select(SessionTable::TABLE_NAME . '.' . SessionTable::COLUMN_CREATED)
+            ->select(SessionTable::TABLE_NAME . '.' . SessionTable::COLUMN_FIELDS)
             ->select(SessionTable::TABLE_NAME . '.' . SessionTable::COLUMN_STATUS)
 
             ->setFetchMode(SessionTable::FETCH_MODE, SessionTable::FETCH_CLASS);

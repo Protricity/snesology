@@ -74,6 +74,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /** Nav Bar **/
 
+
 .navbar {
     float: left;
     /* max-width: 14em; */
@@ -93,6 +94,11 @@ h1, h2, h3, h4, h5, h6 {
     text-overflow: ellipsis;
     overflow-x: hidden;
     display: inline-block;
+}
+
+.navbar .no-login a.login-only,
+.navbar .login-only a.no-login {
+    display: none;
 }
 
 .navbar a {
