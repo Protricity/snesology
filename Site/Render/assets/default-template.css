@@ -101,9 +101,9 @@ h1, h2, h3, h4, h5, h6 {
 
     color: #000000;
     border-width: 3px;
-    border-color: rgb(255, 140, 0);
+    border-color: rgb(210, 210, 210);
     border-style: outset;
-    box-shadow: inset 1px 1px 1px #CB7130;
+    /* box-shadow: inset 1px 1px 1px #CB7130; */
 
     font-family: monospace;
     font-weight: bold;
@@ -131,6 +131,11 @@ h1, h2, h3, h4, h5, h6 {
     font-style: italic;
 
 /*     box-shadow: inset 1px 1px 1px #666; */
+}
+
+.navbar a.focus {
+    border-color: #FFBC0D;
+    border-style: inset;
 }
 
 .navbar a + a {
