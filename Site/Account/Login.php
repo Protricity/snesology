@@ -216,13 +216,8 @@ Once the <b>challenge answer</b> is entered, you may log in';
      * Note: Use doctag 'test' with '--disable 1' to have this ITestable class skipped during a build
      */
     static function handleStaticUnitTest(IUnitTestRequest $Test) {
-
-        try {
-            AccountEntry::create($Test, TestAccount::PGP_PUBLIC_KEY);
-        }
-        catch (PGPKeyAlreadyImported $ex) {
-
-        }
+        try { AccountEntry::create($Test, TestAccount::PGP_PUBLIC_KEY); }
+        catch (\Exception $ex) {}
 //        $Login = new Login();
 //
 //        $Test->setRequestParameter(self::PARAM_FINGERPRINT, Register::TEST_FINGERPRINT);
