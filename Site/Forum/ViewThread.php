@@ -60,7 +60,7 @@ class ViewThread implements IExecutable, IBuildable, IRoutable, ITestable
 
     private $path;
 
-    public function __construct($path=null) {
+    public function __construct($path) {
         $this->path = $path;
     }
 
@@ -86,97 +86,116 @@ class ViewThread implements IExecutable, IBuildable, IRoutable, ITestable
 //			new HTMLHeaderScript(__DIR__ . '/assets/Thread.js'),
 //			new HTMLHeaderStyleSheet(__DIR__ . '/assets/Thread.css'),
 
-            empty($path) ? null :
-            new HTMLElement('fieldset', 'fieldset-view-parent-threads',
-                new HTMLElement('legend', 'legend-parent-threads', "Parent Threads: " . dirname($path)),
+            // Parent
+            empty($path) || $path === '/' ? null :
+            function(IRequest $Request) use ($path) {
+                $Query = ThreadEntry::query()
+                    ->orderBy(ThreadTable::COLUMN_PATH . " ASC", '')
+                    ->limit(25);
 
-                function(IRequest $Request) use ($path) {
+                while($path) {
+                    $path = dirname($path);
+                    if($path === '\\')
+                        $path = '/';
+                    else
+                        $path = rtrim($path, '/') . '/';
 
-                    $Query = ThreadEntry::query()
-                        ->orderBy(ThreadTable::COLUMN_PATH . " ASC", '');
+                    $Query->orWhere(ThreadTable::COLUMN_PATH, $path);
 
-                    while($path) {
-                        $path = dirname($path);
-                        if($path === '\\')
-                            $path = '/';
-                        else
-                            $path = rtrim($path, '/') . '/';
+                    if(!$path || $path === '/')
+                        break;
+                }
 
-                        $Query->orWhere(ThreadTable::COLUMN_PATH, $path);
+                $ThreadEntry = $Query->fetch();
 
-                        if(!$path || $path === '/')
-                            break;
-                    }
-
-                    echo RI::ni(), "<ul class='thread'>";
-                    while ($ThreadEntry = $Query->fetch()) {
+                if($ThreadEntry) {
+                    echo RI::ni(), "<fieldset class='fieldset-view-parent-threads'>";
+                    echo RI::ni(1), "<legend class='legend-parent-thread'>Parent Threads</legend>";
+                    echo RI::ni(1), "<ul class='parent-threads'>";
+                    while ($ThreadEntry) {
                         /** @var ThreadEntry $ThreadEntry */
                         $ThreadEntry->renderHTML($Request);
+                        $ThreadEntry = $Query->fetch();
                     }
-                    echo RI::ni(), "</ul>";
+                    echo RI::ni(1), "</ul>";
+                    echo RI::ni(), "</fieldset>";
                 }
-            ),
+            },
 
-            new HTMLElement('fieldset', 'fieldset-view-thread',
-                new HTMLElement('legend', 'legend-thread', "Current: " . $this->path),
+            // Thread
+            function(IRequest $Request) use ($path) {
+                $Query = ThreadEntry::query()
+                    ->orderBy(ThreadTable::COLUMN_PATH . " ASC, " . ThreadTable::COLUMN_CREATED . " DESC", '')
+                    ->where(ThreadTable::COLUMN_PATH, $path)
+                    ->limit(25);
 
-                function(IRequest $Request) use ($path) {
-                    $Query = ThreadEntry::query()
-                        ->orderBy(ThreadTable::COLUMN_PATH . " ASC, " . ThreadTable::COLUMN_CREATED . " DESC", '')
-                        ->where(ThreadTable::COLUMN_PATH, ($path ?: '/'));
+                $ThreadEntry = $Query->fetch();
 
-                    echo RI::ni(), "<ul class='thread'>";
-                    while ($ThreadEntry = $Query->fetch()) {
+                if($ThreadEntry) {
+                    echo RI::ni(), "<fieldset class='fieldset-view-thread'>";
+                    echo RI::ni(1), "<legend class='legend-thread'>Thread: ", $path, "</legend>";
+                    echo RI::ni(1), "<ul class='child-threads'>";
+                    while ($ThreadEntry) {
                         /** @var ThreadEntry $ThreadEntry */
                         $ThreadEntry->renderHTML($Request);
+                        $ThreadEntry = $Query->fetch();
                     }
-                    echo RI::ni(), "</ul>";
+                    echo RI::ni(1), "</ul>";
+                    echo RI::ni(), "</fieldset>";
                 }
-            ),
+            },
 
-            new HTMLElement('fieldset', 'fieldset-view-child-threads',
-                new HTMLElement('legend', 'legend-child-thread', "Branches: " . $this->path . '*'),
+            // Branches
+            function(IRequest $Request) use ($path) {
+                $Query = ThreadEntry::query()
+                    ->orderBy(ThreadTable::COLUMN_PATH . " ASC, " . ThreadTable::COLUMN_CREATED . " DESC", '')
+                    ->where(ThreadTable::COLUMN_PATH, $path, ' != ?')
+                    ->where(ThreadTable::COLUMN_PATH, $path . '#%', ' NOT LIKE ?')
+                    ->where(ThreadTable::COLUMN_PATH, $path . '%', ' LIKE ?')
+                    ->groupBy(ThreadTable::COLUMN_PATH)
+                    ->limit(25);
 
-                function(IRequest $Request) use ($path) {
-                    $Query = ThreadEntry::query()
-                        ->orderBy(ThreadTable::COLUMN_PATH . " ASC, " . ThreadTable::COLUMN_CREATED . " DESC", '')
-                        ->where(ThreadTable::COLUMN_PATH, ($path ?: '/') . '#reply', ' != ?')
-                        ->where(ThreadTable::COLUMN_PATH . ' REGEXP "^' . ($path ?: '/') . '[^/]+/$"');
+                $ThreadEntry = $Query->fetch();
 
-                    echo RI::ni(), "<ul class='child-threads'>";
-                    while ($ThreadEntry = $Query->fetch()) {
+                if($ThreadEntry) {
+                    echo RI::ni(), "<fieldset class='fieldset-view-branches'>";
+                    echo RI::ni(1), "<legend class='legend-branches'>Branches: ", $this->path, "*</legend>";
+                    echo RI::ni(1), "<ul class='child-threads'>";
+                    while ($ThreadEntry) {
                         /** @var ThreadEntry $ThreadEntry */
                         $ThreadEntry->renderHTML($Request);
+                        $ThreadEntry = $Query->fetch();
                     }
-                    echo RI::ni(), "</ul>";
+                    echo RI::ni(1), "</ul>";
+                    echo RI::ni(), "</fieldset>";
                 }
-            ),
+            },
 
+            // Replies
+            function(IRequest $Request) use ($path) {
+                $Query = ThreadEntry::query()
+                    ->orderBy(ThreadTable::COLUMN_PATH . " ASC, " . ThreadTable::COLUMN_CREATED . " DESC", '')
+                    ->where(ThreadTable::COLUMN_PATH, ($path ?: '/') . '#%', ' LIKE ?')
+                    ->limit(25);
 
-            new HTMLElement('fieldset', 'fieldset-view-replies',
-                new HTMLElement('legend', 'legend-replies', "Replies: " . $path . '#reply'),
+                /** @var ThreadEntry $ThreadEntry */
+                $ThreadEntry = $Query->fetch();
 
-                function(IRequest $Request) use ($path) {
-                    $Query = ThreadEntry::query()
-                        ->orderBy(ThreadTable::COLUMN_PATH . " ASC, " . ThreadTable::COLUMN_CREATED . " DESC", '')
-                        ->where(ThreadTable::COLUMN_PATH, ($path ?: '/') . '#reply');
-
-                    /** @var ThreadEntry $ThreadEntry */
-                    $ThreadEntry = $Query->fetch();
-
-                    echo RI::ni(), "<ul class='replies'>";
+                if($ThreadEntry) {
+                    echo RI::ni(), "<fieldset class='fieldset-view-child-replies'>";
+                    echo RI::ni(1), "<legend class='legend-child-replies'>Replies: ", $this->path, "#reply</legend>";
+                    echo RI::ni(1), "<ul class='replies'>";
+                    RI::ai(2);
                     while ($ThreadEntry) {
                         $ThreadEntry->renderHTML($Request);
                         $ThreadEntry = $Query->fetch();
                     }
-                    echo RI::ni(), "</ul>";
-
-
-                    echo RI::ni(), "</ul>";
+                    RI::ai(-2);
+                    echo RI::ni(1), "</ul>";
+                    echo RI::ni(), "</fieldset>";
                 }
-            ),
+            },
 
-            "<br/>",
 			new HTMLElement('fieldset', 'fieldset-create-thread inline',
 				new HTMLElement('legend', 'legend-thread', "New Thread/Reply"),
 
@@ -268,7 +287,7 @@ class ViewThread implements IExecutable, IBuildable, IRoutable, ITestable
 	 * If an object is returned, it is passed along to the next handler
 	 */
 	static function routeRequestStatic(IRequest $Request, Array &$Previous = array(), $_arg = null) {
-        $path = isset($Request[self::PARAM_PATH]) ? urldecode($Request[self::PARAM_PATH]) : null;
+        $path = isset($Request[self::PARAM_PATH]) ? urldecode($Request[self::PARAM_PATH]) : '/';
         return new ExecutableRenderer(new static($path), true);
 	}
 
