@@ -81,8 +81,6 @@ class ViewThread implements IExecutable, IBuildable, IRoutable, ITestable
         if(strpos($path, '#') !== false)
             list($path) = explode('#', $path);
 
-
-
 		$Form = new HTMLForm(self::FORM_METHOD, self::getRequestURL($path), self::FORM_NAME,
 			new HTMLMetaTag(HTMLMetaTag::META_TITLE, self::TITLE),
 //			new HTMLHeaderScript(__DIR__ . '/assets/Thread.js'),
@@ -233,7 +231,7 @@ class ViewThread implements IExecutable, IBuildable, IRoutable, ITestable
             $path = rtrim($path, '/');
 
         if($Account->getName() === GuestAccount::PGP_NAME) {
-            if (strpos($this->path, 'public') === false) {
+            if (strpos($path, 'public') === false || $path === 'public') {
                 throw new ValidationException($Form, "This is not a public forum. Account required");
             }
         }
