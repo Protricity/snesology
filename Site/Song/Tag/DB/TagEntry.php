@@ -18,6 +18,7 @@ use CPath\Render\Helpers\RenderIndents as RI;
 use CPath\Render\HTML\Attribute\IAttributes;
 use CPath\Render\HTML\IRenderHTML;
 use CPath\Request\IRequest;
+use Site\Account\DB\AccountTable;
 use Site\DB\SiteDB;
 use Site\Song\Album\DB\AlbumTable;
 use Site\Song\DB\SongTable;

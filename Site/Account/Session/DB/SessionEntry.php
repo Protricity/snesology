@@ -178,13 +178,15 @@ class SessionEntry implements IBuildable, IKeyMap
 
         $fields = array();
 
-        if ($_SERVER["HTTP_X_FORWARDED_FOR"] != ""){
+        if (!empty($_SERVER["HTTP_X_FORWARDED_FOR"])){
             $fields['ip'] = $_SERVER["HTTP_X_FORWARDED_FOR"];
             $fields['proxy'] = $_SERVER["REMOTE_ADDR"];
             $fields['host'] = @gethostbyaddr($_SERVER["HTTP_X_FORWARDED_FOR"]);
-        }else{
+
+        } elseif (!empty($_SERVER["REMOTE_ADDR"])) {
             $fields['ip'] = $_SERVER["REMOTE_ADDR"];
             $fields['host'] = @gethostbyaddr($_SERVER["REMOTE_ADDR"]);
+
         }
 
         $inserted = self::table()->insert(array(

@@ -32,10 +32,9 @@ class SessionTable extends AbstractBase {
 	const COLUMN_ID = 'id';
 	/**
 
-	 * @column VARCHAR(64) NULL
+	 * @column VARCHAR(64)
 	 * @select
 	 * @insert
-	 * @unique
 	 * @search
 	 */
 	const COLUMN_FINGERPRINT = 'fingerprint';
@@ -60,12 +59,6 @@ class SessionTable extends AbstractBase {
 	 * @insert
 	 */
 	const COLUMN_STATUS = 'status';
-	/**
-
-	 * @index UNIQUE
-	 * @columns fingerprint
-	 */
-	const SESSION_FINGERPRINT_UNIQUE = 'session_fingerprint_unique';
 
 	function insertRow($fingerprint = null, $fields = null, $created = null, $status = null) { 
 		return $this->insert(get_defined_vars());
