@@ -81,7 +81,9 @@ class ViewThread implements IExecutable, IBuildable, IRoutable, ITestable
         if(strpos($path, '#') !== false)
             list($path) = explode('#', $path);
 
-		$Form = new HTMLForm(self::FORM_METHOD, self::FORM_ACTION, self::FORM_NAME,
+
+
+		$Form = new HTMLForm(self::FORM_METHOD, self::getRequestURL($path), self::FORM_NAME,
 			new HTMLMetaTag(HTMLMetaTag::META_TITLE, self::TITLE),
 //			new HTMLHeaderScript(__DIR__ . '/assets/Thread.js'),
 //			new HTMLHeaderStyleSheet(__DIR__ . '/assets/Thread.css'),
@@ -302,7 +304,15 @@ class ViewThread implements IExecutable, IBuildable, IRoutable, ITestable
         $Test->setRequestParameter(self::PARAM_THREAD_TITLE, 'test-thread-title');
         $Test->setRequestParameter(self::PARAM_THREAD_CONTENT, 'test-thread-content');
         $ViewThread->execute($Test);
+
+        $Test->clearRequestParameters();
+        $Test->setRequestParameter(self::PARAM_THREAD_TITLE, 'test-thread-title');
+        $Test->setRequestParameter(self::PARAM_THREAD_CONTENT, 'test-thread-content');
         $ViewThread->execute($Test);
+
+        $Test->clearRequestParameters();
+        $Test->setRequestParameter(self::PARAM_THREAD_TITLE, 'test-thread-title');
+        $Test->setRequestParameter(self::PARAM_THREAD_CONTENT, 'test-thread-content');
         $ViewThread->execute($Test);
 
         ThreadEntry::table()->delete(ThreadTable::COLUMN_PATH, 'test-thread');
