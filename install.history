@@ -1,0 +1,178 @@
+    1  svn --force export http://apt-cyg.googlecode.com/svn/truck/ /bin/
+    2  svn --force export http://apt-cyg.googlecode.com/svn/truck/ /bin/
+    3  svn --force export http://apt-cyg.googlecode.com/svn/trunk/ /bin/
+    4  chmod +x /bin/apt-cyg
+    5  apt-cyg install nano
+    6  apt-cyg install *
+    7  apt-cyg install wget
+    8  apt-cyg install tar
+    9  "apt-cyg install *"
+   10  apt-cyg install *
+   11  apt-cyg install
+   12  apt-cyg install tar
+   13  apt-cyg install gawk
+   14  apt-cyg install xz
+   15  apt-cyg install bzip2
+   // All the apt-cygs are useful for install
+
+   16  cd
+   // PGP Key generation
+   17  ssh-keygen.exe
+   18  cd ssh
+   19  cs .ssh
+   20  cd ..sh
+   21  cd .ssh
+   22  cat id_rsa.pub
+   23  cat id_rsa.pub | clip
+   24  nano config
+   25  nano config
+   26  nano config
+   27  cd nano config
+   28  nano config
+   29  nano config
+   30  nano config
+   31  apt-cyg install nano
+   32  nano config Host cyphergate
+   33  ssh cyphergate
+   34  cd c:\users\arvind\documents\code
+   35  cd c:\Users\Arvind\Documents\Code
+   36  cd c:cd c:
+   37  cd c:\users
+   38  git clone https://arvindkatti1@code.google.com/p/snesology/
+   39  git submodule init
+   40  git init submodule
+   41  git submodule init
+   42  cd
+   43  cd proc
+   44  cd
+   45  ssh-keygen.exe
+   46  cd
+   47  git submodule init
+   48  submodule init
+   49  git
+   50  home
+   51  cd
+   52  git submodule init
+   53  cd proc
+   54  cd
+   55  cd processor
+   56  cd
+   57  cd proc
+   58  cd processor
+   59  cd
+   60  cd proc
+   61  git clone
+   62  sweet
+   63  pwd
+   64  cd /cygdrive/c/Users/Arvind/Documents/Code/
+   65  ls
+   66  git clone https://github.com/Protricity/snesology.git
+   67  cd snesology/
+   68  ls
+   69  git submodule init
+   70  git submodule update
+   71  need to add your public key
+   72  cat ~/.ssh/id_rsa.pub 
+   73  that thing
+   74  cat ~/.ssh/id_rsa.pub | clip
+   75  git submodule update
+   76  hmmmmmmmmmmmmmmmmmmmmmmmm
+   77  nano .gitmodules 
+   78  had the wrong name
+   // These two commands init the repo submodules (when they are working)
+   79  git submodule init
+   80  git submodule update
+   81  nano .git/config 
+   82  git submodule update
+   83  git log
+   84  cd /cygdrive/c/WT-NMP/WWW/
+   85  ls
+   86  cd snesology/
+   87  git push
+   88  nano .git/config 
+   89  git push
+   90  git config --global push.default simple
+   91  git push
+   92  git log
+   93  cd CPath/
+   94  git pull
+   95  git pull origin master
+   96  git log
+   97  git push
+   98  git push origin master
+   99  git push
+  100  git push origin HEAD:master
+  101  git push
+  102  git checkout master
+  103  git pull
+  104  git push
+  105  cd ..
+  106  ls
+  107  ./init.sh
+  108  cat init.sh
+  // This was supposed to initialize the repo by script, but it's broken right now
+
+  109  cp -n .config/.config.php config.php;
+  // Still the config.php has to be created as part of the install
+  110  ls
+  111  php .script/test.php 
+  112  php
+  113  cd /cygdrive/c/WT-NMP/WWW/snesology
+  114  ls
+  115  php
+  116  bah
+  117  cd /cygdrive/c/WT-NMP/WWW/snesology
+  118  php
+  119  php -R "echo 'pwnt';"
+  120  php -c "echo 'pwnt';"
+  121  php -?
+  122  php -r "echo 'pwnt';"
+  123  php -r "echo 'pwnt';"
+  124  pwnt
+  125  php .script/test.php 
+  126  php .script/test.php 
+  127  php .script/test.php 
+  128  php -i
+  129  php -i | grep ini
+  130  php .script/test.php 
+  131  php .script/test.php 
+  132  php .script/test.php 
+  133  php .script/test.php 
+  134  probably a bug
+  135  php .script/build.php
+  136  cd CPath/
+  137  git pull
+  138  git log
+  139  gs
+  140  cd ..
+  141  ls
+  142  cd /cygdrive/c/WT-NMP/WWW/snesology
+  143  php .script/test.php 
+  144  php .script/build.php
+  145  kick ass
+  // Building and testing. build.php first
+  146  php .script/test.php 
+  147  php .script/build.php
+  148  it wasnt building the tables
+  149  php .script/test.php 
+  150  gpg
+  151  apt-cyg install gpg
+  152  apt-cyg install pgp
+  153  apt-cyg --?
+  154  apt-cyg find pgp
+  155  apt-cyg find gpg
+  156  apt-cyg install gnupg
+  157  gpg
+  158  gpg -k
+  159  touch /home/Captain/.gnupg/accounts.gpg
+  160  php .script/test.php 
+  161  gpg
+  162  php .script/test.php 
+  163  i rock
+  164  all the unit tests working means we're pretty solid
+n'i
+  165  go to localhost and lets see
+  166  history
+  167  cat history .history
+  168  cat history > install.history
+  169  history > install.history
