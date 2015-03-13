@@ -176,3 +176,15 @@ n'i
   167  cat history .history
   168  cat history > install.history
   169  history > install.history
+
+
+// This is how to add new changes and commit
+  142  cd /cygdrive/c/WT-NMP/WWW/snesology/
+  144  git status
+  145  git diff
+  146  git status
+  147  git add .
+  148  git status
+  149  git commit -a -m "modified DBConfig missing field and added installation raw history"
+  150  git push
+  151  git log
