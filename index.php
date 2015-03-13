@@ -21,6 +21,4 @@ set_error_handler(function($errno, $errstr, $errfile, $errline, $errcontext) {
 require_once('Site/SiteMap.php');
 include 'config.php';
 SiteMap::route();
-$Request = \CPath\Request\Request::create();
-//echo $Request->getDomainPath();
 

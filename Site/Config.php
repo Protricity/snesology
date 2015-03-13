@@ -22,7 +22,7 @@ class Config {
     public static $ChatSocketPath = 'socket';
     public static $SocketDomainPath = null;
 
-    public static $TemplateClass = 'Site\\Render\\DefaultTemplate';
+//    public static $TemplateClass = 'Site\\Render\\DefaultTemplate';
     public static $AllowedTags = array(
         'b',
         'i',

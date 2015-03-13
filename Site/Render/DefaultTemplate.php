@@ -128,10 +128,7 @@ class DefaultTemplate extends HTMLContainer implements IRoutable, IBuildable {
 		$customLoaded ?: HTMLConfig::addValueRenderer(new CustomHTMLValueRenderer($Request));
 		$customLoaded = true;
 
-
-		$class = Config::$TemplateClass;
-		/** @var DefaultTemplate $Template */
-		$Template = new $class();
+		$Template = new DefaultTemplate();
 
 		$Object = reset($Previous);
 		if($RouteRenderer instanceof RouteRenderer) {
@@ -178,24 +175,6 @@ class DefaultTemplate extends HTMLContainer implements IRoutable, IBuildable {
 		);
         foreach(HTMLConfig::getSupportHeaders() as $Headers)
             $Template->addSupportHeaders($Headers);
-//
-//        foreach($SubPaths as $SubPath) {
-//            $processed = false;
-//            foreach($Previous as $Obj) {
-//                if($Obj instanceof IProcessSubPaths) {
-//                    $processed = $Obj->processSubPath($SubPath) ?: $processed;
-//                }
-//                if($Obj instanceof IHTMLContainer) {
-//                    foreach($Obj->getContentRecursive() as $Content) {
-//                        if($Content instanceof IProcessSubPaths) {
-//                            $processed = $Content->processSubPath($SubPath) ?: $processed;
-//                        }
-//                    }
-//                }
-//            }
-//            if(!$processed)
-//                $Template->mNavBar->addContent($SubPath);
-//        }
 
 		$Template->renderHTML($Request);
 		return true;
