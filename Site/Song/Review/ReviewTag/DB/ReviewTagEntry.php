@@ -10,6 +10,7 @@ use CPath\Build\IBuildable;
 use CPath\Build\IBuildRequest;
 use CPath\Data\Map\IKeyMap;
 use CPath\Data\Map\IKeyMapper;
+use CPath\Data\Schema\PDO\PDOSelectBuilder;
 use CPath\Data\Schema\PDO\PDOTableClassWriter;
 use CPath\Data\Schema\PDO\PDOTableWriter;
 use CPath\Data\Schema\TableSchema;
@@ -18,7 +19,9 @@ use CPath\Render\HTML\Attribute\IAttributes;
 use CPath\Render\HTML\IRenderHTML;
 use CPath\Request\Exceptions\RequestException;
 use CPath\Request\IRequest;
+use Site\Account\DB\AccountTable;
 use Site\DB\SiteDB;
+use Site\Song\Review\DB\ReviewTable;
 
 /**
  * Class ReviewTagEntry
@@ -33,6 +36,8 @@ class ReviewTagEntry implements IBuildable, IKeyMap, IRenderHTML
 
     const TAG_RECOMMENDED = 'b:recommended';
     const TAG_RATING = '5s:rating';
+
+    const JOIN_ACCOUNT_NAME = 'account_name';
 
     static $TagDefaults = array(
         "Recommended" => self::TAG_RECOMMENDED,
@@ -69,12 +74,18 @@ class ReviewTagEntry implements IBuildable, IKeyMap, IRenderHTML
      */
     protected $value;
 
+    protected $account_name;
+
 	public function getReviewID() {
 		return $this->review_id;
 	}
 
     public function getAccountFingerprint() {
         return $this->account_fingerprint;
+    }
+
+    public function getAccountName() {
+        return $this->account_name;
     }
 
 	public function getTagName() {
@@ -133,6 +144,24 @@ class ReviewTagEntry implements IBuildable, IKeyMap, IRenderHTML
         if(!$inserted)
             throw new \InvalidArgumentException("Could not insert " . __CLASS__);
         $Request->log("Review Tag added to song: " . $tagName, $Request::VERBOSE);
+    }
+
+    /**
+     * @return PDOSelectBuilder
+     */
+    static function query() {
+        return self::table()
+            ->select(ReviewTagTable::TABLE_NAME . '.' . ReviewTagTable::COLUMN_TAG)
+            ->select(ReviewTagTable::TABLE_NAME . '.' . ReviewTagTable::COLUMN_VALUE)
+            ->select(ReviewTagTable::TABLE_NAME . '.' . ReviewTagTable::COLUMN_ACCOUNT_FINGERPRINT)
+            ->select(ReviewTagTable::TABLE_NAME . '.' . ReviewTagTable::COLUMN_REVIEW_ID)
+
+            ->select(AccountTable::TABLE_NAME . '.' . AccountTable::COLUMN_NAME, self::JOIN_ACCOUNT_NAME)
+            ->leftJoin(AccountTable::TABLE_NAME, AccountTable::TABLE_NAME . '.' . AccountTable::COLUMN_FINGERPRINT, ReviewTagTable::TABLE_NAME . '.' . ReviewTagTable::COLUMN_ACCOUNT_FINGERPRINT)
+
+            ->groupBy(ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_ID)
+
+            ->setFetchMode(ReviewTable::FETCH_MODE, ReviewTable::FETCH_CLASS);
     }
 
     static function table() {

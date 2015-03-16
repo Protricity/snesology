@@ -18,6 +18,7 @@ use CPath\Render\Helpers\RenderIndents as RI;
 use CPath\Request\IRequest;
 use CPath\UnitTest\ITestable;
 use CPath\UnitTest\IUnitTestRequest;
+use Site\Account\DB\AccountTable;
 use Site\Config;
 use Site\DB\SiteDB;
 use Site\Song\Review\ReviewTag\DB\ReviewTagEntry;
@@ -34,6 +35,7 @@ class ReviewEntry implements IBuildable, IKeyMap
     const STATUS_WRITE_UP =             0x000010;
     const STATUS_CRITIQUE =             0x000020;
     const JOIN_COLUMN_TAGS = 'tags';
+    const JOIN_ACCOUNT_NAME = 'account_name';
     const ID_PREFIX = 'R';
 
     static $StatusOptions = array(
@@ -91,6 +93,7 @@ class ReviewEntry implements IBuildable, IKeyMap
     protected $created;
 
     protected $tags;
+    protected $account_name;
 
 
     public function getID() {
@@ -107,6 +110,10 @@ class ReviewEntry implements IBuildable, IKeyMap
 
     public function getAccountFingerprint() {
         return $this->account_fingerprint;
+    }
+
+    public function getAccountName() {
+        return $this->account_name;
     }
 
     public function getReviewTitle() {
@@ -193,7 +200,7 @@ class ReviewEntry implements IBuildable, IKeyMap
         $Map->map('song-review', $this->getReview());
         $Map->map('source-id', $this->getSourceID());
         $Map->map('source-type', $this->getSourceType());
-        $Map->map('review-fingerprint', $this->getAccountFingerprint());
+        $Map->map('review-fingerprint', $this->getAccountFingerprint(), $this->getAccountName());
     }
 
     public function getFormattedReview() {
@@ -255,6 +262,9 @@ class ReviewEntry implements IBuildable, IKeyMap
 
             ->select('GROUP_CONCAT(DISTINCT CONCAT(' . ReviewTagTable::TABLE_NAME . '.' . ReviewTagTable::COLUMN_TAG . ', "::", ' . ReviewTagTable::TABLE_NAME . '.' . ReviewTagTable::COLUMN_VALUE . ') SEPARATOR "||")', self::JOIN_COLUMN_TAGS)
             ->leftJoin(ReviewTagTable::TABLE_NAME . ' ON ' . ReviewTagTable::TABLE_NAME . '.' . ReviewTagTable::COLUMN_REVIEW_ID . ' = ' . ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_ID)
+
+            ->select(AccountTable::TABLE_NAME . '.' . AccountTable::COLUMN_NAME, self::JOIN_ACCOUNT_NAME)
+            ->leftJoin(AccountTable::TABLE_NAME, AccountTable::TABLE_NAME . '.' . AccountTable::COLUMN_FINGERPRINT, ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_ACCOUNT_FINGERPRINT)
 
             ->groupBy(ReviewTable::TABLE_NAME . '.' . ReviewTable::COLUMN_ID)
 

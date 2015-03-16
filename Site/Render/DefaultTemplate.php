@@ -31,8 +31,10 @@ use CPath\Route\RouteIndex;
 use CPath\Route\RouteRenderer;
 use Site\Account\AccountHome;
 use Site\Account\DB\AccountEntry;
+use Site\Account\Guest\GuestAccount;
 use Site\Account\ViewAccount;
 use Site\Config;
+use Site\Forum\ViewThread;
 use Site\Path\ManagePath;
 use Site\PGP\PGPSupportHeaders;
 use Site\Relay\HTML\HTMLRelayChat;
@@ -136,9 +138,13 @@ class DefaultTemplate extends HTMLContainer implements IRoutable, IBuildable {
 			if(!$Object)
 				$Object = new RouteIndex($Request, $RouteRenderer);
 
+            $Account = AccountEntry::loadFromSession($Request);
+
 //			$NavBarTitle = new HTMLElement('h3', 'navbar-title');
 //			$Template->mNavBar->
-			$Template->mNavBar->addContent(new HTMLRouteNavigator($RouteRenderer));
+            $Navigator = new HTMLRouteNavigator($RouteRenderer);
+            $Navigator->addClass($Account->getName() === GuestAccount::PGP_NAME ? IRequest::NAVIGATION_NO_LOGIN_CLASS : IRequest::NAVIGATION_LOGIN_ONLY_CLASS);
+			$Template->mNavBar->addContent($Navigator);
 		}
 
 		if ($Object instanceof IResponseHeaders) {
@@ -155,7 +161,7 @@ class DefaultTemplate extends HTMLContainer implements IRoutable, IBuildable {
 		$Template->mHeaderTitle->addAll(
 			'BETA - ' . $Request->getMethodName() . ' ' . $Request->getPath()
 		);
-        $Template->mPathBar->addAll($Request->getPath());
+        $Template->mPathBar->addAll(htmlentities(urldecode($Request->getPath())));
 
 		$Template->addMetaTag(HTMLMetaTag::META_CONTENT_TYPE, 'text/html; charset=utf-8');
 		$Template->addMetaTag(self::META_PATH, $Request->getPath());
@@ -225,6 +231,7 @@ class CustomHTMLValueRenderer implements IHTMLValueRenderer, IHTMLSupportHeaders
             case 'inviter':
             case 'fingerprint':
                 $domain = $this->Request->getDomainPath();
+                $arg1 ?: $arg1 = '..' . substr($value, -8);
                 $href = $domain . ltrim(ViewAccount::getRequestURL($value), '/');
                 echo "<a href='{$href}'>", $arg1 ?: $value, "</a>";
                 return true;
@@ -315,6 +322,9 @@ class CustomHTMLValueRenderer implements IHTMLValueRenderer, IHTMLSupportHeaders
             case 'url-cover-front':
             case 'url-cover-back':
                 $href = $value;
+                $domain = $this->Request->getDomainPath();
+                if(strpos($href, $domain) !== 0)
+                    $href = rtrim($domain, '/') . '/' . ltrim($href, '/');
                 echo "<a href='{$href}'>", $arg1 ?: 'link', "</a>";
                 return true;
 
@@ -329,7 +339,27 @@ class CustomHTMLValueRenderer implements IHTMLValueRenderer, IHTMLSupportHeaders
                 echo "<a href='{$href}'>", $arg1 ?: $value, "</a>";
                 return true;
 
-		}
+            case 'thread-path':
+                $domain = $this->Request->getDomainPath();
+                $href = $domain . ltrim(ViewThread::getRequestURL($value), '/');
+                echo "<a href='{$href}'>", $arg1 ?: $value, "</a>";
+                return true;
+
+
+
+            case 'thread-branch':
+                $href = $this->Request->getDomainPath() . ltrim(ViewThread::getRequestURL($value), '/');
+                echo "<a href='", $href, ">", $arg1 ?: $value, "</a>";
+                return true;
+
+            case 'thread-reply':
+                $value = $value .'/branch';
+                $href = $this->Request->getDomainPath() . ltrim(ViewThread::getRequestURL($value), '/');
+                echo "<a href='", $href, ">", $arg1 ?: $value, "</a>";
+                return true;
+
+
+        }
 		return false;
 	}
 

@@ -287,7 +287,7 @@ class CreateSong implements IExecutable, IBuildable, IRoutable, ITestable
 	static function handleBuildStatic(IBuildRequest $Request) {
 		$RouteBuilder = new RouteBuilder($Request, new SiteMap());
 		$RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION, __CLASS__);
-		$RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION2, __CLASS__, IRequest::NAVIGATION_ROUTE | IRequest::MATCH_SESSION_ONLY, "Songs");
+		$RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION2, __CLASS__, IRequest::NAVIGATION_ROUTE | IRequest::NAVIGATION_LOGIN_ONLY, "Songs");
 	}
 
     /**

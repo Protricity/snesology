@@ -103,8 +103,8 @@ class ViewAccount implements IExecutable, IBuildable, IRoutable
 
 	// Static
 
-	public static function getRequestURL($id) {
-		return sprintf(self::FORM_FORMAT, $id);
+	public static function getRequestURL($fingerprint) {
+		return sprintf(self::FORM_FORMAT, $fingerprint);
 	}
 
 	/**

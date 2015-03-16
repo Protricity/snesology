@@ -109,7 +109,7 @@ class Logout implements IExecutable, IBuildable, IRoutable
 		$RouteBuilder = new RouteBuilder($Request, new SiteMap(), '_1logout');
 		$RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION, __CLASS__,
 			IRequest::NAVIGATION_ROUTE
-			| IRequest::MATCH_SESSION_ONLY
+			| IRequest::NAVIGATION_LOGIN_ONLY
 			, "Logout");
 	}
 }

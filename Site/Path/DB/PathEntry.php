@@ -15,6 +15,7 @@ use CPath\Data\Schema\PDO\PDOTableClassWriter;
 use CPath\Data\Schema\PDO\PDOTableWriter;
 use CPath\Data\Schema\TableSchema;
 use CPath\Request\IRequest;
+use Site\Account\DB\AccountTable;
 use Site\DB\SiteDB;
 
 
@@ -213,6 +214,7 @@ class PathEntry implements IBuildable, IKeyMap
             ->select(PathTable::TABLE_NAME . '.' . PathTable::COLUMN_CONTENT)
             ->select(PathTable::TABLE_NAME . '.' . PathTable::COLUMN_CREATED)
             ->select(PathTable::TABLE_NAME . '.' . PathTable::COLUMN_STATUS)
+
             ->setFetchMode(PathTable::FETCH_MODE, PathTable::FETCH_CLASS);
     }
 

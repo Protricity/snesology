@@ -54,8 +54,8 @@ class SitePages implements IExecutable, IBuildable, IRoutable
      */
     static function handleBuildStatic(IBuildRequest $Request) {
         $RouteBuilder = new RouteBuilder($Request, new SiteMap());
-        $RouteBuilder->writeRoute('ANY ' . self::PATH_BLOG, __CLASS__, IRequest::NAVIGATION_ROUTE | IRequest::MATCH_NO_SESSION, "Blog");
-        $RouteBuilder->writeRoute('ANY ' . self::PATH_CHAT, __CLASS__, IRequest::NAVIGATION_ROUTE | IRequest::MATCH_SESSION_ONLY, "Chat");
+        $RouteBuilder->writeRoute('ANY ' . self::PATH_BLOG, __CLASS__, IRequest::NAVIGATION_ROUTE | IRequest::NAVIGATION_NO_LOGIN, "Blog");
+        $RouteBuilder->writeRoute('ANY ' . self::PATH_CHAT, __CLASS__, IRequest::NAVIGATION_ROUTE | IRequest::NAVIGATION_LOGIN_ONLY, "Chat");
     }
 
 

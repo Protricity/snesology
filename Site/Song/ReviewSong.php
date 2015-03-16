@@ -56,6 +56,7 @@ use Site\Song\Review\DB\ReviewTable;
 use Site\Song\Review\HTML\HTMLSourceReview;
 use Site\Song\Review\ReviewTag\DB\ReviewTagEntry;
 use Site\Song\Tag\DB\TagEntry;
+use Wrench\Exception\Exception;
 
 
 class ReviewSong implements IExecutable, IBuildable, IRoutable, ITestable
@@ -362,7 +363,7 @@ class ReviewSong implements IExecutable, IBuildable, IRoutable, ITestable
      */
     static function handleStaticUnitTest(IUnitTestRequest $Test) {
         try { AccountEntry::create($Test, TestAccount::PGP_PUBLIC_KEY); }
-        catch (PGPKeyAlreadyImported $ex) {}
+        catch (\Exception $ex) {}
 
         SessionEntry::create($Test, TestAccount::PGP_FINGERPRINT);
 

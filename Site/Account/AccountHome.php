@@ -13,6 +13,7 @@ use CPath\Render\HTML\Attribute\Attributes;
 use CPath\Render\HTML\Element\Form\HTMLButton;
 use CPath\Render\HTML\Element\Form\HTMLForm;
 use CPath\Render\HTML\Element\Form\HTMLInputField;
+use CPath\Render\HTML\Element\Form\HTMLSelectField;
 use CPath\Render\HTML\Element\Form\HTMLTextAreaField;
 use CPath\Render\HTML\Element\HTMLAnchor;
 use CPath\Render\HTML\Element\HTMLElement;
@@ -34,6 +35,7 @@ use CPath\Route\RouteBuilder;
 use Site\Account\DB\AccountEntry;
 use Site\Account\Session\AccountSession;
 use Site\Account\Session\DB\SessionEntry;
+use Site\Account\Session\HTML\HTMLSessionsTable;
 use Site\SiteMap;
 
 class AccountHome implements IExecutable, IBuildable, IRoutable
@@ -54,6 +56,11 @@ class AccountHome implements IExecutable, IBuildable, IRoutable
     const PARAM_PRIVATE_MESSAGE = 'private-message';
     const PARAM_PRIVATE_MESSAGE_RECIPIENT = 'private-message-recipient';
     const PARAM_ENCRYPT = 'encrypt';
+    const PARAM_PGP_SELECT = 'pgp-select';
+    const PARAM_PGP_BACKUP = 'pgp-backup';
+    const PARAM_PGP_DELETE = 'pgp-delete';
+    const PARAM_PGP_CONTENT = 'pgp-content';
+    const PARAM_PGP_ADD = 'pgp-add';
 
     /**
 	 * Execute a command and return a response. Does not render
@@ -69,6 +76,8 @@ class AccountHome implements IExecutable, IBuildable, IRoutable
             throw new \Exception("Session required");
 
         $Account = AccountEntry::loadFromSession($SessionRequest);
+
+        $SessionsTable = new HTMLSessionsTable($Account->getFingerprint());
 
 		$Form = new HTMLForm(self::FORM_METHOD, $Request->getPath(), self::FORM_NAME,
 			new HTMLMetaTag(HTMLMetaTag::META_TITLE, self::TITLE),
@@ -137,6 +146,33 @@ class AccountHome implements IExecutable, IBuildable, IRoutable
                 new HTMLButton(self::PARAM_SUBMIT, 'Send Message', self::PARAM_PRIVATE_MESSAGE,
                     new Attributes('disabled', 'disabled')
                 )
+            ),
+
+            new HTMLElement('fieldset', 'fieldset-sessions inline',
+                new HTMLElement('legend', 'legend-sessions', "Session History"),
+
+                $SessionsTable
+
+            ),
+
+            new HTMLElement('fieldset', 'fieldset-manage-pgp inline',
+                new HTMLElement('legend', 'legend-manage-pgp', "Manage Browser Keys"),
+
+                new HTMLSelectField(self::PARAM_PGP_SELECT, 'select-pgp-list'),
+
+                "<br/><br/>",
+                new HTMLTextAreaField(self::PARAM_PGP_CONTENT),
+
+                "<br/><br/>",
+                new HTMLButton(self::PARAM_PGP_ADD, 'Add',
+                    new Attributes('disabled', 'disabled')
+                ),
+                new HTMLButton(self::PARAM_PGP_BACKUP, 'Backup',
+                    new Attributes('disabled', 'disabled')
+                ),
+                new HTMLButton(self::PARAM_PGP_DELETE, 'Delete',
+                    new Attributes('disabled', 'disabled')
+                )
             )
 
 		);
@@ -187,7 +223,7 @@ class AccountHome implements IExecutable, IBuildable, IRoutable
 		$RouteBuilder = new RouteBuilder($Request, new SiteMap());
 
 		$RouteBuilder->writeRoute('ANY ' . self::FORM_ACTION, __CLASS__,
-			IRequest::MATCH_SESSION_ONLY
+			IRequest::NAVIGATION_LOGIN_ONLY
 			| IRequest::NAVIGATION_ROUTE,
 			"My Account");
 	}

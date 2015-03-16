@@ -55,6 +55,15 @@ class SiteMap implements IRouteMap, IBuildable
 			$Map->route('ANY /account/:id', 'Site\\Account\\ViewAccount') ||
 			$Map->route('ANY /view/account/:id', 'Site\\Account\\ViewAccount') ||
 
+			// @group Site\Forum\CreateThread
+			$Map->route('ANY /create/thread/', 'Site\\Forum\\CreateThread') ||
+			$Map->route('ANY /thread/', 'Site\\Forum\\CreateThread') ||
+
+			// @group Site\Forum\ViewThread
+			$Map->route('ANY /t/:path', 'Site\\Forum\\ViewThread') ||
+			$Map->route('ANY /view/thread/:path', 'Site\\Forum\\ViewThread') ||
+			$Map->route('ANY /forum/', 'Site\\Forum\\ViewThread', 256, 'Forum') ||
+
 			// @group Site\Path\CreatePath
 			$Map->route('ANY /create/path/', 'Site\\Path\\CreatePath') ||
 			$Map->route('ANY /paths/', 'Site\\Path\\CreatePath') ||
