@@ -35,8 +35,8 @@ section, div.section {
 
 .header {
     background: url("img/header1.jpg") no-repeat center;
-    /* width: 1024px; */
-    height: 195px;
+    width: 800px;
+    height: 200px;
     padding: 1em;
 }
 
@@ -134,6 +134,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .navbar a.focus {
+    background-image: url("img/button2.jpg");
     border-color: #FFBC0D;
     border-style: inset;
 }
@@ -147,7 +148,7 @@ h1, h2, h3, h4, h5, h6 {
 thead th,
 tbody th,
 tr:hover {
-    background: #567;
+    background: #670008;
     color: #CCC;
 }
 
