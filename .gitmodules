@@ -1,6 +1,6 @@
 [submodule "CPath"]
 	path = CPath
-	url = https://ari.asulin@code.google.com/p/clevertree-cpath/
+	url = ssh://git@github.com/Protricity/cpath.git
 [submodule "Site/PGP/assets/libs/openpgp"]
         path = Site/PGP/assets/libs/openpgp
         url = https://github.com/singpolyma/openpgp-php.git

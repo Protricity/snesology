@@ -16,8 +16,9 @@ class DBConfig
 	static $DB_HOST = 'localhost';
 	static $GrantSalt = 'eS6bZZlQaKM66ZZCGetAJVGJA6ZfZ3UsUbw';
 	static $GrantContentPath;
+    static $DB_WRITE_TABLES = true;
 
-	static function getContentPath($additionalPath=null) {
+    static function getContentPath($additionalPath=null) {
 		return self::$GrantContentPath . ($additionalPath ? '/' . $additionalPath : '');
 	}
 }
