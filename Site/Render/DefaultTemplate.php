@@ -215,6 +215,7 @@ class CustomHTMLValueRenderer implements IHTMLValueRenderer, IHTMLSupportHeaders
                 echo "<a href='{$href}'>", $arg1 ?: $value, "</a>";
                 return true;
 
+            case 'entry-account':
             case 'id':
                 $domain = $this->Request->getDomainPath();
                 switch(true) {
@@ -224,7 +225,7 @@ class CustomHTMLValueRenderer implements IHTMLValueRenderer, IHTMLSupportHeaders
                     default: $url = $value;
                 }
                 $href = $domain . ltrim($url, '/');
-                echo "<a href='{$href}'>", $arg1 ?: $value, "</a>";
+                echo "<a href='{$href}'>", $arg1 ?: ('...' . substr($value, -4)), "</a>";
                 return true;
 
 //            case 'review':

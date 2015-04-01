@@ -1,5 +1,20 @@
+/** Body **/
+body {
+    /*max-width: 1000px;*/
+    color: #FFF;
+    margin: 0 auto;
 
-/** Popup Icon **/
+    background-color: #000;
+    font-family: monospace;
+    /** margin: 0 0 0 0; **/
+}
+
+
+
+h1, h2, h3, h4, h5, h6 {
+    /* margin-top: 0; */
+    /* margin: 0.5em; */
+}
 
 
 body .popup.info {
@@ -20,22 +35,27 @@ body .popup.description {
 }
 
 
-.pending {
-    opacity: 0.5;
-}
 
 /** Page Layout **/
 
-section, div.section {
-    border: thick groove darkorange;
+section.centered form {
+    /*text-align: center;*/
+}
 
-    /* padding: 12px; */
-    margin: 6px;
+section.centered form * {
+    /*text-align: left;*/
+}
+
+a { color: #3A80FF; }
+a:visited { color: #99B; }
+
+
+section, div.section {
 }
 
 .header {
-    background: url("img/header1.jpg") no-repeat center;
-    width: 800px;
+    background: url("img/header.png") no-repeat left top;
+    /*width: 800px;*/
     height: 200px;
     padding: 1em;
 }
@@ -46,23 +66,10 @@ section, div.section {
     background-color: red;
 }
 
-.footer div.logos {
-    /* background: #eee url("img/footer.jpg") no-repeat; */
-    display: inline-block;
-}
-
 section.content {
-    /* display: inline-block; */  
-    /* min-width: 978px; */
     min-height: 30em;
-    /* margin: auto; */
-    /* padding-top: 0.5em; */
-}
-
-
-h1, h2, h3, h4, h5, h6 {
-    /* margin-top: 0; */
-    /* margin: 0.5em; */
+    border: thick groove darkorange;
+    margin: 6px;
 }
 
 /** Path Bar **/
@@ -158,38 +165,6 @@ tr:hover {
     color: #CCC;
 }
 
-
-/** Body **/
-
-body {
-
-  max-width: 1000px;
-  
-
-  color: #FFF;
-
-  margin: 0 auto;
-  
-
-  background-color: #000;
-    font-family: monospace;
-    /** margin: 0 0 0 0; **/
-}
-
-/** Page **/
-
-section.centered form {
-    text-align: center;
-}
-
-section.centered form * {
-    text-align: left;
-}
-
-
-a { color: #3A80FF; }
-a:visited { color: #99B; }
-
 /** Form **/
 
 form {
@@ -280,33 +255,6 @@ form input[type="range"] {
     text-decoration: wavy;
     border-color: #ed47f4;
 }
-
-/*form.focus {*/
-    /*background-color: #DDD;*/
-    /*opacity: 0.8;*/
-
-    /*margin: -0.5em;*/
-    /*padding: 0.5em;*/
-
-    /*border-radius: 0.5em;*/
-    /*color: #AAA;*/
-/*}*/
-
-
-/*form.focus input,*/
-/*form.focus textarea,*/
-/*form.focus button {*/
-    /*opacity: 0.2;*/
-
-/*}*/
-
-/*form.focus div.focus,*/
-/*form.focus input.focus,*/
-/*form.focus textarea.focus,*/
-/*form.focus button.focus  {*/
-    /*opacity: 1;*/
-    /*font-weight: bold;*/
-/*}*/
 
 /** Tables **/
 
