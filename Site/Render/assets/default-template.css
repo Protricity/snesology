@@ -54,12 +54,32 @@ section, div.section {
 }
 
 .header {
-    background: url("img/header.png") no-repeat left top;
-    /*width: 800px;*/
-    height: 200px;
+    background: url("img/header-background.png");
+    min-width: 781px;
+    height: 184px;
     padding: 1em;
+    position: relative;
+    z-index: -1;
 }
 
+.header .overlap-left {
+    background: url("img/header.png") no-repeat left top;
+    width: 660px;
+    height: 525px;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.header .overlap-right {
+    background: url("img/header.png") no-repeat right top;
+    background-position: -660px 0;
+    width: 136px;
+    height: 238px;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
 
 .footer {
     height: 35px;
@@ -68,8 +88,8 @@ section, div.section {
 
 section.content {
     min-height:45em;
-    border: thick groove darkorange;
-    margin: 6px;
+    /* border: thick groove darkorange; */
+    /* margin: 6px; */
 }
 
 /** Path Bar **/
@@ -84,12 +104,23 @@ section.content {
 
 .navbar {
     float: left;
-    /* max-width: 14em; */
+    background: url("img/navbar-background.png") left top;
     /* display: inline-block; */
     padding: 0;
-    margin: 0 1em 0 0;
-    border: groove #D70;
-    border-width: 0 3px 3px 0;
+    position: relative;
+    padding-bottom: 50px;
+    z-index: -1;
+}
+
+.navbar .overlap-bottom {
+    background: url("img/header.png") no-repeat left bottom;
+    background-position: 0 -225px;
+    width: 160px;
+    height: 232px;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    z-index: -1;
 }
 
 .navbar a:hover {
@@ -115,7 +146,7 @@ section.content {
     display: block;
 
     /* font-size: 19px; */
-    width: 120px;
+    width: 95px;
     height: 30px;
 
     font-size: 13px;
@@ -123,7 +154,7 @@ section.content {
 
     text-decoration: none;
     text-align: center;
-    margin: 15px;
+    margin: 0 20px 0 46px;
 }
 
 .navbar a:visited {
@@ -134,7 +165,7 @@ section.content {
     /*background-image: url("img/buttonpress.jpg");*/
     font-style: italic;
 
-/*     box-shadow: inset 1px 1px 1px #666; */
+    /*     box-shadow: inset 1px 1px 1px #666; */
 }
 
 .navbar a.focus {
@@ -250,7 +281,7 @@ dl > dt
     float: left;
     width: 10em;
     margin: 0 15px 0 0;
-     text-align: right;
+    text-align: right;
     font-weight: bold;
     color: #FFF;
 
@@ -276,6 +307,6 @@ ul > li
 }
 
 dd dl.closed > :not(.stay-open) {
-display: none;
+    display: none;
 }
 

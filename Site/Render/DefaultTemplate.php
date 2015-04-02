@@ -70,11 +70,13 @@ class DefaultTemplate extends HTMLContainer implements IRoutable, IBuildable {
 
 		$Render = new HTMLResponseBody(
 			$this->mHeader = new HTMLElement('section', 'header',
-				$this->mHeaderTitle = new HTMLElement('h1', 'header-title')
+				$this->mHeaderTitle = new HTMLElement('h1', 'header-title'),
+                "<div class='overlap-left'></div>",
+                "<div class='overlap-right'></div>"
 			),
 			$Content = new HTMLElement('section', 'content',
-                $this->mNavBar = new HTMLElement('div', 'navbar'
-
+                $this->mNavBar = new HTMLElement('div', 'navbar',
+                    "<div class='overlap-bottom'></div>"
                 ),
                 $this->mPathBar = new HTMLElement('div', 'pathbar'
 
