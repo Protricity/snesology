@@ -9,6 +9,8 @@ namespace Site;
 
 use CPath\Build\IBuildable;
 use CPath\Build\IBuildRequest;
+use CPath\Render\HTML\Attribute\Attributes;
+use CPath\Render\HTML\Attribute\StyleAttributes;
 use CPath\Render\HTML\Element\Form\HTMLForm;
 use CPath\Render\HTML\Element\HTMLElement;
 use CPath\Render\HTML\Element\Table\HTMLPDOQueryTable;
@@ -54,20 +56,23 @@ class SiteIndex implements IExecutable, IBuildable, IRoutable
 //			new HTMLHeaderScript(__DIR__ . '\assets\form-login.js'),
 //			new HTMLHeaderStyleSheet(__DIR__ . '\assets\form-login.css'),
 // http://snesology.tumblr.com/rss
-			new HTMLElement('fieldset', 'legend-page inline',
-				new HTMLElement('legend', 'legend-page', self::TITLE),
+			new HTMLElement('fieldset', 'legend-page',
+                new StyleAttributes('display', 'inline-block'),
+                new HTMLElement('legend', 'legend-page', self::TITLE),
 
                 "Beta Test Coming Soon"
 			),
 
             "<br/>",
-            new HTMLElement('fieldset', 'fieldset-published-songs inline',
+            new HTMLElement('fieldset', 'fieldset-published-songs',
+                new StyleAttributes('display', 'inline-block'),
                 new HTMLElement('legend', 'legend-published-songs', "Recent Published Songs"),
 
                 $SongsTable
             ),
 
-            new HTMLElement('fieldset', 'fieldset-contribution-history inline',
+            new HTMLElement('fieldset', 'fieldset-contribution-history',
+                new StyleAttributes('display', 'inline-block'),
                 new HTMLElement('legend', 'legend-contribution-history', "Contribution History"),
 
                 new HTMLRequestHistory()
