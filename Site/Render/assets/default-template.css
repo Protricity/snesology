@@ -109,7 +109,7 @@ section.content {
     padding: 0;
     position: relative;
     padding-bottom: 50px;
-    z-index: -1;
+    z-index: 1;
 }
 
 .navbar .overlap-bottom {
