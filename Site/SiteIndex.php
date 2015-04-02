@@ -42,8 +42,12 @@ class SiteIndex implements IExecutable, IBuildable, IRoutable
 
         $SongsTable = new HTMLPDOQueryTable($Query);
 
-//        $SongsTable->addColumn('title');
+        $SongsTable->addColumn(SongTable::COLUMN_TITLE);
+        $SongsTable->addColumn(SongTable::COLUMN_DESCRIPTION);
+        $SongsTable->addColumn('artist');
+        $SongsTable->addColumn('chip-style');
 //        $SongsTable->addColumn(SongTable::COLUMN_CREATED);
+//        $SongsTable->addColumn(SongTable::COLUMN_STATUS);
 
 		$Form = new HTMLForm(self::FORM_METHOD, $Request->getPath(), self::FORM_NAME,
 			new HTMLMetaTag(HTMLMetaTag::META_TITLE, self::TITLE),

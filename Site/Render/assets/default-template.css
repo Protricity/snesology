@@ -67,7 +67,7 @@ section, div.section {
 }
 
 section.content {
-    min-height: 30em;
+    min-height:40em;
     border: thick groove darkorange;
     margin: 6px;
 }
@@ -307,56 +307,56 @@ td a:hover {
 /** Data **/
 
 
-dl, ul, ol
-{
-    display: block;
+/*dl, ul, ol*/
+/*{*/
+    /*display: block;*/
 
     /*float: left;*/
     /*width: 648px;*/
-    margin: 5pt;
-    padding: 0 8pt 4pt 0;
+    /*margin: 5pt;*/
+    /*padding: 0 8pt 4pt 0;*/
 
     /*border-radius: 8pt;*/
     /*border: 2pt solid #ccc;*/
 
-    min-width: 30pt;
-}
+    /*min-width: 30pt;*/
+/*}*/
 
-dd > a {
-    text-decoration: none;
-}
+/*dd > a {*/
+    /*text-decoration: none;*/
+/*}*/
 
-dl > dt
-{
-    white-space: nowrap;
+/*dl > dt*/
+/*{*/
+    /*white-space: nowrap;*/
 
-    float: left;
-    width: 10em;
-    margin: 0 15px 0 0;
+    /*float: left;*/
+    /*width: 10em;*/
+    /*margin: 0 15px 0 0;*/
     /* text-align: right; */
-    font-weight: bold;
-    color: #FFF;
+    /*font-weight: bold;*/
+    /*color: #FFF;*/
 
-    padding: 2pt 0 0;
-}
+    /*padding: 2pt 0 0;*/
+/*}*/
 
-dl > dd
-{
+/*dl > dd*/
+/*{*/
     /*white-space: pre-line;*/
     /*white-space: nowrap;*/
     /*overflow-x: hidden;*/
-    overflow-y: hidden;
+    /*overflow-y: hidden;*/
 
-    margin: 0 0 0 70pt;
-    padding: 3pt 0 0;
+    /*margin: 0 0 0 70pt;*/
+    /*padding: 3pt 0 0;*/
 
-    min-height: 12pt;
-}
+    /*min-height: 12pt;*/
+/*}*/
 
-ul > li
-{
-    list-style-type: none;
-}
+/*ul > li*/
+/*{*/
+    /*list-style-type: none;*/
+/*}*/
 
 /*dd dl.closed > :not(.stay-open) {*/
 /*display: none;*/
