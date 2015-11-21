@@ -66,7 +66,7 @@
    63  pwd
    64  cd /cygdrive/c/Users/Arvind/Documents/Code/
    65  ls
-   66  git clone https://github.com/Protricity/snesology.git
+   66  git clone https://github.com/clevertree/snesology.git
    67  cd snesology/
    68  ls
    69  git submodule init

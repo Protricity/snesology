@@ -51,7 +51,7 @@ class SitePages implements IExecutable, IBuildable, IRoutable
 
                         <li>Snesology.com is <i>Community Source</i> which means
                             <ul>
-                                <li><a href='https://github.com/Protricity/snesology'>Open Source</a></li>
+                                <li><a href='https://github.com/clevertree/snesology'>Open Source</a></li>
                                 <li>Anyone can <a href='mailto:ari@asu.edu?subject=I want to help'>contribute</a></li>
                                 <li>Community Operated <small>(No administrator accounts)</small></li>
                             </ul>
